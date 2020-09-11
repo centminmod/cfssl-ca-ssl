@@ -1,8 +1,11 @@
 Using [cfssl](https://github.com/cloudflare/cfssl) to generate a CA certificate/key and to sign server and client self-signed SSL certificates with it. Intended for [Centmin Mod LEMP stack](https://centminmod.com) installations on CentOS 7.x for creating Nginx based client based SSL certificate authentication via [ssl_client_certificate](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_client_certificate) and [ssl_verify_client](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_verify_client) directives.
 
+Nginx Configuration
+
 ```
 cp -a /etc/cfssl/centminmod.com-ca.pem /usr/local/nginx/conf/ssl/cacerts_certificates/centminmod.com-ca.pem
 ```
+
 ```
 ssl_client_certificate /usr/local/nginx/conf/ssl/cacerts_certificates/centminmod.com-ca.pem;
 ssl_verify_client on;
@@ -11,6 +14,15 @@ if ($ssl_client_verify != SUCCESS) {
     return 403;
 }
 ```
+
+Client connection
+
+```
+curl -k --cert /etc/cfssl/clientcerts/client.centminmod.com.pem https://domain.com
+```
+
+# Contents
+
 
 * [Usage](#usage)
 * [CA Certificate](#ca-certificate)
