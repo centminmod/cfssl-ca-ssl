@@ -96,7 +96,7 @@ ca profile: /etc/cfssl/profile.json
 
 # Server SSL Certificate
 
-Generate self-signed server SSL certificate with CA signing for centminmod.com
+Generate self-signed server SSL certificate with CA signing for centminmod.com with `TLS Web Server Authentication`
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600
@@ -150,7 +150,7 @@ ca csr: /etc/cfssl/servercerts/centminmod.com.csr
 ca csr profile: /etc/cfssl/servercerts/centminmod.com.csr.json
 ```
 
-Generate self-signed server SSL certificate with CA signing for server.centminmod.com subdomain
+Generate self-signed server SSL certificate with CA signing for server.centminmod.com subdomain with `TLS Web Server Authentication`
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600 server
@@ -209,7 +209,7 @@ ca csr profile: /etc/cfssl/servercerts/server.centminmod.com.csr.json
 
 # Client SSL Certificate
 
-Generate self-signed client SSL certificate with CA signing for centminmod.com
+Generate self-signed client SSL certificate with CA signing for centminmod.com with `TLS Web Client Authentication`
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600      
@@ -263,7 +263,7 @@ ca csr: /etc/cfssl/clientcerts/centminmod.com.csr
 ca csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
 ```
 
-Generate self-signed client SSL certificate with CA signing for client.centminmod.com subdomain
+Generate self-signed client SSL certificate with CA signing for client.centminmod.com subdomain with `TLS Web Client Authentication`
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600 client
