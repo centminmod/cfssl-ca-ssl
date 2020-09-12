@@ -617,7 +617,7 @@ ssl_certificate_key  /etc/cfssl/servercerts/server.centminmod.com-key.pem;
 
 Generate self-signed client SSL certificate with CA signing for centminmod.com with `TLS Web Client Authentication`
 
-* client pkc12: /etc/cfssl/clientcerts/centminmod.com.p12
+* client pkcs12: /etc/cfssl/clientcerts/centminmod.com.p12
 * client cert: /etc/cfssl/clientcerts/centminmod.com.pem
 * client key: /etc/cfssl/clientcerts/centminmod.com-key.pem
 * client csr: /etc/cfssl/clientcerts/centminmod.com.csr
@@ -683,7 +683,7 @@ Certificate:
 Generate pkcs12 format
 openssl pkcs12 -export -out /etc/cfssl/clientcerts/centminmod.com.p12 -inkey /etc/cfssl/clientcerts/centminmod.com-key.pem -in /etc/cfssl/clientcerts/centminmod.com.pem -certfile /etc/cfssl/centminmod.com-ca-bundle.pem -passin pass: -passout pass:
 
-client pkc12: /etc/cfssl/clientcerts/centminmod.com.p12
+client pkcs12: /etc/cfssl/clientcerts/centminmod.com.p12
 client cert: /etc/cfssl/clientcerts/centminmod.com.pem
 client key: /etc/cfssl/clientcerts/centminmod.com-key.pem
 client csr: /etc/cfssl/clientcerts/centminmod.com.csr
@@ -731,7 +731,7 @@ client csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
 
 Generate self-signed client SSL certificate with CA signing for client.centminmod.com subdomain with `TLS Web Client Authentication`
 
-* client pkc12: /etc/cfssl/clientcerts/client.centminmod.com.p12
+* client pkcs12: /etc/cfssl/clientcerts/client.centminmod.com.p12
 * client cert: /etc/cfssl/clientcerts/client.centminmod.com.pem
 * client key: /etc/cfssl/clientcerts/client.centminmod.com-key.pem
 * client csr: /etc/cfssl/clientcerts/client.centminmod.com.csr
@@ -797,7 +797,7 @@ Certificate:
 Generate pkcs12 format
 openssl pkcs12 -export -out /etc/cfssl/clientcerts/client.centminmod.com.p12 -inkey /etc/cfssl/clientcerts/client.centminmod.com-key.pem -in /etc/cfssl/clientcerts/client.centminmod.com.pem -certfile /etc/cfssl/centminmod.com-ca-bundle.pem -passin pass: -passout pass:
 
-client pkc12: /etc/cfssl/clientcerts/client.centminmod.com.p12
+client pkcs12: /etc/cfssl/clientcerts/client.centminmod.com.p12
 client cert: /etc/cfssl/clientcerts/client.centminmod.com.pem
 client key: /etc/cfssl/clientcerts/client.centminmod.com-key.pem
 client csr: /etc/cfssl/clientcerts/client.centminmod.com.csr
@@ -847,7 +847,7 @@ client csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
 
 Generate self-signed peer wildcard SSL certificate with CA signing for centminmod.com subdomain with `TLS Web Client Authentication` and `TLS Web Server Authentication` 
 
-* peer pkc12: /etc/cfssl/peercerts/centminmod.com.p12
+* peer pkcs12: /etc/cfssl/peercerts/centminmod.com.p12
 * peer cert: /etc/cfssl/peercerts/centminmod.com.pem
 * peer key: /etc/cfssl/peercerts/centminmod.com-key.pem
 * peer csr: /etc/cfssl/peercerts/centminmod.com.csr
@@ -913,7 +913,7 @@ Certificate:
 Generate pkcs12 format
 openssl pkcs12 -export -out /etc/cfssl/peercerts/centminmod.com.p12 -inkey /etc/cfssl/peercerts/centminmod.com-key.pem -in /etc/cfssl/peercerts/centminmod.com.pem -certfile /etc/cfssl/centminmod.com-ca-bundle.pem -passin pass: -passout pass:
 
-peer pkc12: /etc/cfssl/peercerts/centminmod.com.p12
+peer pkcs12: /etc/cfssl/peercerts/centminmod.com.p12
 peer cert: /etc/cfssl/peercerts/centminmod.com.pem
 peer key: /etc/cfssl/peercerts/centminmod.com-key.pem
 peer csr: /etc/cfssl/peercerts/centminmod.com.csr
@@ -964,7 +964,7 @@ peer csr profile: /etc/cfssl/peercerts/centminmod.com.csr.json
 
 Generate self-signed peer SSL certificate with CA signing for peer.centminmod.com subdomain with `TLS Web Client Authentication` and `TLS Web Server Authentication` 
 
-* peer pkc12: /etc/cfssl/peercerts/peer.centminmod.com.p12
+* peer pkcs12: /etc/cfssl/peercerts/peer.centminmod.com.p12
 * peer cert: /etc/cfssl/peercerts/peer.centminmod.com.pem
 * peer key: /etc/cfssl/peercerts/peer.centminmod.com-key.pem
 * peer csr: /etc/cfssl/peercerts/peer.centminmod.com.csr
@@ -1030,7 +1030,7 @@ Certificate:
 Generate pkcs12 format
 openssl pkcs12 -export -out /etc/cfssl/peercerts/peer.centminmod.com.p12 -inkey /etc/cfssl/peercerts/peer.centminmod.com-key.pem -in /etc/cfssl/peercerts/peer.centminmod.com.pem -certfile /etc/cfssl/centminmod.com-ca-bundle.pem -passin pass: -passout pass:
 
-peer pkc12: /etc/cfssl/peercerts/peer.centminmod.com.p12
+peer pkcs12: /etc/cfssl/peercerts/peer.centminmod.com.p12
 peer cert: /etc/cfssl/peercerts/peer.centminmod.com.pem
 peer key: /etc/cfssl/peercerts/peer.centminmod.com-key.pem
 peer csr: /etc/cfssl/peercerts/peer.centminmod.com.csr

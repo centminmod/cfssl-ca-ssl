@@ -250,7 +250,7 @@ client_gen() {
       fi
       openssl pkcs12 -export -out "${clientcerts_dir}/${domain}.p12" -inkey "${clientcerts_dir}/${domain}-key.pem" -in "${clientcerts_dir}/${domain}.pem" -certfile "${cfdir}/${d}-ca-bundle.pem" -passin pass: -passout pass:
       if [ -f "${clientcerts_dir}/${domain}.p12" ]; then
-        echo "client pkc12: ${clientcerts_dir}/${domain}.p12"
+        echo "client pkcs12: ${clientcerts_dir}/${domain}.p12"
       fi
     fi
     if [ -f "${clientcerts_dir}/${domain}.pem" ]; then
@@ -331,7 +331,7 @@ peer_gen() {
       fi
       openssl pkcs12 -export -out "${peercerts_dir}/${domain}.p12" -inkey "${peercerts_dir}/${domain}-key.pem" -in "${peercerts_dir}/${domain}.pem" -certfile "${cfdir}/${d}-ca-bundle.pem" -passin pass: -passout pass:
       if [ -f "${peercerts_dir}/${domain}.p12" ]; then
-        echo "peer pkc12: ${peercerts_dir}/${domain}.p12"
+        echo "peer pkcs12: ${peercerts_dir}/${domain}.p12"
       fi
     fi
     if [ -f "${peercerts_dir}/${domain}.pem" ]; then
