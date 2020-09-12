@@ -80,17 +80,17 @@ server_gen() {
     openssl x509 -in "${domain}.pem" -text -noout
     echo
     if [ -f "${servercerts_dir}/${domain}.pem" ]; then
-      echo "ca cert: ${servercerts_dir}/${domain}.pem"
+      echo "server cert: ${servercerts_dir}/${domain}.pem"
       certinfo=$(cfssl-certinfo -cert ${servercerts_dir}/${domain}.pem)
     fi
     if [ -f "${servercerts_dir}/${domain}-key.pem" ]; then
-      echo "ca key: ${servercerts_dir}/${domain}-key.pem"
+      echo "server key: ${servercerts_dir}/${domain}-key.pem"
     fi
     if [ -f "${servercerts_dir}/${domain}.csr" ]; then
-      echo "ca csr: ${servercerts_dir}/${domain}.csr"
+      echo "server csr: ${servercerts_dir}/${domain}.csr"
     fi
     if [ -f "${servercerts_dir}/${domain}.csr.json" ]; then
-      echo "ca csr profile: ${servercerts_dir}/${domain}.csr.json"
+      echo "server csr profile: ${servercerts_dir}/${domain}.csr.json"
       echo
     fi
     echo "$certinfo"
@@ -122,17 +122,17 @@ client_gen() {
     openssl x509 -in "${domain}.pem" -text -noout
     echo
     if [ -f "${clientcerts_dir}/${domain}.pem" ]; then
-      echo "ca cert: ${clientcerts_dir}/${domain}.pem"
+      echo "client cert: ${clientcerts_dir}/${domain}.pem"
       certinfo=$(cfssl-certinfo -cert ${clientcerts_dir}/${domain}.pem)
     fi
     if [ -f "${clientcerts_dir}/${domain}-key.pem" ]; then
-      echo "ca key: ${clientcerts_dir}/${domain}-key.pem"
+      echo "client key: ${clientcerts_dir}/${domain}-key.pem"
     fi
     if [ -f "${clientcerts_dir}/${domain}.csr" ]; then
-      echo "ca csr: ${clientcerts_dir}/${domain}.csr"
+      echo "client csr: ${clientcerts_dir}/${domain}.csr"
     fi
     if [ -f "${clientcerts_dir}/${domain}.csr.json" ]; then
-      echo "ca csr profile: ${clientcerts_dir}/${domain}.csr.json"
+      echo "client csr profile: ${clientcerts_dir}/${domain}.csr.json"
       echo
     fi
     echo "$certinfo"

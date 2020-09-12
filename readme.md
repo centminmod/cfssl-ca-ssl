@@ -1,4 +1,4 @@
-Using [cfssl](https://github.com/cloudflare/cfssl) to generate a CA certificate/key and to sign server and client self-signed SSL certificates with it. Intended for [Centmin Mod LEMP stack](https://centminmod.com) installations on CentOS 7.x for creating Nginx based client based SSL certificate authentication via [ssl_client_certificate](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_client_certificate) and [ssl_verify_client](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_verify_client) directives.
+Using [cfssl](https://github.com/cloudflare/cfssl) to generate a CA certificate/key and to sign server and client self-signed SSL certificates with it. Intended for [Centmin Mod LEMP stack](https://centminmod.com) installations on CentOS 7.x for creating Nginx based TLS/SSL client certificate authentication via [ssl_client_certificate](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_client_certificate) and [ssl_verify_client](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_verify_client) directives.
 
 Nginx Configuration
 
@@ -178,10 +178,10 @@ Certificate:
          07:02:21:00:8d:44:4a:30:4d:33:1e:fe:29:ff:82:0f:b2:44:
          da:3c:49:b3:11:43:ec:ee:e6:e6:3c:6b:83:70:b4:ec:e7:77
 
-ca cert: /etc/cfssl/servercerts/centminmod.com.pem
-ca key: /etc/cfssl/servercerts/centminmod.com-key.pem
-ca csr: /etc/cfssl/servercerts/centminmod.com.csr
-ca csr profile: /etc/cfssl/servercerts/centminmod.com.csr.json
+server cert: /etc/cfssl/servercerts/centminmod.com.pem
+server key: /etc/cfssl/servercerts/centminmod.com-key.pem
+server csr: /etc/cfssl/servercerts/centminmod.com.csr
+server csr profile: /etc/cfssl/servercerts/centminmod.com.csr.json
 
 {
   "subject": {
@@ -272,10 +272,10 @@ Certificate:
          03:02:20:09:39:c6:b4:3e:95:a7:ca:43:cd:8c:97:db:af:6e:
          16:33:aa:7d:5c:70:97:72:6e:cd:3c:eb:a0:01:2b:8d:36
 
-ca cert: /etc/cfssl/servercerts/server.centminmod.com.pem
-ca key: /etc/cfssl/servercerts/server.centminmod.com-key.pem
-ca csr: /etc/cfssl/servercerts/server.centminmod.com.csr
-ca csr profile: /etc/cfssl/servercerts/server.centminmod.com.csr.json
+server cert: /etc/cfssl/servercerts/server.centminmod.com.pem
+server key: /etc/cfssl/servercerts/server.centminmod.com-key.pem
+server csr: /etc/cfssl/servercerts/server.centminmod.com.csr
+server csr profile: /etc/cfssl/servercerts/server.centminmod.com.csr.json
 
 {
   "subject": {
@@ -365,10 +365,10 @@ Certificate:
          a4:02:20:66:27:87:0f:bd:af:6d:95:52:7a:f4:81:42:3f:4b:
          bb:2f:11:41:c0:cd:46:92:5a:85:ac:ea:2e:c3:b9:ad:e1
 
-ca cert: /etc/cfssl/clientcerts/centminmod.com.pem
-ca key: /etc/cfssl/clientcerts/centminmod.com-key.pem
-ca csr: /etc/cfssl/clientcerts/centminmod.com.csr
-ca csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
+client cert: /etc/cfssl/clientcerts/centminmod.com.pem
+client key: /etc/cfssl/clientcerts/centminmod.com-key.pem
+client csr: /etc/cfssl/clientcerts/centminmod.com.csr
+client csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
 
 {
   "subject": {
@@ -459,10 +459,10 @@ Certificate:
          a2:02:21:00:9c:ee:ff:fe:be:4d:e3:d1:8d:d3:4b:e2:78:6c:
          4e:1b:6d:9c:e9:3d:fa:51:74:43:85:2d:75:7a:24:55:93:8e
 
-ca cert: /etc/cfssl/clientcerts/client.centminmod.com.pem
-ca key: /etc/cfssl/clientcerts/client.centminmod.com-key.pem
-ca csr: /etc/cfssl/clientcerts/client.centminmod.com.csr
-ca csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
+client cert: /etc/cfssl/clientcerts/client.centminmod.com.pem
+client key: /etc/cfssl/clientcerts/client.centminmod.com-key.pem
+client csr: /etc/cfssl/clientcerts/client.centminmod.com.csr
+client csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
 
 {
   "subject": {
