@@ -3,6 +3,7 @@
 cfdir='/etc/cfssl'
 servercerts_dir="${cfdir}/servercerts"
 clientcerts_dir="${cfdir}/clientcerts"
+peercerts_dir="${cfdir}/peercerts"
 cfssl_bin='/root/golang/packages/bin/cfssl'
 cfssljson_bin='/root/golang/packages/bin/cfssljson'
 cfsslinfo_bin='/root/golang/packages/bin/cfssl-certinfo'
@@ -32,7 +33,8 @@ ca_gen() {
   cd "${cfdir}"
   domain=${1:-centminmod.com}
   expiry=${2:-87600}
-  cfssl print-defaults config | sed -e "s|8760h|${expiry}h|g" -e "s|168h|${expiry}h|g" > profile.json
+  # cfssl print-defaults config | sed -e "s|8760h|${expiry}h|g" -e "s|168h|${expiry}h|g" > profile.json
+  echo "{\"signing\":{\"default\":{\"expiry\":\"8760h\"},\"profiles\":{\"intermediate_ca\":{\"usages\":[\"signing\",\"digital signature\",\"key encipherment\",\"cert sign\",\"crl sign\",\"server auth\",\"client auth\"],\"expiry\":\"8760h\",\"ca_constraint\":{\"is_ca\":true,\"max_path_len\":0,\"max_path_len_zero\":true}},\"peer\":{\"usages\":[\"signing\",\"digital signature\",\"key encipherment\",\"client auth\",\"server auth\"],\"expiry\":\"8760h\"},\"server\":{\"usages\":[\"signing\",\"digital signing\",\"key encipherment\",\"server auth\"],\"expiry\":\"8760h\"},\"client\":{\"usages\":[\"signing\",\"digital signature\",\"key encipherment\",\"client auth\"],\"expiry\":\"8760h\"}}}}" | jq | sed -e "s|8760h|${expiry}h|g" -e "s|168h|${expiry}h|g" > profile.json
   cfssl print-defaults csr | sed -e "s|example.net|${domain}|g" > "${domain}.csr.json"
   jq --arg expires "${expiry}h" '. + {"CA":{"expiry": $expires,"pathlen":0}}' "${domain}.csr.json" > "${domain}-ca.csr.json"
   cfssl gencert -initca "${domain}-ca.csr.json" | cfssljson -bare "${domain}-ca"
@@ -79,11 +81,11 @@ server_gen() {
     if [ "$3" = 'wildcard' ]; then
       echo "{\"CN\":\"${serverdomain}\",\"hosts\":[\"${serverdomain}\",\"*.${serverdomain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
 
-      cfssl gencert -config "${cfdir}/profile.json" -profile www \
+      cfssl gencert -config "${cfdir}/profile.json" -profile server \
             -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
             "${domain}.csr.json" > "${domain}.json"
     else
-      cfssl gencert -config "${cfdir}/profile.json" -profile www -cn "${domain}" -hostname "${domain}" \
+      cfssl gencert -config "${cfdir}/profile.json" -profile server -cn "${domain}" -hostname "${domain}" \
             -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
             "${domain}.csr.json" > "${domain}.json"
     fi
@@ -158,6 +160,59 @@ client_gen() {
   fi
 }
 
+peer_gen() {
+  d=${1:-centminmod.com}
+  subdomain=${3:-server}
+  if [ "$3" = 'wildcard' ]; then
+    serverdomain="$d"
+  elif [ "$3" ]; then
+    serverdomain="${subdomain}.$d"
+  else
+    serverdomain="$d"
+  fi
+  domain=${serverdomain}
+  expiry=${2:-87600}
+  if [[ -f "${cfdir}/profile.json" && -f "${cfdir}/${d}-ca.pem" && -f "${cfdir}/${d}-ca-key.pem" ]]; then
+    mkdir -p "${peercerts_dir}"
+    cd "${peercerts_dir}"
+    cfssl print-defaults csr | jq 'del(.CN, .hosts)' > "${domain}.csr.json"
+    if [ "$3" = 'wildcard' ]; then
+      echo "{\"CN\":\"${serverdomain}\",\"hosts\":[\"${serverdomain}\",\"*.${serverdomain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
+
+      cfssl gencert -config "${cfdir}/profile.json" -profile peer \
+            -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
+            "${domain}.csr.json" > "${domain}.json"
+    else
+      cfssl gencert -config "${cfdir}/profile.json" -profile peer -cn "${domain}" -hostname "${domain}" \
+            -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
+            "${domain}.csr.json" > "${domain}.json"
+    fi
+    cfssljson -f "${domain}.json" -bare "${domain}"
+    openssl x509 -in "${domain}.pem" -text -noout
+    echo
+    if [ -f "${peercerts_dir}/${domain}.pem" ]; then
+      echo "peer cert: ${peercerts_dir}/${domain}.pem"
+      certinfo=$(cfssl-certinfo -cert ${peercerts_dir}/${domain}.pem)
+    fi
+    if [ -f "${peercerts_dir}/${domain}-key.pem" ]; then
+      chmod 0600 "${peercerts_dir}/${domain}-key.pem"
+      echo "peer key: ${peercerts_dir}/${domain}-key.pem"
+    fi
+    if [ -f "${peercerts_dir}/${domain}.csr" ]; then
+      echo "peer csr: ${peercerts_dir}/${domain}.csr"
+    fi
+    if [ -f "${peercerts_dir}/${domain}.csr.json" ]; then
+      echo "peer csr profile: ${peercerts_dir}/${domain}.csr.json"
+      echo
+    fi
+    echo "$certinfo"
+    echo
+  else
+    echo "error: missing required files:"
+    echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca.pem\n${cfdir}/${d}-ca-key.pem"
+  fi
+}
+
 help_function() {
   echo
   echo "Usage:"
@@ -174,6 +229,12 @@ help_function() {
   echo
   echo "Generate TLS Client certificate & keys"
   echo "$0 gen-client domain.com expiryhrs client"
+  echo
+  echo "Generate TLS Peer certificate & keys"
+  echo "$0 gen-peer domain.com expiryhrs peer"
+  echo
+  echo "Generate TLS Peer wildcard certificate & keys"
+  echo "$0 gen-peer domain.com expiryhrs wildcard"
 }
 
 case "$1" in
@@ -190,6 +251,9 @@ case "$1" in
     ;;
   gen-client )
     client_gen $2 $3 $4
+    ;;
+  gen-peer )
+    peer_gen $2 $3 $4
     ;;
   reset )
     reset_dir
