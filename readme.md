@@ -74,12 +74,12 @@ CA generation
 
 cfssl gencert -initca centminmod.com-ca.csr.json | cfssljson -bare centminmod.com-ca
 
-2020/09/12 13:21:33 [INFO] generating a new CA key and certificate from CSR
-2020/09/12 13:21:33 [INFO] generate received request
-2020/09/12 13:21:33 [INFO] received CSR
-2020/09/12 13:21:33 [INFO] generating key: ecdsa-256
-2020/09/12 13:21:33 [INFO] encoded CSR
-2020/09/12 13:21:33 [INFO] signed certificate with serial number 51979244079705508229190957673967436224750582218
+2020/09/12 22:04:50 [INFO] generating a new CA key and certificate from CSR
+2020/09/12 22:04:50 [INFO] generate received request
+2020/09/12 22:04:50 [INFO] received CSR
+2020/09/12 22:04:50 [INFO] generating key: ecdsa-256
+2020/09/12 22:04:50 [INFO] encoded CSR
+2020/09/12 22:04:50 [INFO] signed certificate with serial number 324942453558285070022802152586461918656054052293
 
 openssl x509 -in centminmod.com-ca.pem -text -noout
 
@@ -87,22 +87,22 @@ Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            09:1a:d4:75:70:73:c7:5e:ee:36:2f:80:64:b3:e7:45:37:1e:79:ca
+            38:ea:ec:6e:40:0f:fe:4e:6e:a1:6e:c4:a8:4d:20:89:2d:22:45:c5
     Signature Algorithm: ecdsa-with-SHA256
-        Issuer: C=US, ST=CA, L=San Francisco, OU=CA, CN=centminmod.com
+        Issuer: C=US, ST=CA, L=San Francisco, OU=Root CA, CN=centminmod.com
         Validity
-            Not Before: Sep 12 13:17:00 2020 GMT
-            Not After : Sep 10 13:17:00 2030 GMT
-        Subject: C=US, ST=CA, L=San Francisco, OU=CA, CN=centminmod.com
+            Not Before: Sep 12 22:00:00 2020 GMT
+            Not After : Sep 10 22:00:00 2030 GMT
+        Subject: C=US, ST=CA, L=San Francisco, OU=Root CA, CN=centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:4e:ee:8e:7c:1a:49:c4:dd:42:28:f4:f9:a4:f5:
-                    fa:c0:d3:f5:87:ea:56:1f:86:64:a9:40:93:63:61:
-                    99:d4:d1:ad:bd:d3:4e:8e:53:bb:88:4b:da:5f:00:
-                    5d:94:8b:e7:a9:80:76:ed:ac:29:2f:da:8a:1f:05:
-                    61:38:24:90:09
+                    04:a5:15:d5:8b:5b:cb:3f:42:92:12:dd:25:ea:80:
+                    1b:e6:c7:72:1e:89:ae:5a:24:19:f8:38:dc:eb:47:
+                    2c:87:5f:9d:02:13:00:af:54:ad:18:90:30:1d:a5:
+                    4c:29:5c:7d:6c:c2:0d:68:3c:ad:9c:6d:e1:7d:17:
+                    62:1f:1f:f8:5f
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -111,12 +111,12 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:TRUE
             X509v3 Subject Key Identifier: 
-                AC:2E:E5:D7:4F:FD:74:2B:1A:F2:CC:CB:9E:5D:BC:A1:28:74:8D:57
+                4D:19:C6:A2:EA:60:D6:D6:85:E8:F6:DE:C2:D4:6D:F7:58:F1:E8:F9
     Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:20:03:ce:6b:74:3d:13:b8:52:84:55:9f:fe:96:80:
-         7a:c3:46:5c:32:de:cc:58:ee:c8:72:b7:b5:d3:1d:21:fb:d9:
-         02:21:00:90:58:cc:29:77:01:70:03:58:8c:1c:56:06:91:56:
-         0e:95:3f:53:48:32:f8:ba:b3:90:db:d3:2f:54:23:d0:b1
+         30:45:02:21:00:cb:60:21:35:2e:cc:2b:a0:a8:7b:3a:b2:b2:
+         a4:72:a0:f0:a1:9e:4a:6b:03:16:88:63:ed:62:d0:68:23:86:
+         3b:02:20:17:b0:c0:ce:58:9c:60:21:2e:7c:50:1e:bb:59:a2:
+         0d:58:30:28:50:3d:fc:02:5b:b8:0b:8a:67:11:b1:87:67
 
 ca cert: /etc/cfssl/centminmod.com-ca.pem
 ca key: /etc/cfssl/centminmod.com-ca-key.pem
@@ -128,38 +128,38 @@ ca profile: /etc/cfssl/profile.json
   "subject": {
     "common_name": "centminmod.com",
     "country": "US",
-    "organizational_unit": "CA",
+    "organizational_unit": "Root CA",
     "locality": "San Francisco",
     "province": "CA",
     "names": [
       "US",
       "CA",
       "San Francisco",
-      "CA",
+      "Root CA",
       "centminmod.com"
     ]
   },
   "issuer": {
     "common_name": "centminmod.com",
     "country": "US",
-    "organizational_unit": "CA",
+    "organizational_unit": "Root CA",
     "locality": "San Francisco",
     "province": "CA",
     "names": [
       "US",
       "CA",
       "San Francisco",
-      "CA",
+      "Root CA",
       "centminmod.com"
     ]
   },
-  "serial_number": "51979244079705508229190957673967436224750582218",
-  "not_before": "2020-09-12T13:17:00Z",
-  "not_after": "2030-09-10T13:17:00Z",
+  "serial_number": "324942453558285070022802152586461918656054052293",
+  "not_before": "2020-09-12T22:00:00Z",
+  "not_after": "2030-09-10T22:00:00Z",
   "sigalg": "ECDSAWithSHA256",
   "authority_key_id": "",
-  "subject_key_id": "AC:2E:E5:D7:4F:FD:74:2B:1A:F2:CC:CB:9E:5D:BC:A1:28:74:8D:57",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIIB9DCCAZqgAwIBAgIUCRrUdXBzx17uNi+AZLPnRTceecowCgYIKoZIzj0EAwIw\nWDELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMQswCQYDVQQLEwJDQTEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wHhcNMjAw\nOTEyMTMxNzAwWhcNMzAwOTEwMTMxNzAwWjBYMQswCQYDVQQGEwJVUzELMAkGA1UE\nCBMCQ0ExFjAUBgNVBAcTDVNhbiBGcmFuY2lzY28xCzAJBgNVBAsTAkNBMRcwFQYD\nVQQDEw5jZW50bWlubW9kLmNvbTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABE7u\njnwaScTdQij0+aT1+sDT9YfqVh+GZKlAk2NhmdTRrb3TTo5Tu4hL2l8AXZSL56mA\ndu2sKS/aih8FYTgkkAmjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTAD\nAQH/MB0GA1UdDgQWBBSsLuXXT/10KxryzMueXbyhKHSNVzAKBggqhkjOPQQDAgNI\nADBFAiADzmt0PRO4UoRVn/6WgHrDRlwy3sxY7shyt7XTHSH72QIhAJBYzCl3AXAD\nWIwcVgaRVg6VP1NIMvi6s5Db0y9UI9Cx\n-----END CERTIFICATE-----\n"
+  "subject_key_id": "4D:19:C6:A2:EA:60:D6:D6:85:E8:F6:DE:C2:D4:6D:F7:58:F1:E8:F9",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIIB/jCCAaSgAwIBAgIUOOrsbkAP/k5uoW7EqE0giS0iRcUwCgYIKoZIzj0EAwIw\nXTELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRAwDgYDVQQLEwdSb290IENBMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAe\nFw0yMDA5MTIyMjAwMDBaFw0zMDA5MTAyMjAwMDBaMF0xCzAJBgNVBAYTAlVTMQsw\nCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEQMA4GA1UECxMHUm9v\ndCBDQTEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcqhkjOPQIBBggqhkjO\nPQMBBwNCAASlFdWLW8s/QpIS3SXqgBvmx3Ieia5aJBn4ONzrRyyHX50CEwCvVK0Y\nkDAdpUwpXH1swg1oPK2cbeF9F2IfH/hfo0IwQDAOBgNVHQ8BAf8EBAMCAQYwDwYD\nVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUTRnGoupg1taF6PbewtRt91jx6PkwCgYI\nKoZIzj0EAwIDSAAwRQIhAMtgITUuzCugqHs6srKkcqDwoZ5KawMWiGPtYtBoI4Y7\nAiAXsMDOWJxgIS58UB67WaINWDAoUD38Alu4C4pnEbGHZw==\n-----END CERTIFICATE-----\n"
 }
 
 --------------------------------------
@@ -168,15 +168,15 @@ CA Intermediate generation
 
 cfssl gencert -initca centminmod.com-ca-intermediate.csr.json | cfssljson -bare centminmod.com-ca-intermediate
 
-2020/09/12 13:21:33 [INFO] generating a new CA key and certificate from CSR
-2020/09/12 13:21:33 [INFO] generate received request
-2020/09/12 13:21:33 [INFO] received CSR
-2020/09/12 13:21:33 [INFO] generating key: ecdsa-256
-2020/09/12 13:21:33 [INFO] encoded CSR
-2020/09/12 13:21:33 [INFO] signed certificate with serial number 54924533124229624054260783121466572244774803208
+2020/09/12 22:04:50 [INFO] generating a new CA key and certificate from CSR
+2020/09/12 22:04:50 [INFO] generate received request
+2020/09/12 22:04:50 [INFO] received CSR
+2020/09/12 22:04:50 [INFO] generating key: ecdsa-256
+2020/09/12 22:04:50 [INFO] encoded CSR
+2020/09/12 22:04:50 [INFO] signed certificate with serial number 386334214604305976372879152253444336536490589410
 
 cfssl sign -ca /etc/cfssl/centminmod.com-ca.pem -ca-key /etc/cfssl/centminmod.com-ca-key.pem -config /etc/cfssl/profile.json -profile intermediate_ca centminmod.comca-intermediate.csr | cfssljson -bare centminmod.com-ca-intermediate
-2020/09/12 13:21:33 [INFO] signed certificate with serial number 157829954090881895767767084957269407059785675046
+2020/09/12 22:04:50 [INFO] signed certificate with serial number 446690807988893825891068299615638059845636989711
 
 openssl x509 -in centminmod.com-ca-intermediate.pem -text -noout
 
@@ -184,22 +184,22 @@ Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            1b:a5:57:04:8f:99:37:3a:52:8b:61:68:46:81:21:41:26:d5:f1:26
+            4e:3e:4e:ff:63:51:f9:36:03:3c:24:ff:91:12:9b:e3:2e:be:23:0f
     Signature Algorithm: ecdsa-with-SHA256
-        Issuer: C=US, ST=CA, L=San Francisco, OU=CA, CN=centminmod.com
+        Issuer: C=US, ST=CA, L=San Francisco, OU=Root CA, CN=centminmod.com
         Validity
-            Not Before: Sep 12 13:17:00 2020 GMT
-            Not After : Sep 10 13:17:00 2030 GMT
+            Not Before: Sep 12 22:00:00 2020 GMT
+            Not After : Sep 10 22:00:00 2030 GMT
         Subject: C=US, ST=CA, L=San Francisco, OU=Intermediate CA, CN=centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:34:42:57:af:19:97:45:98:d7:55:6f:1f:37:d4:
-                    ff:9b:f9:9f:73:ea:9e:89:ab:7c:7b:b7:1a:2c:c0:
-                    ea:a4:f9:91:fb:72:bf:be:98:c1:99:86:03:29:b4:
-                    5d:2c:7d:31:5d:06:f5:88:d7:10:90:a5:1d:e6:6f:
-                    12:9c:e5:a1:de
+                    04:2c:37:b6:1f:08:5f:27:c7:6c:db:c0:e6:4b:96:
+                    7d:03:05:1d:75:2f:9e:86:ec:44:3e:cf:57:36:97:
+                    1d:41:5e:e6:cc:95:a8:50:30:49:89:f3:1b:cc:7e:
+                    da:aa:ef:b8:ce:8d:df:bb:fe:a2:11:32:41:26:29:
+                    69:5b:b1:a1:63
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -210,15 +210,15 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:TRUE, pathlen:0
             X509v3 Subject Key Identifier: 
-                20:29:C3:2B:EC:5D:40:8C:6F:30:AD:E8:00:85:5C:2F:A1:1E:B7:EB
+                82:28:38:0A:B8:11:26:D0:79:9C:8C:C6:5C:78:81:1C:D9:38:17:2F
             X509v3 Authority Key Identifier: 
-                keyid:AC:2E:E5:D7:4F:FD:74:2B:1A:F2:CC:CB:9E:5D:BC:A1:28:74:8D:57
+                keyid:4D:19:C6:A2:EA:60:D6:D6:85:E8:F6:DE:C2:D4:6D:F7:58:F1:E8:F9
 
     Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:20:2d:61:48:bf:4a:e0:2f:91:14:6f:0f:f1:9e:c9:
-         0d:6b:a8:89:40:89:a1:4c:f3:21:f1:ec:9f:9a:0a:52:15:22:
-         02:21:00:da:95:a6:af:a0:fd:ee:4f:76:52:96:e1:3f:51:02:
-         54:d1:d0:f6:2a:65:61:ae:a1:3e:6c:dc:71:b9:00:c6:4a
+         30:44:02:20:33:19:cb:95:d4:2d:d0:1a:2a:dd:75:50:b9:7a:
+         4e:da:b7:5c:bb:13:67:a0:2d:d1:52:c0:ef:2c:ef:c3:da:a9:
+         02:20:62:45:38:15:45:75:61:f3:d8:08:46:be:ae:12:ad:e0:
+         bf:e5:32:89:05:8b:9a:b0:23:b9:46:51:8f:62:45:6b
 
 ca intermediate cert: /etc/cfssl/centminmod.com-ca-intermediate.pem
 ca intermediate key: /etc/cfssl/centminmod.com-ca-intermediate-key.pem
@@ -244,24 +244,24 @@ ca intermediate profile: /etc/cfssl/profile.json
   "issuer": {
     "common_name": "centminmod.com",
     "country": "US",
-    "organizational_unit": "CA",
+    "organizational_unit": "Root CA",
     "locality": "San Francisco",
     "province": "CA",
     "names": [
       "US",
       "CA",
       "San Francisco",
-      "CA",
+      "Root CA",
       "centminmod.com"
     ]
   },
-  "serial_number": "157829954090881895767767084957269407059785675046",
-  "not_before": "2020-09-12T13:17:00Z",
-  "not_after": "2030-09-10T13:17:00Z",
+  "serial_number": "446690807988893825891068299615638059845636989711",
+  "not_before": "2020-09-12T22:00:00Z",
+  "not_after": "2030-09-10T22:00:00Z",
   "sigalg": "ECDSAWithSHA256",
-  "authority_key_id": "AC:2E:E5:D7:4F:FD:74:2B:1A:F2:CC:CB:9E:5D:BC:A1:28:74:8D:57",
-  "subject_key_id": "20:29:C3:2B:EC:5D:40:8C:6F:30:AD:E8:00:85:5C:2F:A1:1E:B7:EB",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICRjCCAeygAwIBAgIUG6VXBI+ZNzpSi2FoRoEhQSbV8SYwCgYIKoZIzj0EAwIw\nWDELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMQswCQYDVQQLEwJDQTEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wHhcNMjAw\nOTEyMTMxNzAwWhcNMzAwOTEwMTMxNzAwWjBlMQswCQYDVQQGEwJVUzELMAkGA1UE\nCBMCQ0ExFjAUBgNVBAcTDVNhbiBGcmFuY2lzY28xGDAWBgNVBAsTD0ludGVybWVk\naWF0ZSBDQTEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcqhkjOPQIBBggq\nhkjOPQMBBwNCAAQ0QlevGZdFmNdVbx831P+b+Z9z6p6Jq3x7txoswOqk+ZH7cr++\nmMGZhgMptF0sfTFdBvWI1xCQpR3mbxKc5aHeo4GGMIGDMA4GA1UdDwEB/wQEAwIB\npjAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwEgYDVR0TAQH/BAgwBgEB\n/wIBADAdBgNVHQ4EFgQUICnDK+xdQIxvMK3oAIVcL6Eet+swHwYDVR0jBBgwFoAU\nrC7l10/9dCsa8szLnl28oSh0jVcwCgYIKoZIzj0EAwIDSAAwRQIgLWFIv0rgL5EU\nbw/xnskNa6iJQImhTPMh8eyfmgpSFSICIQDalaavoP3uT3ZSluE/UQJU0dD2KmVh\nrqE+bNxxuQDGSg==\n-----END CERTIFICATE-----\n"
+  "authority_key_id": "4D:19:C6:A2:EA:60:D6:D6:85:E8:F6:DE:C2:D4:6D:F7:58:F1:E8:F9",
+  "subject_key_id": "82:28:38:0A:B8:11:26:D0:79:9C:8C:C6:5C:78:81:1C:D9:38:17:2F",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICSjCCAfGgAwIBAgIUTj5O/2NR+TYDPCT/kRKb4y6+Iw8wCgYIKoZIzj0EAwIw\nXTELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRAwDgYDVQQLEwdSb290IENBMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAe\nFw0yMDA5MTIyMjAwMDBaFw0zMDA5MTAyMjAwMDBaMGUxCzAJBgNVBAYTAlVTMQsw\nCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEYMBYGA1UECxMPSW50\nZXJtZWRpYXRlIENBMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTBZMBMGByqGSM49\nAgEGCCqGSM49AwEHA0IABCw3th8IXyfHbNvA5kuWfQMFHXUvnobsRD7PVzaXHUFe\n5syVqFAwSYnzG8x+2qrvuM6N37v+ohEyQSYpaVuxoWOjgYYwgYMwDgYDVR0PAQH/\nBAQDAgGmMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjASBgNVHRMBAf8E\nCDAGAQH/AgEAMB0GA1UdDgQWBBSCKDgKuBEm0HmcjMZceIEc2TgXLzAfBgNVHSME\nGDAWgBRNGcai6mDW1oXo9t7C1G33WPHo+TAKBggqhkjOPQQDAgNHADBEAiAzGcuV\n1C3QGirddVC5ek7at1y7E2egLdFSwO8s78PaqQIgYkU4FUV1YfPYCEa+rhKt4L/l\nMokFi5qwI7lGUY9iRWs=\n-----END CERTIFICATE-----\n"
 }
 
 CA Bundle generated: /etc/cfssl/centminmod.com-ca-bundle.pem

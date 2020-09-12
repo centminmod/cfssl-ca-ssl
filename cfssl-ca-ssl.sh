@@ -43,7 +43,7 @@ ca_gen() {
   echo "--------------------------------------"
   # cfssl print-defaults csr | sed -e "s|example.net|${domain}|g" > "${domain}.csr.json"
   # jq --arg expires "${expiry}h" '. + {"CA":{"expiry": $expires,"pathlen":0}}' "${domain}.csr.json" > "${domain}-ca.csr.json"
-  echo "{\"CN\":\"${domain}\",\"hosts\":[\"${domain}\",\"www.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"OU\":\"CA\",\"L\":\"San Francisco\"}],\"CA\":{\"expiry\":\"${expiry}h\",\"pathlen\":0}}" | jq > "${domain}-ca.csr.json"
+  echo "{\"CN\":\"${domain}\",\"hosts\":[\"${domain}\",\"www.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"OU\":\"Root CA\",\"L\":\"San Francisco\"}],\"CA\":{\"expiry\":\"${expiry}h\",\"pathlen\":0}}" | jq > "${domain}-ca.csr.json"
   if [[ "$debug" = [yY] ]]; then
     echo
     echo "cfssl gencert -initca ${domain}-ca.csr.json | cfssljson -bare ${domain}-ca"
