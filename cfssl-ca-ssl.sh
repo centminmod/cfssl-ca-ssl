@@ -43,6 +43,7 @@ ca_gen() {
     certinfo=$(cfssl-certinfo -cert ${cfdir}/${domain}-ca.pem)
   fi
   if [ -f "${cfdir}/${domain}-ca-key.pem" ]; then
+    chmod 0600 "${cfdir}/${domain}-ca-key.pem"
     echo "ca key: ${cfdir}/${domain}-ca-key.pem"
   fi
   if [ -f "${cfdir}/${domain}-ca.csr" ]; then
@@ -62,7 +63,9 @@ ca_gen() {
 server_gen() {
   d=${1:-centminmod.com}
   subdomain=${3:-server}
-  if [ "$3" ]; then
+  if [ "$3" = 'wildcard' ]; then
+    serverdomain="$d"
+  elif [ "$3" ]; then
     serverdomain="${subdomain}.$d"
   else
     serverdomain="$d"
@@ -73,9 +76,17 @@ server_gen() {
     mkdir -p "${servercerts_dir}"
     cd "${servercerts_dir}"
     cfssl print-defaults csr | jq 'del(.CN, .hosts)' > "${domain}.csr.json"
-    cfssl gencert -config "${cfdir}/profile.json" -profile www -cn "${domain}" -hostname "${domain}" \
-          -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
-          -hostname "${domain}" "${domain}.csr.json" > "${domain}.json"
+    if [ "$3" = 'wildcard' ]; then
+      echo "{\"CN\":\"${serverdomain}\",\"hosts\":[\"${serverdomain}\",\"*.${serverdomain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
+
+      cfssl gencert -config "${cfdir}/profile.json" -profile www \
+            -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
+            "${domain}.csr.json" > "${domain}.json"
+    else
+      cfssl gencert -config "${cfdir}/profile.json" -profile www -cn "${domain}" -hostname "${domain}" \
+            -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
+            "${domain}.csr.json" > "${domain}.json"
+    fi
     cfssljson -f "${domain}.json" -bare "${domain}"
     openssl x509 -in "${domain}.pem" -text -noout
     echo
@@ -84,6 +95,7 @@ server_gen() {
       certinfo=$(cfssl-certinfo -cert ${servercerts_dir}/${domain}.pem)
     fi
     if [ -f "${servercerts_dir}/${domain}-key.pem" ]; then
+      chmod 0600 "${servercerts_dir}/${domain}-key.pem"
       echo "server key: ${servercerts_dir}/${domain}-key.pem"
     fi
     if [ -f "${servercerts_dir}/${domain}.csr" ]; then
@@ -93,6 +105,8 @@ server_gen() {
       echo "server csr profile: ${servercerts_dir}/${domain}.csr.json"
       echo
     fi
+    echo "Nginx SSL configuration paramaters:"
+    echo -e "ssl_certificate      ${servercerts_dir}/${domain}.pem;\nssl_certificate_key  ${servercerts_dir}/${domain}-key.pem;\n"
     echo "$certinfo"
     echo
   else
@@ -117,7 +131,7 @@ client_gen() {
     cfssl print-defaults csr | jq 'del(.CN, .hosts)' > "${domain}.csr.json"
     cfssl gencert -config "${cfdir}/profile.json" -profile client -cn "${domain}" -hostname "${domain}" \
           -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
-          -hostname "${domain}" "${domain}.csr.json" > "${domain}.json"
+          "${domain}.csr.json" > "${domain}.json"
     cfssljson -f "${domain}.json" -bare "${domain}"
     openssl x509 -in "${domain}.pem" -text -noout
     echo
@@ -126,6 +140,7 @@ client_gen() {
       certinfo=$(cfssl-certinfo -cert ${clientcerts_dir}/${domain}.pem)
     fi
     if [ -f "${clientcerts_dir}/${domain}-key.pem" ]; then
+      chmod 0600 "${clientcerts_dir}/${domain}-key.pem"
       echo "client key: ${clientcerts_dir}/${domain}-key.pem"
     fi
     if [ -f "${clientcerts_dir}/${domain}.csr" ]; then
@@ -147,8 +162,17 @@ help_function() {
   echo
   echo "Usage:"
   #echo "$0 gen-all domain.com expiryhrs"
+  echo
+  echo "Generate CA certificate & keys"
   echo "$0 gen-ca domain.com expiryhrs"
+  echo
+  echo "Generate TLS server certificate & keys"
   echo "$0 gen-server domain.com expiryhrs server"
+  echo
+  echo "Generate TLS server wildcard certificate & keys"
+  echo "$0 gen-server domain.com expiryhrs wildcard"
+  echo
+  echo "Generate TLS Client certificate & keys"
   echo "$0 gen-client domain.com expiryhrs client"
 }
 
