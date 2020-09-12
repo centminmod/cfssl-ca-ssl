@@ -4,17 +4,20 @@ cfdir='/etc/cfssl'
 servercerts_dir="${cfdir}/servercerts"
 clientcerts_dir="${cfdir}/clientcerts"
 cfssl_bin='/root/golang/packages/bin/cfssl'
+cfssljson_bin='/root/golang/packages/bin/cfssljson'
+cfsslinfo_bin='/root/golang/packages/bin/cfssl-certinfo'
 
 if [ ! -d $cfdir ]; then
   mkdir -p $cfdir
 fi
 
-if [[ ! -f "$cfssl_bin" && -f /usr/local/src/centminmod/addons/golang.sh ]]; then
+if [[ ! -f "$cfssl_bin" || ! -f "$cfssljson_bin" || ! -f "$cfsslinfo_bin" ]] && [ -f /usr/local/src/centminmod/addons/golang.sh ]; then
   /usr/local/src/centminmod/addons/golang.sh install
   source /root/.bashrc
   export CC=gcc
   go get -u github.com/cloudflare/cfssl/cmd/cfssl
   go get -u github.com/cloudflare/cfssl/cmd/cfssljson
+  go get -u github.com/cloudflare/cfssl/cmd/cfssl-certinfo
   if [ -f "$cfssl_bin" ]; then
     cfssl version
   fi
@@ -37,6 +40,7 @@ ca_gen() {
   echo
   if [ -f "${cfdir}/${domain}-ca.pem" ]; then
     echo "ca cert: ${cfdir}/${domain}-ca.pem"
+    certinfo=$(cfssl-certinfo -cert ${cfdir}/${domain}-ca.pem)
   fi
   if [ -f "${cfdir}/${domain}-ca-key.pem" ]; then
     echo "ca key: ${cfdir}/${domain}-ca-key.pem"
@@ -49,7 +53,9 @@ ca_gen() {
   fi
   if [ -f "${cfdir}/profile.json" ]; then
     echo "ca profile: ${cfdir}/profile.json"
+    echo
   fi
+  echo "$certinfo"
   echo
 }
 
@@ -75,6 +81,7 @@ server_gen() {
     echo
     if [ -f "${servercerts_dir}/${domain}.pem" ]; then
       echo "ca cert: ${servercerts_dir}/${domain}.pem"
+      certinfo=$(cfssl-certinfo -cert ${servercerts_dir}/${domain}.pem)
     fi
     if [ -f "${servercerts_dir}/${domain}-key.pem" ]; then
       echo "ca key: ${servercerts_dir}/${domain}-key.pem"
@@ -84,7 +91,9 @@ server_gen() {
     fi
     if [ -f "${servercerts_dir}/${domain}.csr.json" ]; then
       echo "ca csr profile: ${servercerts_dir}/${domain}.csr.json"
+      echo
     fi
+    echo "$certinfo"
     echo
   else
     echo "error: missing required files:"
@@ -114,6 +123,7 @@ client_gen() {
     echo
     if [ -f "${clientcerts_dir}/${domain}.pem" ]; then
       echo "ca cert: ${clientcerts_dir}/${domain}.pem"
+      certinfo=$(cfssl-certinfo -cert ${clientcerts_dir}/${domain}.pem)
     fi
     if [ -f "${clientcerts_dir}/${domain}-key.pem" ]; then
       echo "ca key: ${clientcerts_dir}/${domain}-key.pem"
@@ -123,7 +133,9 @@ client_gen() {
     fi
     if [ -f "${clientcerts_dir}/${domain}.csr.json" ]; then
       echo "ca csr profile: ${clientcerts_dir}/${domain}.csr.json"
+      echo
     fi
+    echo "$certinfo"
     echo
   else
     echo "error: missing required files:"
