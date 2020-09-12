@@ -629,7 +629,7 @@ client csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
 
 # Peer Wildcard SSL Certificate
 
-Generate self-signed peer wildcard SSL certificate with CA signing for client.centminmod.com subdomain with `TLS Web Client Authentication` and `TLS Web Server Authentication` 
+Generate self-signed peer wildcard SSL certificate with CA signing for centminmod.com subdomain with `TLS Web Client Authentication` and `TLS Web Server Authentication` 
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer centminmod.com 87600 wildcard
@@ -724,7 +724,7 @@ peer csr profile: /etc/cfssl/peercerts/centminmod.com.csr.json
 
 # Peer SSL Certificate
 
-Generate self-signed peer SSL certificate with CA signing for client.centminmod.com subdomain with `TLS Web Client Authentication` and `TLS Web Server Authentication` 
+Generate self-signed peer SSL certificate with CA signing for peer.centminmod.com subdomain with `TLS Web Client Authentication` and `TLS Web Server Authentication` 
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer centminmod.com 87600 peer
