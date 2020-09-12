@@ -1,5 +1,6 @@
 #!/bin/bash
 # for centminmod.com LEMP stack installations
+debug='y'
 cfdir='/etc/cfssl'
 servercerts_dir="${cfdir}/servercerts"
 clientcerts_dir="${cfdir}/clientcerts"
@@ -35,9 +36,24 @@ ca_gen() {
   expiry=${2:-87600}
   # cfssl print-defaults config | sed -e "s|8760h|${expiry}h|g" -e "s|168h|${expiry}h|g" > profile.json
   echo "{\"signing\":{\"default\":{\"expiry\":\"8760h\"},\"profiles\":{\"intermediate_ca\":{\"usages\":[\"signing\",\"digital signature\",\"key encipherment\",\"cert sign\",\"crl sign\",\"server auth\",\"client auth\"],\"expiry\":\"8760h\",\"ca_constraint\":{\"is_ca\":true,\"max_path_len\":0,\"max_path_len_zero\":true}},\"peer\":{\"usages\":[\"signing\",\"digital signature\",\"key encipherment\",\"client auth\",\"server auth\"],\"expiry\":\"8760h\"},\"server\":{\"usages\":[\"signing\",\"digital signing\",\"key encipherment\",\"server auth\"],\"expiry\":\"8760h\"},\"client\":{\"usages\":[\"signing\",\"digital signature\",\"key encipherment\",\"client auth\"],\"expiry\":\"8760h\"}}}}" | jq | sed -e "s|8760h|${expiry}h|g" -e "s|168h|${expiry}h|g" > profile.json
+
+  # ca generation
+  echo "--------------------------------------"
+  echo "CA generation"
+  echo "--------------------------------------"
   cfssl print-defaults csr | sed -e "s|example.net|${domain}|g" > "${domain}.csr.json"
   jq --arg expires "${expiry}h" '. + {"CA":{"expiry": $expires,"pathlen":0}}' "${domain}.csr.json" > "${domain}-ca.csr.json"
+  if [[ "$debug" = [yY] ]]; then
+    echo
+    echo "cfssl gencert -initca ${domain}-ca.csr.json | cfssljson -bare ${domain}-ca"
+    echo
+  fi
   cfssl gencert -initca "${domain}-ca.csr.json" | cfssljson -bare "${domain}-ca"
+  if [[ "$debug" = [yY] ]]; then
+    echo
+    echo "openssl x509 -in ${domain}-ca.pem -text -noout"
+    echo
+  fi
   openssl x509 -in "${domain}-ca.pem" -text -noout
   echo
   if [ -f "${cfdir}/${domain}-ca.pem" ]; then
@@ -60,6 +76,62 @@ ca_gen() {
   fi
   echo "$certinfo"
   echo
+
+  # ca intermediate generation
+  echo "--------------------------------------"
+  echo "CA Intermediate generation"
+  echo "--------------------------------------"
+  cd "${cfdir}"
+  cfssl print-defaults csr | sed -e "s|example.net|${domain}|g" > "${domain}-intermediate.csr.json"
+  jq --arg expires "${expiry}h" '. + {"CA":{"expiry": $expires,"pathlen":0}}' "${domain}-intermediate.csr.json" > "${domain}-ca-intermediate.csr.json"
+  if [[ "$debug" = [yY] ]]; then
+    echo
+    echo "cfssl gencert -initca ${domain}-ca-intermediate.csr.json | cfssljson -bare ${domain}-ca-intermediate"
+    echo
+  fi
+  cfssl gencert -initca "${domain}-ca-intermediate.csr.json" | cfssljson -bare "${domain}-ca-intermediate"
+  if [[ "$debug" = [yY] ]]; then
+    echo
+    echo "cfssl sign -ca ${cfdir}/${domain}-ca.pem -ca-key ${cfdir}/${domain}-ca-key.pem -config ${cfdir}/profile.json -profile intermediate_ca ${domain}ca-intermediate.csr | cfssljson -bare ${domain}-ca-intermediate"
+  fi
+  cfssl sign -ca "${cfdir}/${domain}-ca.pem" -ca-key "${cfdir}/${domain}-ca-key.pem" \
+        -config "${cfdir}/profile.json" -profile intermediate_ca "${domain}-ca-intermediate.csr" | cfssljson -bare "${domain}-ca-intermediate"
+  if [[ "$debug" = [yY] ]]; then
+    echo
+    echo "openssl x509 -in ${domain}-ca-intermediate.pem -text -noout"
+    echo
+  fi
+  openssl x509 -in "${domain}-ca-intermediate.pem" -text -noout
+  echo
+  if [ -f "${cfdir}/${domain}-ca-intermediate.pem" ]; then
+    echo "ca intermediate cert: ${cfdir}/${domain}-ca-intermediate.pem"
+    certinfo=$(cfssl-certinfo -cert ${cfdir}/${domain}-ca-intermediate.pem)
+  fi
+  if [ -f "${cfdir}/${domain}-ca-intermediate-key.pem" ]; then
+    chmod 0600 "${cfdir}/${domain}-ca-intermediate-key.pem"
+    echo "ca intermediate key: ${cfdir}/${domain}-ca-intermediate-key.pem"
+  fi
+  if [ -f "${cfdir}/${domain}-ca-intermediate.csr" ]; then
+    echo "ca intermediate csr: ${cfdir}/${domain}-ca-intermediate.csr"
+  fi
+  if [ -f "${cfdir}/${domain}-ca-intermediate.csr.json" ]; then
+    echo "ca intermediate csr profile: ${cfdir}/${domain}-ca-intermediate.csr.json"
+  fi
+  if [ -f "${cfdir}/profile.json" ]; then
+    echo "ca intermediate profile: ${cfdir}/profile.json"
+    echo
+  fi
+  echo "$certinfo"
+  echo
+
+  # CA bundle
+  cat "${cfdir}/${domain}-ca.pem" "${cfdir}/${domain}-ca-intermediate.pem" > "${cfdir}/${domain}-ca-bundle.pem"
+  echo "CA Bundle generated: ${cfdir}/${domain}-ca-bundle.pem"
+  if [[ "$debug" = [yY] ]]; then
+    echo
+    echo "cat ${cfdir}/${domain}-ca.pem ${cfdir}/${domain}-ca-intermediate.pem > ${cfdir}/${domain}-ca-bundle.pem"
+    echo
+  fi
 }
 
 server_gen() {
@@ -74,22 +146,39 @@ server_gen() {
   fi
   domain=${serverdomain}
   expiry=${2:-87600}
-  if [[ -f "${cfdir}/profile.json" && -f "${cfdir}/${d}-ca.pem" && -f "${cfdir}/${d}-ca-key.pem" ]]; then
+  if [[ -f "${cfdir}/profile.json" && -f "${cfdir}/${d}-ca-intermediate.pem" && -f "${cfdir}/${d}-ca-intermediate-key.pem" ]]; then
     mkdir -p "${servercerts_dir}"
     cd "${servercerts_dir}"
     cfssl print-defaults csr | jq 'del(.CN, .hosts)' > "${domain}.csr.json"
     if [ "$3" = 'wildcard' ]; then
       echo "{\"CN\":\"${serverdomain}\",\"hosts\":[\"${serverdomain}\",\"*.${serverdomain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
-
+      if [[ "$debug" = [yY] ]]; then
+        echo
+        echo "cfssl gencert -config ${cfdir}/profile.json -profile server -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}-ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
+      fi
       cfssl gencert -config "${cfdir}/profile.json" -profile server \
-            -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
+            -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
             "${domain}.csr.json" > "${domain}.json"
     else
+      if [[ "$debug" = [yY] ]]; then
+        echo
+        echo "cfssl gencert -config ${cfdir}/profile.json -profile server -cn ${domain} -hostname ${domain} -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
+      fi
       cfssl gencert -config "${cfdir}/profile.json" -profile server -cn "${domain}" -hostname "${domain}" \
-            -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
-            "${domain}.csr.json" > "${domain}.json"
+          -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
+          "${domain}.csr.json" > "${domain}.json"
+  fi
+    if [[ "$debug" = [yY] ]]; then
+      echo
+        echo "cfssljson -f ${domain}.json -bare ${domain}"
+        echo
     fi
     cfssljson -f "${domain}.json" -bare "${domain}"
+    if [[ "$debug" = [yY] ]]; then
+      echo
+        echo "openssl x509 -in "${domain}.pem" -text -noout"
+        echo
+    fi
     openssl x509 -in "${domain}.pem" -text -noout
     echo
     if [ -f "${servercerts_dir}/${domain}.pem" ]; then
@@ -113,7 +202,7 @@ server_gen() {
     echo
   else
     echo "error: missing required files:"
-    echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca.pem\n${cfdir}/${d}-ca-key.pem"
+    echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca-intermediate.pem\n${cfdir}/${d}-ca-intermediate-key.pem"
   fi
 }
 
@@ -127,14 +216,28 @@ client_gen() {
   fi
   domain=${clientdomain}
   expiry=${2:-87600}
-  if [[ -f "${cfdir}/profile.json" && -f "${cfdir}/${d}-ca.pem" && -f "${cfdir}/${d}-ca-key.pem" ]]; then
+  if [[ -f "${cfdir}/profile.json" && -f "${cfdir}/${d}-ca-intermediate.pem" && -f "${cfdir}/${d}-ca-intermediate-key.pem" ]]; then
     mkdir -p "${clientcerts_dir}"
     cd "${clientcerts_dir}"
     cfssl print-defaults csr | jq 'del(.CN, .hosts)' > "${domain}.csr.json"
+    if [[ "$debug" = [yY] ]]; then
+      echo
+      echo "cfssl gencert -config ${cfdir}/profile.json -profile client -cn ${domain} -hostname ${domain} -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
+    fi
     cfssl gencert -config "${cfdir}/profile.json" -profile client -cn "${domain}" -hostname "${domain}" \
-          -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
+          -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
           "${domain}.csr.json" > "${domain}.json"
+    if [[ "$debug" = [yY] ]]; then
+      echo
+      echo "cfssljson -f ${domain}.json -bare ${domain}"
+      echo
+    fi
     cfssljson -f "${domain}.json" -bare "${domain}"
+    if [[ "$debug" = [yY] ]]; then
+      echo
+      echo "openssl x509 -in ${domain}.pem -text -noout"
+      echo
+    fi
     openssl x509 -in "${domain}.pem" -text -noout
     echo
     if [ -f "${clientcerts_dir}/${domain}.pem" ]; then
@@ -156,7 +259,7 @@ client_gen() {
     echo
   else
     echo "error: missing required files:"
-    echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca.pem\n${cfdir}/${d}-ca-key.pem"
+    echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca-intermediate.pem\n${cfdir}/${d}-ca-intermediate-key.pem"
   fi
 }
 
@@ -172,22 +275,40 @@ peer_gen() {
   fi
   domain=${serverdomain}
   expiry=${2:-87600}
-  if [[ -f "${cfdir}/profile.json" && -f "${cfdir}/${d}-ca.pem" && -f "${cfdir}/${d}-ca-key.pem" ]]; then
+  if [[ -f "${cfdir}/profile.json" && -f "${cfdir}/${d}-ca-intermediate.pem" && -f "${cfdir}/${d}-ca-intermediate-key.pem" ]]; then
     mkdir -p "${peercerts_dir}"
     cd "${peercerts_dir}"
     cfssl print-defaults csr | jq 'del(.CN, .hosts)' > "${domain}.csr.json"
     if [ "$3" = 'wildcard' ]; then
       echo "{\"CN\":\"${serverdomain}\",\"hosts\":[\"${serverdomain}\",\"*.${serverdomain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
 
+      if [[ "$debug" = [yY] ]]; then
+        echo
+        echo "cfssl gencert -config ${cfdir}/profile.json -profile peer -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}-ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
+      fi
       cfssl gencert -config "${cfdir}/profile.json" -profile peer \
-            -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
+            -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
             "${domain}.csr.json" > "${domain}.json"
     else
+      if [[ "$debug" = [yY] ]]; then
+        echo
+        echo "cfssl gencert -config ${cfdir}/profile.json -profile peer -cn ${domain} -hostname ${domain} -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
+      fi
       cfssl gencert -config "${cfdir}/profile.json" -profile peer -cn "${domain}" -hostname "${domain}" \
-            -ca "${cfdir}/${d}-ca.pem" -ca-key "${cfdir}/${d}-ca-key.pem" \
+            -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
             "${domain}.csr.json" > "${domain}.json"
     fi
+    if [[ "$debug" = [yY] ]]; then
+      echo
+      echo "cfssljson -f ${domain}.json -bare ${domain}"
+      echo
+    fi
     cfssljson -f "${domain}.json" -bare "${domain}"
+    if [[ "$debug" = [yY] ]]; then
+      echo
+      echo "openssl x509 -in "${domain}.pem" -text -noout"
+      echo
+    fi
     openssl x509 -in "${domain}.pem" -text -noout
     echo
     if [ -f "${peercerts_dir}/${domain}.pem" ]; then
@@ -209,7 +330,7 @@ peer_gen() {
     echo
   else
     echo "error: missing required files:"
-    echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca.pem\n${cfdir}/${d}-ca-key.pem"
+    echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca-intermediate.pem\n${cfdir}/${d}-ca-intermediate-key.pem"
   fi
 }
 

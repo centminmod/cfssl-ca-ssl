@@ -3,11 +3,11 @@ Using [cfssl](https://github.com/cloudflare/cfssl) to generate a CA certificate/
 Nginx Configuration
 
 ```
-cp -a /etc/cfssl/centminmod.com-ca.pem /usr/local/nginx/conf/ssl/cacerts_certificates/centminmod.com-ca.pem
+cp -a /etc/cfssl/centminmod.com-ca-bundle.pem /usr/local/nginx/conf/ssl/cacerts_certificates/centminmod.com-ca-bundle.pem
 ```
 
 ```
-ssl_client_certificate /usr/local/nginx/conf/ssl/cacerts_certificates/centminmod.com-ca.pem;
+ssl_client_certificate /usr/local/nginx/conf/ssl/cacerts_certificates/centminmod.com-ca-bundle.pem;
 ssl_verify_client on;
 
 if ($ssl_client_verify != SUCCESS) {
@@ -60,36 +60,49 @@ Generate TLS Peer wildcard certificate & keys
 
 # CA Certificate
 
-Generate CA certificates for centminmod.com with 87600 hrs expiry = 10yrs
+Generate CA & CA Intermediate signed certificates for centminmod.com with 87600 hrs expiry = 10yrs with:
+
+* CA certificate /etc/cfssl/centminmod.com-ca.pem
+* CA Intermediate certificate /etc/cfssl/centminmod.com-ca-intermediate.pem
+* CA Bundle certificate /etc/cfssl/centminmod.com-ca-bundle.pem
 
 ```
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-ca centminmod.com 87600             
-2020/09/12 11:24:09 [INFO] generating a new CA key and certificate from CSR
-2020/09/12 11:24:09 [INFO] generate received request
-2020/09/12 11:24:09 [INFO] received CSR
-2020/09/12 11:24:09 [INFO] generating key: ecdsa-256
-2020/09/12 11:24:09 [INFO] encoded CSR
-2020/09/12 11:24:09 [INFO] signed certificate with serial number 427871406414710309376762164705690502841132438546
+./cfssl-ca-ssl.sh gen-ca centminmod.com 87600
+--------------------------------------
+CA generation
+--------------------------------------
+
+cfssl gencert -initca centminmod.com-ca.csr.json | cfssljson -bare centminmod.com-ca
+
+2020/09/12 12:57:16 [INFO] generating a new CA key and certificate from CSR
+2020/09/12 12:57:16 [INFO] generate received request
+2020/09/12 12:57:16 [INFO] received CSR
+2020/09/12 12:57:16 [INFO] generating key: ecdsa-256
+2020/09/12 12:57:17 [INFO] encoded CSR
+2020/09/12 12:57:17 [INFO] signed certificate with serial number 150057736493308774156569627236546007311200018313
+
+openssl x509 -in centminmod.com-ca.pem -text -noout
+
 Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            4a:f2:6a:dc:cc:15:24:3f:bc:a2:40:19:f5:e9:a5:50:c4:fc:d4:12
+            1a:48:d2:55:dc:d7:44:14:8b:2a:21:c4:9d:54:d9:5d:ff:e7:df:89
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Validity
-            Not Before: Sep 12 11:19:00 2020 GMT
-            Not After : Sep 10 11:19:00 2030 GMT
+            Not Before: Sep 12 12:52:00 2020 GMT
+            Not After : Sep 10 12:52:00 2030 GMT
         Subject: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:e8:97:88:3b:c0:dc:46:e5:23:04:d1:e2:de:52:
-                    97:e7:a4:e1:a6:12:5a:04:86:f5:e5:b6:7c:ed:57:
-                    3c:97:ae:74:63:7e:0a:67:a6:94:eb:77:5b:8f:93:
-                    9f:56:ea:1e:56:7d:d4:de:fe:e6:b0:5a:82:fb:35:
-                    31:f6:6b:29:95
+                    04:43:50:1b:80:50:37:c5:1a:5f:db:a1:99:49:f8:
+                    d9:d6:7e:0b:62:e5:ca:f0:b3:4a:af:7b:aa:67:24:
+                    d9:ed:4e:94:e6:fe:34:7d:bc:2b:b7:59:a9:c5:6a:
+                    d7:61:d7:d8:6e:00:08:bf:37:42:c3:87:74:3c:12:
+                    ce:26:6c:c9:10
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -98,12 +111,12 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:TRUE
             X509v3 Subject Key Identifier: 
-                7E:E3:AE:DE:26:F8:86:85:63:BD:58:49:25:14:FB:97:98:2B:34:5F
+                D0:8A:95:C6:85:4A:57:7F:5A:3D:0A:9A:6A:5C:90:73:1A:9F:18:04
     Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:20:0f:34:0a:9e:94:a8:c6:17:05:b7:ad:b7:e5:78:
-         e3:f8:7c:cd:f1:76:5f:69:c9:e3:17:a3:31:b1:9d:8a:4a:79:
-         02:21:00:8d:83:1a:ba:ac:85:c0:93:f4:48:fa:b6:df:b3:41:
-         e5:e2:26:37:1b:dc:50:8d:32:68:80:15:8f:03:2a:53:98
+         30:45:02:20:49:3d:81:92:9e:ce:c7:6a:30:09:7e:19:cf:81:
+         5f:89:d2:99:0e:ad:de:1a:29:c1:db:4e:f9:f5:0a:44:83:36:
+         02:21:00:b3:42:0f:17:64:d9:f4:48:16:b0:4c:8f:54:83:1f:
+         e8:ad:66:6f:de:41:41:f1:36:68:1e:ce:79:f7:32:84:fc
 
 ca cert: /etc/cfssl/centminmod.com-ca.pem
 ca key: /etc/cfssl/centminmod.com-ca-key.pem
@@ -136,14 +149,113 @@ ca profile: /etc/cfssl/profile.json
       "centminmod.com"
     ]
   },
-  "serial_number": "427871406414710309376762164705690502841132438546",
-  "not_before": "2020-09-12T11:19:00Z",
-  "not_after": "2030-09-10T11:19:00Z",
+  "serial_number": "150057736493308774156569627236546007311200018313",
+  "not_before": "2020-09-12T12:52:00Z",
+  "not_after": "2030-09-10T12:52:00Z",
   "sigalg": "ECDSAWithSHA256",
   "authority_key_id": "",
-  "subject_key_id": "7E:E3:AE:DE:26:F8:86:85:63:BD:58:49:25:14:FB:97:98:2B:34:5F",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIIB2jCCAYCgAwIBAgIUSvJq3MwVJD+8okAZ9emlUMT81BIwCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMTE5MDBaFw0z\nMDA5MTAxMTE5MDBaMEsxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcq\nhkjOPQIBBggqhkjOPQMBBwNCAATol4g7wNxG5SME0eLeUpfnpOGmEloEhvXltnzt\nVzyXrnRjfgpnppTrd1uPk59W6h5WfdTe/uawWoL7NTH2aymVo0IwQDAOBgNVHQ8B\nAf8EBAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUfuOu3ib4hoVjvVhJ\nJRT7l5grNF8wCgYIKoZIzj0EAwIDSAAwRQIgDzQKnpSoxhcFt6235Xjj+HzN8XZf\nacnjF6MxsZ2KSnkCIQCNgxq6rIXAk/RI+rbfs0Hl4iY3G9xQjTJogBWPAypTmA==\n-----END CERTIFICATE-----\n"
+  "subject_key_id": "D0:8A:95:C6:85:4A:57:7F:5A:3D:0A:9A:6A:5C:90:73:1A:9F:18:04",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIIB2jCCAYCgAwIBAgIUGkjSVdzXRBSLKiHEnVTZXf/n34kwCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMjUyMDBaFw0z\nMDA5MTAxMjUyMDBaMEsxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcq\nhkjOPQIBBggqhkjOPQMBBwNCAARDUBuAUDfFGl/boZlJ+NnWfgti5crws0qve6pn\nJNntTpTm/jR9vCu3WanFatdh19huAAi/N0LDh3Q8Es4mbMkQo0IwQDAOBgNVHQ8B\nAf8EBAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQU0IqVxoVKV39aPQqa\nalyQcxqfGAQwCgYIKoZIzj0EAwIDSAAwRQIgST2Bkp7Ox2owCX4Zz4FfidKZDq3e\nGinB20759QpEgzYCIQCzQg8XZNn0SBawTI9Ugx/orWZv3kFB8TZoHs559zKE/A==\n-----END CERTIFICATE-----\n"
 }
+
+--------------------------------------
+CA Intermediate generation
+--------------------------------------
+
+cfssl gencert -initca centminmod.com-ca-intermediate.csr.json | cfssljson -bare centminmod.com-ca-intermediate
+
+2020/09/12 12:57:17 [INFO] generating a new CA key and certificate from CSR
+2020/09/12 12:57:17 [INFO] generate received request
+2020/09/12 12:57:17 [INFO] received CSR
+2020/09/12 12:57:17 [INFO] generating key: ecdsa-256
+2020/09/12 12:57:17 [INFO] encoded CSR
+2020/09/12 12:57:17 [INFO] signed certificate with serial number 302924499314591647502631354794741669080024009736
+
+cfssl sign -ca /etc/cfssl/centminmod.com-ca.pem -ca-key /etc/cfssl/centminmod.com-ca-key.pem -config /etc/cfssl/profile.json -profile intermediate_ca centminmod.comca-intermediate.csr | cfssljson -bare centminmod.com-ca-intermediate
+2020/09/12 12:57:17 [INFO] signed certificate with serial number 475615121865468009329136793859889097323899653701
+
+openssl x509 -in centminmod.com-ca-intermediate.pem -text -noout
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            53:4f:51:d6:4b:d8:eb:ad:a3:fe:8c:47:d2:9b:77:a7:6b:f6:0e:45
+    Signature Algorithm: ecdsa-with-SHA256
+        Issuer: C=US, ST=CA, L=San Francisco, CN=centminmod.com
+        Validity
+            Not Before: Sep 12 12:52:00 2020 GMT
+            Not After : Sep 10 12:52:00 2030 GMT
+        Subject: C=US, ST=CA, L=San Francisco, CN=centminmod.com
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub: 
+                    04:ce:cd:7a:61:02:c4:8b:13:d3:32:b8:ae:1f:83:
+                    12:2a:cd:2f:c1:74:af:f1:13:04:80:f8:4e:8c:3a:
+                    0b:59:30:13:53:bf:7b:64:3f:19:33:46:c9:d5:0a:
+                    e1:76:4a:e2:53:93:72:86:11:61:a4:f4:94:48:47:
+                    f9:15:7c:d8:d5
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment, Certificate Sign, CRL Sign
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication, TLS Web Client Authentication
+            X509v3 Basic Constraints: critical
+                CA:TRUE, pathlen:0
+            X509v3 Subject Key Identifier: 
+                EB:26:7F:00:60:EA:2D:2B:44:F1:46:D8:A3:BF:91:3A:DE:BF:B9:07
+    Signature Algorithm: ecdsa-with-SHA256
+         30:45:02:20:11:d0:24:83:b7:ee:d2:1f:9c:93:67:c4:48:9a:
+         9b:ef:d7:0b:c4:2a:7f:5d:ad:c1:11:da:b7:da:76:c9:14:33:
+         02:21:00:e1:94:dc:55:2b:a4:09:ab:f4:d6:94:86:3c:17:63:
+         59:36:c8:aa:2a:b9:50:d8:08:fb:85:ed:8e:27:f2:95:6c
+
+ca intermediate cert: /etc/cfssl/centminmod.com-ca-intermediate.pem
+ca intermediate key: /etc/cfssl/centminmod.com-ca-intermediate-key.pem
+ca intermediate csr: /etc/cfssl/centminmod.com-ca-intermediate.csr
+ca intermediate csr profile: /etc/cfssl/centminmod.com-ca-intermediate.csr.json
+ca intermediate profile: /etc/cfssl/profile.json
+
+{
+  "subject": {
+    "common_name": "centminmod.com",
+    "country": "US",
+    "locality": "San Francisco",
+    "province": "CA",
+    "names": [
+      "US",
+      "CA",
+      "San Francisco",
+      "centminmod.com"
+    ]
+  },
+  "issuer": {
+    "common_name": "centminmod.com",
+    "country": "US",
+    "locality": "San Francisco",
+    "province": "CA",
+    "names": [
+      "US",
+      "CA",
+      "San Francisco",
+      "centminmod.com"
+    ]
+  },
+  "serial_number": "475615121865468009329136793859889097323899653701",
+  "not_before": "2020-09-12T12:52:00Z",
+  "not_after": "2030-09-10T12:52:00Z",
+  "sigalg": "ECDSAWithSHA256",
+  "authority_key_id": "",
+  "subject_key_id": "EB:26:7F:00:60:EA:2D:2B:44:F1:46:D8:A3:BF:91:3A:DE:BF:B9:07",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIIB/DCCAaKgAwIBAgIUU09R1kvY662j/oxH0pt3p2v2DkUwCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMjUyMDBaFw0z\nMDA5MTAxMjUyMDBaMEsxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcq\nhkjOPQIBBggqhkjOPQMBBwNCAATOzXphAsSLE9MyuK4fgxIqzS/BdK/xEwSA+E6M\nOgtZMBNTv3tkPxkzRsnVCuF2SuJTk3KGEWGk9JRIR/kVfNjVo2QwYjAOBgNVHQ8B\nAf8EBAMCAaYwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBIGA1UdEwEB\n/wQIMAYBAf8CAQAwHQYDVR0OBBYEFOsmfwBg6i0rRPFG2KO/kTrev7kHMAoGCCqG\nSM49BAMCA0gAMEUCIBHQJIO37tIfnJNnxEiam+/XC8Qqf12twRHat9p2yRQzAiEA\n4ZTcVSukCav01pSGPBdjWTbIqiq5UNgI+4XtjifylWw=\n-----END CERTIFICATE-----\n"
+}
+
+CA Bundle generated: /etc/cfssl/centminmod.com-ca-bundle.pem
+
+cat /etc/cfssl/centminmod.com-ca.pem /etc/cfssl/centminmod.com-ca-intermediate.pem > /etc/cfssl/centminmod.com-ca-bundle.pem
 ```
 
 # Server Wildcard SSL Certificate
@@ -152,31 +264,39 @@ Generate self-signed server wildcard SSL certificate with CA signing for centmin
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600 wildcard
-2020/09/12 11:25:25 [INFO] generate received request
-2020/09/12 11:25:25 [INFO] received CSR
-2020/09/12 11:25:25 [INFO] generating key: ecdsa-256
-2020/09/12 11:25:25 [INFO] encoded CSR
-2020/09/12 11:25:25 [INFO] signed certificate with serial number 643893016033135791192125429617958731885395959998
+
+cfssl gencert -config /etc/cfssl/profile.json -profile server -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.com-ca-intermediate-key.pem centminmod.com.csr.json > centminmod.com.json
+2020/09/12 13:02:38 [INFO] generate received request
+2020/09/12 13:02:38 [INFO] received CSR
+2020/09/12 13:02:38 [INFO] generating key: ecdsa-256
+2020/09/12 13:02:38 [INFO] encoded CSR
+2020/09/12 13:02:38 [INFO] signed certificate with serial number 230632741149898333520347063671309303507161469646
+
+cfssljson -f centminmod.com.json -bare centminmod.com
+
+
+openssl x509 -in centminmod.com.pem -text -noout
+
 Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            70:c9:29:53:33:c2:ad:83:17:56:49:73:4e:98:20:fd:d7:01:e0:be
+            28:65:ee:06:d7:45:f2:28:c2:58:88:dc:ac:78:2b:e5:eb:a0:52:ce
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Validity
-            Not Before: Sep 12 11:20:00 2020 GMT
-            Not After : Sep 10 11:20:00 2030 GMT
+            Not Before: Sep 12 12:58:00 2020 GMT
+            Not After : Sep 10 12:58:00 2030 GMT
         Subject: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:4b:a2:14:51:4a:ab:7d:ce:c3:5e:a1:dc:c2:3f:
-                    52:50:95:fe:c0:e1:ec:5e:af:fa:c9:e7:51:1b:4c:
-                    8e:04:60:47:40:b5:2b:65:48:67:29:e3:85:90:73:
-                    ad:0f:5c:30:06:b5:12:e4:c7:60:24:9f:1c:f9:46:
-                    94:a3:9e:1c:6b
+                    04:0d:7d:e7:95:31:45:2d:b1:87:11:d5:5b:5c:8c:
+                    63:c6:b2:b9:c3:7f:b6:2b:56:b6:f3:fd:fd:0c:ba:
+                    c9:f8:ec:73:5a:9a:e4:c9:af:81:4a:1f:19:65:ce:
+                    5b:0a:6d:c2:68:e0:0d:9d:76:d4:12:c7:b4:5b:3b:
+                    22:78:e4:86:36
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -187,14 +307,14 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:FALSE
             X509v3 Subject Key Identifier: 
-                88:DA:62:70:47:16:32:A9:3D:6A:62:03:07:C4:AB:3B:5E:3B:C6:F5
+                26:FB:1C:C2:17:A3:8C:3C:0E:54:7B:8D:DC:BB:97:E0:A7:78:B0:6E
             X509v3 Subject Alternative Name: 
                 DNS:centminmod.com, DNS:*.centminmod.com
     Signature Algorithm: ecdsa-with-SHA256
-         30:44:02:20:31:c8:02:9b:95:e7:e7:44:88:e1:71:a0:02:7e:
-         8f:ec:d6:52:42:d7:48:76:b3:1f:e0:ab:7a:68:aa:a5:72:81:
-         02:20:23:b9:e4:7b:bb:03:36:3e:c0:14:5e:10:65:02:81:1c:
-         2b:b6:32:32:b8:f5:07:8e:d6:1c:63:7c:20:59:eb:76
+         30:44:02:20:7e:ac:fc:ce:64:5f:79:95:d0:48:d9:80:34:78:
+         43:ee:c2:88:f3:22:d6:ef:1f:e6:cb:47:d3:00:2d:3b:8d:fe:
+         02:20:55:77:11:a4:62:55:6a:c3:11:ad:c8:64:86:7f:db:cb:
+         3b:47:cb:21:d0:73:1f:aa:1e:41:58:be:2e:1c:1b:87
 
 server cert: /etc/cfssl/servercerts/centminmod.com.pem
 server key: /etc/cfssl/servercerts/centminmod.com-key.pem
@@ -230,17 +350,17 @@ ssl_certificate_key  /etc/cfssl/servercerts/centminmod.com-key.pem;
       "centminmod.com"
     ]
   },
-  "serial_number": "643893016033135791192125429617958731885395959998",
+  "serial_number": "230632741149898333520347063671309303507161469646",
   "sans": [
     "centminmod.com",
     "*.centminmod.com"
   ],
-  "not_before": "2020-09-12T11:20:00Z",
-  "not_after": "2030-09-10T11:20:00Z",
+  "not_before": "2020-09-12T12:58:00Z",
+  "not_after": "2030-09-10T12:58:00Z",
   "sigalg": "ECDSAWithSHA256",
   "authority_key_id": "",
-  "subject_key_id": "88:DA:62:70:47:16:32:A9:3D:6A:62:03:07:C4:AB:3B:5E:3B:C6:F5",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICGTCCAcCgAwIBAgIUcMkpUzPCrYMXVklzTpgg/dcB4L4wCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMTIwMDBaFw0z\nMDA5MTAxMTIwMDBaMEsxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcq\nhkjOPQIBBggqhkjOPQMBBwNCAARLohRRSqt9zsNeodzCP1JQlf7A4exer/rJ51Eb\nTI4EYEdAtStlSGcp44WQc60PXDAGtRLkx2Aknxz5RpSjnhxro4GBMH8wDgYDVR0P\nAQH/BAQDAgWgMBMGA1UdJQQMMAoGCCsGAQUFBwMBMAwGA1UdEwEB/wQCMAAwHQYD\nVR0OBBYEFIjaYnBHFjKpPWpiAwfEqzteO8b1MCsGA1UdEQQkMCKCDmNlbnRtaW5t\nb2QuY29tghAqLmNlbnRtaW5tb2QuY29tMAoGCCqGSM49BAMCA0cAMEQCIDHIApuV\n5+dEiOFxoAJ+j+zWUkLXSHazH+CremiqpXKBAiAjueR7uwM2PsAUXhBlAoEcK7Yy\nMrj1B47WHGN8IFnrdg==\n-----END CERTIFICATE-----\n"
+  "subject_key_id": "26:FB:1C:C2:17:A3:8C:3C:0E:54:7B:8D:DC:BB:97:E0:A7:78:B0:6E",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICGTCCAcCgAwIBAgIUKGXuBtdF8ijCWIjcrHgr5eugUs4wCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMjU4MDBaFw0z\nMDA5MTAxMjU4MDBaMEsxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcq\nhkjOPQIBBggqhkjOPQMBBwNCAAQNfeeVMUUtsYcR1VtcjGPGsrnDf7YrVrbz/f0M\nusn47HNamuTJr4FKHxllzlsKbcJo4A2ddtQSx7RbOyJ45IY2o4GBMH8wDgYDVR0P\nAQH/BAQDAgWgMBMGA1UdJQQMMAoGCCsGAQUFBwMBMAwGA1UdEwEB/wQCMAAwHQYD\nVR0OBBYEFCb7HMIXo4w8DlR7jdy7l+CneLBuMCsGA1UdEQQkMCKCDmNlbnRtaW5t\nb2QuY29tghAqLmNlbnRtaW5tb2QuY29tMAoGCCqGSM49BAMCA0cAMEQCIH6s/M5k\nX3mV0EjZgDR4Q+7CiPMi1u8f5stH0wAtO43+AiBVdxGkYlVqwxGtyGSGf9vLO0fL\nIdBzH6oeQVi+Lhwbhw==\n-----END CERTIFICATE-----\n"
 }
 ```
 
@@ -250,31 +370,39 @@ Generate self-signed server SSL certificate with CA signing for centminmod.com w
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600
-2020/09/12 11:26:07 [INFO] generate received request
-2020/09/12 11:26:07 [INFO] received CSR
-2020/09/12 11:26:07 [INFO] generating key: ecdsa-256
-2020/09/12 11:26:07 [INFO] encoded CSR
-2020/09/12 11:26:07 [INFO] signed certificate with serial number 355851856854210141265300821511927833347403647723
+
+cfssl gencert -config /etc/cfssl/profile.json -profile server -cn centminmod.com -hostname centminmod.com -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.comca-intermediate-key.pem centminmod.com.csr.json > centminmod.com.json
+2020/09/12 13:03:34 [INFO] generate received request
+2020/09/12 13:03:34 [INFO] received CSR
+2020/09/12 13:03:34 [INFO] generating key: ecdsa-256
+2020/09/12 13:03:35 [INFO] encoded CSR
+2020/09/12 13:03:35 [INFO] signed certificate with serial number 174634815604050242179733004949942022538717814142
+
+cfssljson -f centminmod.com.json -bare centminmod.com
+
+
+openssl x509 -in centminmod.com.pem -text -noout
+
 Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            3e:54:f2:fa:a7:84:5a:e7:0f:1b:2e:3a:d9:da:94:cf:a6:7d:8a:eb
+            1e:96:e5:5d:ff:a6:5d:f9:88:44:de:21:79:a6:ed:35:bb:e3:dd:7e
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Validity
-            Not Before: Sep 12 11:21:00 2020 GMT
-            Not After : Sep 10 11:21:00 2030 GMT
+            Not Before: Sep 12 12:59:00 2020 GMT
+            Not After : Sep 10 12:59:00 2030 GMT
         Subject: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:90:b3:25:46:01:67:79:cb:1d:c5:2c:c6:45:5c:
-                    0d:84:e1:77:3c:c7:dc:4e:de:9f:c7:70:7f:66:dc:
-                    98:47:2e:ec:b1:71:5a:2b:75:74:d2:bd:a7:f3:3f:
-                    ec:de:2b:01:29:d6:a6:b0:dd:37:62:59:ed:e1:05:
-                    6d:6c:f3:2e:3a
+                    04:ea:67:76:3d:05:9e:17:b5:73:0e:56:c9:c1:2e:
+                    17:5c:ff:36:d7:82:55:28:4d:23:45:aa:bd:7c:e5:
+                    b5:a8:a2:be:92:3b:74:43:9b:9e:32:53:6e:05:e7:
+                    6e:4b:8c:8a:e4:83:e6:20:22:08:1d:5c:21:32:b6:
+                    67:3e:aa:6b:11
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -285,14 +413,14 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:FALSE
             X509v3 Subject Key Identifier: 
-                C0:47:64:A5:7F:7E:80:16:61:9B:00:EE:03:88:A0:FA:DE:DD:4F:28
+                AB:4C:C1:9C:1C:5E:9D:80:0C:D7:FB:34:6A:39:7D:02:CB:83:6D:2C
             X509v3 Subject Alternative Name: 
                 DNS:centminmod.com
     Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:20:6e:e9:88:83:a0:3c:f4:c3:3b:98:b6:c8:4e:79:
-         84:03:b7:1c:23:64:c3:46:d7:ed:5b:51:e7:3f:b8:e7:d9:1c:
-         02:21:00:c3:2e:1b:bd:97:37:74:68:85:a0:3f:78:6c:9e:39:
-         e4:8a:b5:fd:76:99:05:93:29:67:c7:e0:81:58:84:9d:8d
+         30:45:02:21:00:b0:e6:30:53:0f:57:14:f3:37:97:84:5b:2a:
+         69:19:13:74:a9:5f:24:23:bf:21:87:27:5e:6a:a1:d3:a5:f9:
+         f9:02:20:20:2a:50:6d:a2:65:2f:69:f2:21:b3:d9:99:23:3d:
+         49:9d:ea:48:7a:d2:25:f2:01:ef:94:5a:86:9b:86:60:c3
 
 server cert: /etc/cfssl/servercerts/centminmod.com.pem
 server key: /etc/cfssl/servercerts/centminmod.com-key.pem
@@ -328,16 +456,16 @@ ssl_certificate_key  /etc/cfssl/servercerts/centminmod.com-key.pem;
       "centminmod.com"
     ]
   },
-  "serial_number": "355851856854210141265300821511927833347403647723",
+  "serial_number": "174634815604050242179733004949942022538717814142",
   "sans": [
     "centminmod.com"
   ],
-  "not_before": "2020-09-12T11:21:00Z",
-  "not_after": "2030-09-10T11:21:00Z",
+  "not_before": "2020-09-12T12:59:00Z",
+  "not_after": "2030-09-10T12:59:00Z",
   "sigalg": "ECDSAWithSHA256",
   "authority_key_id": "",
-  "subject_key_id": "C0:47:64:A5:7F:7E:80:16:61:9B:00:EE:03:88:A0:FA:DE:DD:4F:28",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICBzCCAa2gAwIBAgIUPlTy+qeEWucPGy462dqUz6Z9iuswCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMTIxMDBaFw0z\nMDA5MTAxMTIxMDBaMEsxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcq\nhkjOPQIBBggqhkjOPQMBBwNCAASQsyVGAWd5yx3FLMZFXA2E4Xc8x9xO3p/HcH9m\n3JhHLuyxcVordXTSvafzP+zeKwEp1qaw3TdiWe3hBW1s8y46o28wbTAOBgNVHQ8B\nAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADAdBgNV\nHQ4EFgQUwEdkpX9+gBZhmwDuA4ig+t7dTygwGQYDVR0RBBIwEIIOY2VudG1pbm1v\nZC5jb20wCgYIKoZIzj0EAwIDSAAwRQIgbumIg6A89MM7mLbITnmEA7ccI2TDRtft\nW1HnP7jn2RwCIQDDLhu9lzd0aIWgP3hsnjnkirX9dpkFkylnx+CBWISdjQ==\n-----END CERTIFICATE-----\n"
+  "subject_key_id": "AB:4C:C1:9C:1C:5E:9D:80:0C:D7:FB:34:6A:39:7D:02:CB:83:6D:2C",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICBzCCAa2gAwIBAgIUHpblXf+mXfmIRN4heabtNbvj3X4wCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMjU5MDBaFw0z\nMDA5MTAxMjU5MDBaMEsxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcq\nhkjOPQIBBggqhkjOPQMBBwNCAATqZ3Y9BZ4XtXMOVsnBLhdc/zbXglUoTSNFqr18\n5bWoor6SO3RDm54yU24F525LjIrkg+YgIggdXCEytmc+qmsRo28wbTAOBgNVHQ8B\nAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADAdBgNV\nHQ4EFgQUq0zBnBxenYAM1/s0ajl9AsuDbSwwGQYDVR0RBBIwEIIOY2VudG1pbm1v\nZC5jb20wCgYIKoZIzj0EAwIDSAAwRQIhALDmMFMPVxTzN5eEWyppGRN0qV8kI78h\nhydeaqHTpfn5AiAgKlBtomUvafIhs9mZIz1JnepIetIl8gHvlFqGm4Zgww==\n-----END CERTIFICATE-----\n"
 }
 ```
 
@@ -345,31 +473,39 @@ Generate self-signed server SSL certificate with CA signing for server.centminmo
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600 server
-2020/09/12 11:26:42 [INFO] generate received request
-2020/09/12 11:26:42 [INFO] received CSR
-2020/09/12 11:26:42 [INFO] generating key: ecdsa-256
-2020/09/12 11:26:42 [INFO] encoded CSR
-2020/09/12 11:26:42 [INFO] signed certificate with serial number 518456004323665490076061413231222364632137454220
+
+cfssl gencert -config /etc/cfssl/profile.json -profile server -cn server.centminmod.com -hostname server.centminmod.com -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.comca-intermediate-key.pem server.centminmod.com.csr.json > server.centminmod.com.json
+2020/09/12 13:04:09 [INFO] generate received request
+2020/09/12 13:04:09 [INFO] received CSR
+2020/09/12 13:04:09 [INFO] generating key: ecdsa-256
+2020/09/12 13:04:09 [INFO] encoded CSR
+2020/09/12 13:04:09 [INFO] signed certificate with serial number 46598388745653789974301431345191330508878561040
+
+cfssljson -f server.centminmod.com.json -bare server.centminmod.com
+
+
+openssl x509 -in server.centminmod.com.pem -text -noout
+
 Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            5a:d0:5f:0c:94:b6:8f:0f:5f:6a:24:e3:c5:a6:e5:05:5d:85:d2:8c
+            08:29:8b:44:d1:e1:2e:19:a0:d1:0e:6b:09:eb:34:7e:2a:8a:bf:10
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Validity
-            Not Before: Sep 12 11:22:00 2020 GMT
-            Not After : Sep 10 11:22:00 2030 GMT
+            Not Before: Sep 12 12:59:00 2020 GMT
+            Not After : Sep 10 12:59:00 2030 GMT
         Subject: C=US, ST=CA, L=San Francisco, CN=server.centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:54:45:ba:af:54:d6:07:f6:3f:10:b3:43:f4:ed:
-                    30:27:66:83:e6:fc:ca:5e:b9:72:04:c6:56:66:1b:
-                    29:c0:df:ae:a5:01:ff:0b:af:55:35:26:88:3b:19:
-                    f8:2a:ac:40:10:50:85:f4:22:c8:0d:17:77:47:6b:
-                    6c:77:ea:a1:25
+                    04:c3:ba:66:22:ba:63:a3:a1:04:87:11:d7:0b:95:
+                    b8:2d:80:90:e9:95:61:dc:58:ae:32:67:57:28:a1:
+                    c5:d1:79:9a:f3:2c:34:16:1e:12:53:08:e9:60:2a:
+                    31:7a:c5:48:12:11:02:b9:4e:c1:6c:98:6b:5b:cf:
+                    4c:1a:b9:36:02
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -380,17 +516,17 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:FALSE
             X509v3 Subject Key Identifier: 
-                12:E5:D8:B9:AF:12:AF:52:A3:68:D8:B5:B8:39:51:F6:4E:18:E8:64
+                CA:6D:C6:E6:5B:E5:AC:1B:0E:8F:1C:19:74:53:6E:AE:52:91:8F:70
             X509v3 Authority Key Identifier: 
-                keyid:7E:E3:AE:DE:26:F8:86:85:63:BD:58:49:25:14:FB:97:98:2B:34:5F
+                keyid:EB:26:7F:00:60:EA:2D:2B:44:F1:46:D8:A3:BF:91:3A:DE:BF:B9:07
 
             X509v3 Subject Alternative Name: 
                 DNS:server.centminmod.com
     Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:20:16:9c:78:5a:1b:af:81:69:c9:c9:a7:76:66:c3:
-         54:7a:0b:88:cd:ba:8c:a0:17:ac:02:19:82:38:18:9c:0f:2e:
-         02:21:00:f9:86:bd:05:5f:4d:66:30:94:1e:ad:fd:a0:70:b3:
-         b1:bd:63:77:48:eb:14:86:07:05:cf:9c:18:11:a8:41:de
+         30:44:02:20:42:13:ba:6e:9c:26:e1:01:99:f6:b4:2f:dc:e0:
+         58:48:bf:c7:e7:5a:25:74:09:0e:2c:4f:16:0e:b8:47:7c:7a:
+         02:20:2e:8e:8f:ea:07:72:c6:18:73:86:ba:ce:49:ff:1d:7f:
+         f6:f1:e1:df:c9:9b:fb:03:5d:f1:aa:a9:19:49:de:e9
 
 server cert: /etc/cfssl/servercerts/server.centminmod.com.pem
 server key: /etc/cfssl/servercerts/server.centminmod.com-key.pem
@@ -426,18 +562,17 @@ ssl_certificate_key  /etc/cfssl/servercerts/server.centminmod.com-key.pem;
       "centminmod.com"
     ]
   },
-  "serial_number": "518456004323665490076061413231222364632137454220",
+  "serial_number": "46598388745653789974301431345191330508878561040",
   "sans": [
     "server.centminmod.com"
   ],
-  "not_before": "2020-09-12T11:22:00Z",
-  "not_after": "2030-09-10T11:22:00Z",
+  "not_before": "2020-09-12T12:59:00Z",
+  "not_after": "2030-09-10T12:59:00Z",
   "sigalg": "ECDSAWithSHA256",
-  "authority_key_id": "7E:E3:AE:DE:26:F8:86:85:63:BD:58:49:25:14:FB:97:98:2B:34:5F",
-  "subject_key_id": "12:E5:D8:B9:AF:12:AF:52:A3:68:D8:B5:B8:39:51:F6:4E:18:E8:64",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICODCCAd6gAwIBAgIUWtBfDJS2jw9faiTjxablBV2F0owwCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMTIyMDBaFw0z\nMDA5MTAxMTIyMDBaMFIxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEeMBwGA1UEAxMVc2VydmVyLmNlbnRtaW5tb2QuY29t\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEVEW6r1TWB/Y/ELND9O0wJ2aD5vzK\nXrlyBMZWZhspwN+upQH/C69VNSaIOxn4KqxAEFCF9CLIDRd3R2tsd+qhJaOBmDCB\nlTAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUHAwEwDAYDVR0TAQH/\nBAIwADAdBgNVHQ4EFgQUEuXYua8Sr1KjaNi1uDlR9k4Y6GQwHwYDVR0jBBgwFoAU\nfuOu3ib4hoVjvVhJJRT7l5grNF8wIAYDVR0RBBkwF4IVc2VydmVyLmNlbnRtaW5t\nb2QuY29tMAoGCCqGSM49BAMCA0gAMEUCIBaceFobr4FpycmndmbDVHoLiM26jKAX\nrAIZgjgYnA8uAiEA+Ya9BV9NZjCUHq39oHCzsb1jd0jrFIYHBc+cGBGoQd4=\n-----END CERTIFICATE-----\n"
+  "authority_key_id": "EB:26:7F:00:60:EA:2D:2B:44:F1:46:D8:A3:BF:91:3A:DE:BF:B9:07",
+  "subject_key_id": "CA:6D:C6:E6:5B:E5:AC:1B:0E:8F:1C:19:74:53:6E:AE:52:91:8F:70",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICNzCCAd6gAwIBAgIUCCmLRNHhLhmg0Q5rCes0fiqKvxAwCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMjU5MDBaFw0z\nMDA5MTAxMjU5MDBaMFIxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEeMBwGA1UEAxMVc2VydmVyLmNlbnRtaW5tb2QuY29t\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEw7pmIrpjo6EEhxHXC5W4LYCQ6ZVh\n3FiuMmdXKKHF0Xma8yw0Fh4SUwjpYCoxesVIEhECuU7BbJhrW89MGrk2AqOBmDCB\nlTAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUHAwEwDAYDVR0TAQH/\nBAIwADAdBgNVHQ4EFgQUym3G5lvlrBsOjxwZdFNurlKRj3AwHwYDVR0jBBgwFoAU\n6yZ/AGDqLStE8UbYo7+ROt6/uQcwIAYDVR0RBBkwF4IVc2VydmVyLmNlbnRtaW5t\nb2QuY29tMAoGCCqGSM49BAMCA0cAMEQCIEITum6cJuEBmfa0L9zgWEi/x+daJXQJ\nDixPFg64R3x6AiAujo/qB3LGGHOGus5J/x1/9vHh38mb+wNd8aqpGUne6Q==\n-----END CERTIFICATE-----\n"
 }
-
 ```
 
 # Client SSL Certificate
@@ -446,31 +581,39 @@ Generate self-signed client SSL certificate with CA signing for centminmod.com w
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600
-2020/09/12 11:27:16 [INFO] generate received request
-2020/09/12 11:27:16 [INFO] received CSR
-2020/09/12 11:27:16 [INFO] generating key: ecdsa-256
-2020/09/12 11:27:16 [INFO] encoded CSR
-2020/09/12 11:27:16 [INFO] signed certificate with serial number 510718541091169151831828772721541812450962802420
+
+cfssl gencert -config /etc/cfssl/profile.json -profile client -cn centminmod.com -hostname centminmod.com -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.comca-intermediate-key.pem centminmod.com.csr.json > centminmod.com.json
+2020/09/12 13:04:42 [INFO] generate received request
+2020/09/12 13:04:42 [INFO] received CSR
+2020/09/12 13:04:42 [INFO] generating key: ecdsa-256
+2020/09/12 13:04:42 [INFO] encoded CSR
+2020/09/12 13:04:42 [INFO] signed certificate with serial number 583605021620236404490827357599685976341855883610
+
+cfssljson -f centminmod.com.json -bare centminmod.com
+
+
+openssl x509 -in centminmod.com.pem -text -noout
+
 Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            59:75:69:53:c8:3c:90:37:22:94:51:b6:20:05:94:7b:11:a9:86:f4
+            66:39:c1:17:10:b5:58:fd:61:27:a9:25:65:bc:49:85:7f:c0:51:5a
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Validity
-            Not Before: Sep 12 11:22:00 2020 GMT
-            Not After : Sep 10 11:22:00 2030 GMT
+            Not Before: Sep 12 13:00:00 2020 GMT
+            Not After : Sep 10 13:00:00 2030 GMT
         Subject: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:5e:be:ec:12:95:8a:e6:fb:06:f2:84:87:31:8d:
-                    33:26:07:a5:03:a1:61:3f:b9:a5:76:41:12:34:f8:
-                    18:ac:8c:d3:78:f5:cc:4d:5d:77:dd:20:ee:f9:b0:
-                    c6:eb:53:d7:34:f5:16:2f:0b:f6:75:8b:b7:f5:6f:
-                    94:9b:ff:56:b0
+                    04:10:ed:0d:e3:8f:a0:61:cf:fc:5d:50:7c:ef:04:
+                    82:e2:8a:2a:04:3f:41:83:b0:46:73:39:c3:48:6f:
+                    02:b2:f0:ef:0d:60:6b:9c:de:5d:a9:2e:db:4f:a5:
+                    98:c3:ba:da:f1:e1:f2:0d:16:17:30:b3:14:a6:89:
+                    d5:86:b8:aa:8c
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -481,14 +624,14 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:FALSE
             X509v3 Subject Key Identifier: 
-                27:38:62:64:AB:E7:C7:48:D3:DE:98:26:33:45:89:09:B2:11:52:8E
+                4F:9F:53:3C:17:4A:E9:C0:6A:23:F2:E7:E3:5B:F6:B8:D4:F7:85:D9
             X509v3 Subject Alternative Name: 
                 DNS:centminmod.com
     Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:21:00:ff:db:2a:bd:76:58:43:a2:4c:5d:5e:79:86:
-         db:bb:5a:03:26:4f:3b:16:cf:bb:d3:22:76:b6:e2:59:3a:48:
-         70:02:20:03:5e:eb:01:f2:de:d8:1e:e7:75:db:38:fa:40:f6:
-         5d:4a:94:e7:7e:0f:99:80:26:02:3a:2c:a1:a9:2b:13:95
+         30:45:02:21:00:86:79:b0:d0:cf:17:47:d8:b2:b3:1b:49:48:
+         89:25:d8:d5:dd:c9:3f:87:f8:5f:ec:10:cb:a2:9f:58:89:ad:
+         27:02:20:1c:1a:18:e3:7e:0e:2c:c0:20:3c:1f:c6:e7:45:f2:
+         29:27:31:72:ba:a6:02:82:32:16:b4:71:a4:7e:bb:ed:f5
 
 client cert: /etc/cfssl/clientcerts/centminmod.com.pem
 client key: /etc/cfssl/clientcerts/centminmod.com-key.pem
@@ -520,16 +663,16 @@ client csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
       "centminmod.com"
     ]
   },
-  "serial_number": "510718541091169151831828772721541812450962802420",
+  "serial_number": "583605021620236404490827357599685976341855883610",
   "sans": [
     "centminmod.com"
   ],
-  "not_before": "2020-09-12T11:22:00Z",
-  "not_after": "2030-09-10T11:22:00Z",
+  "not_before": "2020-09-12T13:00:00Z",
+  "not_after": "2030-09-10T13:00:00Z",
   "sigalg": "ECDSAWithSHA256",
   "authority_key_id": "",
-  "subject_key_id": "27:38:62:64:AB:E7:C7:48:D3:DE:98:26:33:45:89:09:B2:11:52:8E",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICBzCCAa2gAwIBAgIUWXVpU8g8kDcilFG2IAWUexGphvQwCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMTIyMDBaFw0z\nMDA5MTAxMTIyMDBaMEsxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcq\nhkjOPQIBBggqhkjOPQMBBwNCAARevuwSlYrm+wbyhIcxjTMmB6UDoWE/uaV2QRI0\n+BisjNN49cxNXXfdIO75sMbrU9c09RYvC/Z1i7f1b5Sb/1awo28wbTAOBgNVHQ8B\nAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNV\nHQ4EFgQUJzhiZKvnx0jT3pgmM0WJCbIRUo4wGQYDVR0RBBIwEIIOY2VudG1pbm1v\nZC5jb20wCgYIKoZIzj0EAwIDSAAwRQIhAP/bKr12WEOiTF1eeYbbu1oDJk87Fs+7\n0yJ2tuJZOkhwAiADXusB8t7YHud12zj6QPZdSpTnfg+ZgCYCOiyhqSsTlQ==\n-----END CERTIFICATE-----\n"
+  "subject_key_id": "4F:9F:53:3C:17:4A:E9:C0:6A:23:F2:E7:E3:5B:F6:B8:D4:F7:85:D9",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICBzCCAa2gAwIBAgIUZjnBFxC1WP1hJ6klZbxJhX/AUVowCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMzAwMDBaFw0z\nMDA5MTAxMzAwMDBaMEsxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcq\nhkjOPQIBBggqhkjOPQMBBwNCAAQQ7Q3jj6Bhz/xdUHzvBILiiioEP0GDsEZzOcNI\nbwKy8O8NYGuc3l2pLttPpZjDutrx4fINFhcwsxSmidWGuKqMo28wbTAOBgNVHQ8B\nAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNV\nHQ4EFgQUT59TPBdK6cBqI/Ln41v2uNT3hdkwGQYDVR0RBBIwEIIOY2VudG1pbm1v\nZC5jb20wCgYIKoZIzj0EAwIDSAAwRQIhAIZ5sNDPF0fYsrMbSUiJJdjV3ck/h/hf\n7BDLop9Yia0nAiAcGhjjfg4swCA8H8bnRfIpJzFyuqYCgjIWtHGkfrvt9Q==\n-----END CERTIFICATE-----\n"
 }
 ```
 
@@ -537,31 +680,39 @@ Generate self-signed client SSL certificate with CA signing for client.centminmo
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600 client
-2020/09/12 11:27:39 [INFO] generate received request
-2020/09/12 11:27:39 [INFO] received CSR
-2020/09/12 11:27:39 [INFO] generating key: ecdsa-256
-2020/09/12 11:27:39 [INFO] encoded CSR
-2020/09/12 11:27:39 [INFO] signed certificate with serial number 480680860407487031356125533623210121082093482064
+
+cfssl gencert -config /etc/cfssl/profile.json -profile client -cn client.centminmod.com -hostname client.centminmod.com -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.comca-intermediate-key.pem client.centminmod.com.csr.json > client.centminmod.com.json
+2020/09/12 13:05:09 [INFO] generate received request
+2020/09/12 13:05:09 [INFO] received CSR
+2020/09/12 13:05:09 [INFO] generating key: ecdsa-256
+2020/09/12 13:05:09 [INFO] encoded CSR
+2020/09/12 13:05:09 [INFO] signed certificate with serial number 195215568395031250743425933051693886324494469655
+
+cfssljson -f client.centminmod.com.json -bare client.centminmod.com
+
+
+openssl x509 -in client.centminmod.com.pem -text -noout
+
 Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            54:32:79:a9:e4:bc:04:91:de:bb:d5:77:b8:f1:68:bd:a6:7c:b0:50
+            22:31:c4:d2:9a:30:84:72:e2:1d:1b:6e:e9:61:5f:cc:65:0a:8a:17
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Validity
-            Not Before: Sep 12 11:23:00 2020 GMT
-            Not After : Sep 10 11:23:00 2030 GMT
+            Not Before: Sep 12 13:00:00 2020 GMT
+            Not After : Sep 10 13:00:00 2030 GMT
         Subject: C=US, ST=CA, L=San Francisco, CN=client.centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:74:5c:b4:39:4b:93:ba:9c:31:03:f8:9c:92:42:
-                    10:65:96:0e:9b:65:aa:67:ca:84:b1:25:d9:23:20:
-                    38:b0:49:b0:dc:dd:c5:18:92:fc:df:df:d3:aa:92:
-                    30:95:85:11:88:9f:bb:61:91:8b:d4:3f:f6:3d:19:
-                    94:65:8a:79:75
+                    04:e7:54:57:fb:e7:84:af:1a:13:8e:21:d6:3c:53:
+                    0c:d1:2c:c0:ce:ed:9a:b2:79:96:c4:bc:2a:96:49:
+                    ee:78:64:ff:66:d0:97:05:77:86:38:96:37:c9:f8:
+                    d1:64:03:de:8f:57:38:95:38:fb:0e:8c:2c:42:a3:
+                    a4:8c:07:30:8d
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -572,17 +723,17 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:FALSE
             X509v3 Subject Key Identifier: 
-                7B:56:47:1E:CB:CD:2E:50:74:C2:C4:63:9F:52:E6:EB:95:4D:A2:C6
+                AD:B7:CB:B5:9E:56:AC:DB:76:4A:AB:D0:A4:8E:CF:FC:32:82:45:8F
             X509v3 Authority Key Identifier: 
-                keyid:7E:E3:AE:DE:26:F8:86:85:63:BD:58:49:25:14:FB:97:98:2B:34:5F
+                keyid:EB:26:7F:00:60:EA:2D:2B:44:F1:46:D8:A3:BF:91:3A:DE:BF:B9:07
 
             X509v3 Subject Alternative Name: 
                 DNS:client.centminmod.com
     Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:20:3e:bc:3c:35:09:72:9c:67:b4:ff:08:de:31:1d:
-         51:ca:a3:92:86:5f:a0:c4:08:fb:76:6e:bb:c5:e1:28:b0:3e:
-         02:21:00:92:d4:48:6d:89:4a:00:65:c6:90:84:40:30:37:6a:
-         56:82:7c:9d:da:da:bc:8e:20:b1:47:38:22:a7:ec:c7:5a
+         30:46:02:21:00:f6:aa:30:69:65:98:21:3f:b7:a8:a2:54:a3:
+         cd:f6:1f:1d:78:f3:91:42:0b:ef:5a:07:e4:3f:4d:02:96:13:
+         8d:02:21:00:e7:25:75:86:1f:f1:f2:73:24:ef:61:47:df:3e:
+         7c:a6:f1:5d:8d:b0:05:33:ec:9a:22:aa:56:2e:23:13:8f:1e
 
 client cert: /etc/cfssl/clientcerts/client.centminmod.com.pem
 client key: /etc/cfssl/clientcerts/client.centminmod.com-key.pem
@@ -614,16 +765,16 @@ client csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
       "centminmod.com"
     ]
   },
-  "serial_number": "480680860407487031356125533623210121082093482064",
+  "serial_number": "195215568395031250743425933051693886324494469655",
   "sans": [
     "client.centminmod.com"
   ],
-  "not_before": "2020-09-12T11:23:00Z",
-  "not_after": "2030-09-10T11:23:00Z",
+  "not_before": "2020-09-12T13:00:00Z",
+  "not_after": "2030-09-10T13:00:00Z",
   "sigalg": "ECDSAWithSHA256",
-  "authority_key_id": "7E:E3:AE:DE:26:F8:86:85:63:BD:58:49:25:14:FB:97:98:2B:34:5F",
-  "subject_key_id": "7B:56:47:1E:CB:CD:2E:50:74:C2:C4:63:9F:52:E6:EB:95:4D:A2:C6",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICODCCAd6gAwIBAgIUVDJ5qeS8BJHeu9V3uPFovaZ8sFAwCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMTIzMDBaFw0z\nMDA5MTAxMTIzMDBaMFIxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEeMBwGA1UEAxMVY2xpZW50LmNlbnRtaW5tb2QuY29t\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEdFy0OUuTupwxA/ickkIQZZYOm2Wq\nZ8qEsSXZIyA4sEmw3N3FGJL839/TqpIwlYURiJ+7YZGL1D/2PRmUZYp5daOBmDCB\nlTAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/\nBAIwADAdBgNVHQ4EFgQUe1ZHHsvNLlB0wsRjn1Lm65VNosYwHwYDVR0jBBgwFoAU\nfuOu3ib4hoVjvVhJJRT7l5grNF8wIAYDVR0RBBkwF4IVY2xpZW50LmNlbnRtaW5t\nb2QuY29tMAoGCCqGSM49BAMCA0gAMEUCID68PDUJcpxntP8I3jEdUcqjkoZfoMQI\n+3Zuu8XhKLA+AiEAktRIbYlKAGXGkIRAMDdqVoJ8ndravI4gsUc4Iqfsx1o=\n-----END CERTIFICATE-----\n"
+  "authority_key_id": "EB:26:7F:00:60:EA:2D:2B:44:F1:46:D8:A3:BF:91:3A:DE:BF:B9:07",
+  "subject_key_id": "AD:B7:CB:B5:9E:56:AC:DB:76:4A:AB:D0:A4:8E:CF:FC:32:82:45:8F",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICOTCCAd6gAwIBAgIUIjHE0powhHLiHRtu6WFfzGUKihcwCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMzAwMDBaFw0z\nMDA5MTAxMzAwMDBaMFIxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEeMBwGA1UEAxMVY2xpZW50LmNlbnRtaW5tb2QuY29t\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE51RX++eErxoTjiHWPFMM0SzAzu2a\nsnmWxLwqlknueGT/ZtCXBXeGOJY3yfjRZAPej1c4lTj7DowsQqOkjAcwjaOBmDCB\nlTAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/\nBAIwADAdBgNVHQ4EFgQUrbfLtZ5WrNt2SqvQpI7P/DKCRY8wHwYDVR0jBBgwFoAU\n6yZ/AGDqLStE8UbYo7+ROt6/uQcwIAYDVR0RBBkwF4IVY2xpZW50LmNlbnRtaW5t\nb2QuY29tMAoGCCqGSM49BAMCA0kAMEYCIQD2qjBpZZghP7eoolSjzfYfHXjzkUIL\n71oH5D9NApYTjQIhAOcldYYf8fJzJO9hR98+fKbxXY2wBTPsmiKqVi4jE48e\n-----END CERTIFICATE-----\n"
 }
 ```
 
@@ -633,31 +784,39 @@ Generate self-signed peer wildcard SSL certificate with CA signing for centminmo
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer centminmod.com 87600 wildcard
-2020/09/12 11:38:18 [INFO] generate received request
-2020/09/12 11:38:18 [INFO] received CSR
-2020/09/12 11:38:18 [INFO] generating key: ecdsa-256
-2020/09/12 11:38:18 [INFO] encoded CSR
-2020/09/12 11:38:18 [INFO] signed certificate with serial number 417857750383195807981289036429602876449452266039
+
+cfssl gencert -config /etc/cfssl/profile.json -profile peer -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.com-ca-intermediate-key.pem centminmod.com.csr.json > centminmod.com.json
+2020/09/12 13:05:48 [INFO] generate received request
+2020/09/12 13:05:48 [INFO] received CSR
+2020/09/12 13:05:48 [INFO] generating key: ecdsa-256
+2020/09/12 13:05:48 [INFO] encoded CSR
+2020/09/12 13:05:48 [INFO] signed certificate with serial number 53335912518482692307540007920694465212839499471
+
+cfssljson -f centminmod.com.json -bare centminmod.com
+
+
+openssl x509 -in centminmod.com.pem -text -noout
+
 Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            49:31:63:ba:8e:90:60:db:19:cd:69:6c:5f:78:d3:78:1f:21:12:37
+            09:57:aa:3f:a7:50:62:83:31:5f:fa:a4:5d:6e:a5:2b:f9:ea:16:cf
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Validity
-            Not Before: Sep 12 11:33:00 2020 GMT
-            Not After : Sep 10 11:33:00 2030 GMT
+            Not Before: Sep 12 13:01:00 2020 GMT
+            Not After : Sep 10 13:01:00 2030 GMT
         Subject: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:b9:2a:a6:aa:c6:75:91:d9:2a:79:a2:30:44:a1:
-                    2c:f8:92:1a:cf:3f:6b:a5:6b:f0:34:c5:a7:12:59:
-                    db:51:12:4b:e4:9f:fb:3d:60:c2:db:60:d5:83:3c:
-                    bf:79:58:82:57:03:67:3c:61:b7:fb:fd:9e:77:19:
-                    5a:b7:ee:92:3e
+                    04:8a:ae:87:8b:89:51:ed:1a:5b:30:31:99:2b:aa:
+                    be:f3:82:ca:29:a9:32:61:f8:e7:da:7b:1e:84:9f:
+                    ea:a0:9f:ec:b1:ec:57:42:17:88:3c:37:a8:87:d7:
+                    a4:b9:66:ec:13:3c:e2:04:76:48:8e:4e:d1:d1:ed:
+                    31:ad:65:7e:1f
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -668,14 +827,14 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:FALSE
             X509v3 Subject Key Identifier: 
-                1B:46:8F:8E:74:6B:6E:D1:37:BB:E4:E6:52:CA:5C:8A:3C:37:5D:32
+                23:24:C4:3D:87:9E:F5:84:D3:63:57:D3:35:AC:40:48:DE:0C:89:0B
             X509v3 Subject Alternative Name: 
                 DNS:centminmod.com, DNS:*.centminmod.com
     Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:20:6e:2e:f4:56:e3:a3:0e:aa:7e:19:f7:0e:8e:33:
-         fd:81:55:fc:d3:15:39:46:8d:e2:25:5c:77:9b:da:76:36:7b:
-         02:21:00:be:6f:a5:ac:00:43:e1:46:65:f2:d5:7c:c7:98:52:
-         13:2d:32:09:bf:3b:f4:b8:e9:c5:24:1e:c3:b3:cb:ca:86
+         30:46:02:21:00:f4:93:30:8a:42:b0:1c:96:1e:7a:b5:ec:31:
+         97:f0:ce:1a:8a:e1:ba:fb:da:1c:85:22:80:bf:9c:c0:47:60:
+         22:02:21:00:b2:51:f9:d5:0a:ef:84:5b:b9:ab:7d:03:9f:fe:
+         94:19:3a:16:cc:d8:e8:a2:f2:82:f9:30:8a:21:05:43:3c:40
 
 peer cert: /etc/cfssl/peercerts/centminmod.com.pem
 peer key: /etc/cfssl/peercerts/centminmod.com-key.pem
@@ -707,19 +866,18 @@ peer csr profile: /etc/cfssl/peercerts/centminmod.com.csr.json
       "centminmod.com"
     ]
   },
-  "serial_number": "417857750383195807981289036429602876449452266039",
+  "serial_number": "53335912518482692307540007920694465212839499471",
   "sans": [
     "centminmod.com",
     "*.centminmod.com"
   ],
-  "not_before": "2020-09-12T11:33:00Z",
-  "not_after": "2030-09-10T11:33:00Z",
+  "not_before": "2020-09-12T13:01:00Z",
+  "not_after": "2030-09-10T13:01:00Z",
   "sigalg": "ECDSAWithSHA256",
   "authority_key_id": "",
-  "subject_key_id": "1B:46:8F:8E:74:6B:6E:D1:37:BB:E4:E6:52:CA:5C:8A:3C:37:5D:32",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICJTCCAcugAwIBAgIUSTFjuo6QYNsZzWlsX3jTeB8hEjcwCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMTMzMDBaFw0z\nMDA5MTAxMTMzMDBaMEsxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcq\nhkjOPQIBBggqhkjOPQMBBwNCAAS5KqaqxnWR2Sp5ojBEoSz4khrPP2ula/A0xacS\nWdtREkvkn/s9YMLbYNWDPL95WIJXA2c8Ybf7/Z53GVq37pI+o4GMMIGJMA4GA1Ud\nDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDAYDVR0T\nAQH/BAIwADAdBgNVHQ4EFgQUG0aPjnRrbtE3u+TmUspcijw3XTIwKwYDVR0RBCQw\nIoIOY2VudG1pbm1vZC5jb22CECouY2VudG1pbm1vZC5jb20wCgYIKoZIzj0EAwID\nSAAwRQIgbi70VuOjDqp+GfcOjjP9gVX80xU5Ro3iJVx3m9p2NnsCIQC+b6WsAEPh\nRmXy1XzHmFITLTIJvzv0uOnFJB7Ds8vKhg==\n-----END CERTIFICATE-----\n"
+  "subject_key_id": "23:24:C4:3D:87:9E:F5:84:D3:63:57:D3:35:AC:40:48:DE:0C:89:0B",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICJjCCAcugAwIBAgIUCVeqP6dQYoMxX/qkXW6lK/nqFs8wCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMzAxMDBaFw0z\nMDA5MTAxMzAxMDBaMEsxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEXMBUGA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcq\nhkjOPQIBBggqhkjOPQMBBwNCAASKroeLiVHtGlswMZkrqr7zgsopqTJh+Ofaex6E\nn+qgn+yx7FdCF4g8N6iH16S5ZuwTPOIEdkiOTtHR7TGtZX4fo4GMMIGJMA4GA1Ud\nDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDAYDVR0T\nAQH/BAIwADAdBgNVHQ4EFgQUIyTEPYee9YTTY1fTNaxASN4MiQswKwYDVR0RBCQw\nIoIOY2VudG1pbm1vZC5jb22CECouY2VudG1pbm1vZC5jb20wCgYIKoZIzj0EAwID\nSQAwRgIhAPSTMIpCsByWHnq17DGX8M4aiuG6+9ochSKAv5zAR2AiAiEAslH51Qrv\nhFu5q30Dn/6UGToWzNjoovKC+TCKIQVDPEA=\n-----END CERTIFICATE-----\n"
 }
-
 ```
 
 # Peer SSL Certificate
@@ -728,31 +886,39 @@ Generate self-signed peer SSL certificate with CA signing for peer.centminmod.co
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer centminmod.com 87600 peer
-2020/09/12 11:35:41 [INFO] generate received request
-2020/09/12 11:35:41 [INFO] received CSR
-2020/09/12 11:35:41 [INFO] generating key: ecdsa-256
-2020/09/12 11:35:41 [INFO] encoded CSR
-2020/09/12 11:35:41 [INFO] signed certificate with serial number 318535675488440494537446464360803320408370491724
+
+cfssl gencert -config /etc/cfssl/profile.json -profile peer -cn peer.centminmod.com -hostname peer.centminmod.com -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.comca-intermediate-key.pem peer.centminmod.com.csr.json > peer.centminmod.com.json
+2020/09/12 13:06:24 [INFO] generate received request
+2020/09/12 13:06:24 [INFO] received CSR
+2020/09/12 13:06:24 [INFO] generating key: ecdsa-256
+2020/09/12 13:06:24 [INFO] encoded CSR
+2020/09/12 13:06:24 [INFO] signed certificate with serial number 259982623557110093038084835114256286224157936901
+
+cfssljson -f peer.centminmod.com.json -bare peer.centminmod.com
+
+
+openssl x509 -in peer.centminmod.com.pem -text -noout
+
 Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            37:cb:a2:39:ae:18:47:e4:98:61:70:b3:cf:07:f9:e7:4a:5e:b1:4c
+            2d:8a:06:27:42:23:45:82:fc:b1:45:a7:83:ce:8e:14:ba:2a:8d:05
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Validity
-            Not Before: Sep 12 11:31:00 2020 GMT
-            Not After : Sep 10 11:31:00 2030 GMT
+            Not Before: Sep 12 13:01:00 2020 GMT
+            Not After : Sep 10 13:01:00 2030 GMT
         Subject: C=US, ST=CA, L=San Francisco, CN=peer.centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:16:20:4c:98:ba:fb:70:0e:f4:d2:54:45:3c:9c:
-                    09:2a:c7:94:49:6d:2a:47:ca:e1:f3:75:11:7d:53:
-                    30:47:72:fe:2d:ce:a7:c2:85:55:30:85:09:87:ca:
-                    b0:4f:b5:58:44:6b:61:56:eb:57:22:13:a5:bc:de:
-                    a5:e9:ab:70:52
+                    04:b6:c2:4e:6f:f5:36:34:5b:6f:90:89:90:43:3e:
+                    c3:8f:f5:fc:a7:f3:c9:df:9c:a3:91:8d:ce:b1:97:
+                    1f:67:29:de:f0:41:b9:f5:26:7d:0e:26:9a:01:55:
+                    f5:66:85:97:58:5b:2b:8b:b7:7f:b8:cf:2a:de:89:
+                    0a:70:3f:9a:3e
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -763,17 +929,17 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:FALSE
             X509v3 Subject Key Identifier: 
-                BA:70:A6:09:91:C2:E4:DC:73:6D:CC:CA:AE:69:98:32:6B:2A:E3:F2
+                8C:84:64:0F:5D:79:7F:22:59:C7:72:60:49:40:E0:D8:24:BF:4E:B3
             X509v3 Authority Key Identifier: 
-                keyid:7E:E3:AE:DE:26:F8:86:85:63:BD:58:49:25:14:FB:97:98:2B:34:5F
+                keyid:EB:26:7F:00:60:EA:2D:2B:44:F1:46:D8:A3:BF:91:3A:DE:BF:B9:07
 
             X509v3 Subject Alternative Name: 
                 DNS:peer.centminmod.com
     Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:20:76:d9:47:91:e0:f0:a2:67:68:1b:92:2f:63:34:
-         84:5b:36:0c:b4:c0:cf:16:cf:41:ee:7c:7a:78:66:15:f9:f8:
-         02:21:00:83:de:bb:3b:db:24:f7:f4:a1:6e:38:22:13:b9:c6:
-         e0:dd:df:91:a0:5d:a2:80:33:61:f6:67:9c:8f:6e:6c:aa
+         30:46:02:21:00:86:ca:cc:e4:8e:50:6c:0c:f3:a8:0a:ec:2c:
+         bc:be:57:c5:0c:ca:e1:c8:b3:25:27:0d:a2:8e:c9:ca:09:bb:
+         72:02:21:00:f6:4f:5b:9f:f3:8e:c9:f4:f0:33:5b:d0:ba:e5:
+         a6:31:8a:dc:23:9f:a8:fb:c0:cf:3c:0c:4b:2d:75:1c:18:ff
 
 peer cert: /etc/cfssl/peercerts/peer.centminmod.com.pem
 peer key: /etc/cfssl/peercerts/peer.centminmod.com-key.pem
@@ -805,16 +971,15 @@ peer csr profile: /etc/cfssl/peercerts/peer.centminmod.com.csr.json
       "centminmod.com"
     ]
   },
-  "serial_number": "318535675488440494537446464360803320408370491724",
+  "serial_number": "259982623557110093038084835114256286224157936901",
   "sans": [
     "peer.centminmod.com"
   ],
-  "not_before": "2020-09-12T11:31:00Z",
-  "not_after": "2030-09-10T11:31:00Z",
+  "not_before": "2020-09-12T13:01:00Z",
+  "not_after": "2030-09-10T13:01:00Z",
   "sigalg": "ECDSAWithSHA256",
-  "authority_key_id": "7E:E3:AE:DE:26:F8:86:85:63:BD:58:49:25:14:FB:97:98:2B:34:5F",
-  "subject_key_id": "BA:70:A6:09:91:C2:E4:DC:73:6D:CC:CA:AE:69:98:32:6B:2A:E3:F2",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICPjCCAeSgAwIBAgIUN8uiOa4YR+SYYXCzzwf550pesUwwCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMTMxMDBaFw0z\nMDA5MTAxMTMxMDBaMFAxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEcMBoGA1UEAxMTcGVlci5jZW50bWlubW9kLmNvbTBZ\nMBMGByqGSM49AgEGCCqGSM49AwEHA0IABBYgTJi6+3AO9NJURTycCSrHlEltKkfK\n4fN1EX1TMEdy/i3Op8KFVTCFCYfKsE+1WERrYVbrVyITpbzepemrcFKjgaAwgZ0w\nDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDATAM\nBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBS6cKYJkcLk3HNtzMquaZgyayrj8jAfBgNV\nHSMEGDAWgBR+467eJviGhWO9WEklFPuXmCs0XzAeBgNVHREEFzAVghNwZWVyLmNl\nbnRtaW5tb2QuY29tMAoGCCqGSM49BAMCA0gAMEUCIHbZR5Hg8KJnaBuSL2M0hFs2\nDLTAzxbPQe58enhmFfn4AiEAg967O9sk9/ShbjgiE7nG4N3fkaBdooAzYfZnnI9u\nbKo=\n-----END CERTIFICATE-----\n"
+  "authority_key_id": "EB:26:7F:00:60:EA:2D:2B:44:F1:46:D8:A3:BF:91:3A:DE:BF:B9:07",
+  "subject_key_id": "8C:84:64:0F:5D:79:7F:22:59:C7:72:60:49:40:E0:D8:24:BF:4E:B3",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICPzCCAeSgAwIBAgIULYoGJ0IjRYL8sUWng86OFLoqjQUwCgYIKoZIzj0EAwIw\nSzELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRcwFQYDVQQDEw5jZW50bWlubW9kLmNvbTAeFw0yMDA5MTIxMzAxMDBaFw0z\nMDA5MTAxMzAxMDBaMFAxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UE\nBxMNU2FuIEZyYW5jaXNjbzEcMBoGA1UEAxMTcGVlci5jZW50bWlubW9kLmNvbTBZ\nMBMGByqGSM49AgEGCCqGSM49AwEHA0IABLbCTm/1NjRbb5CJkEM+w4/1/Kfzyd+c\no5GNzrGXH2cp3vBBufUmfQ4mmgFV9WaFl1hbK4u3f7jPKt6JCnA/mj6jgaAwgZ0w\nDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDATAM\nBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBSMhGQPXXl/IlnHcmBJQODYJL9OszAfBgNV\nHSMEGDAWgBTrJn8AYOotK0TxRtijv5E63r+5BzAeBgNVHREEFzAVghNwZWVyLmNl\nbnRtaW5tb2QuY29tMAoGCCqGSM49BAMCA0kAMEYCIQCGyszkjlBsDPOoCuwsvL5X\nxQzK4cizJScNoo7Jygm7cgIhAPZPW5/zjsn08DNb0LrlpjGK3COfqPvAzzwMSy11\nHBj/\n-----END CERTIFICATE-----\n"
 }
-
 ```
