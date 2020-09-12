@@ -26,6 +26,7 @@ curl -k --cert /etc/cfssl/clientcerts/client.centminmod.com.pem https://domain.c
 
 * [Usage](#usage)
 * [CA Certificate](#ca-certificate)
+* [Server Wildcard SSL Certificate](#server-wildcard-ssl-certificate)
 * [Server SSL Certificate](#server-ssl-certificate)
 * [Client SSL Certificate](#client-ssl-certificate)
 
