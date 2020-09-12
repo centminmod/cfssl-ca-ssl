@@ -273,6 +273,11 @@ cat /etc/cfssl/centminmod.com-ca.pem /etc/cfssl/centminmod.com-ca-intermediate.p
 
 Generate self-signed server wildcard SSL certificate with CA signing for centminmod.com with `TLS Web Server Authentication` using `wildcard` option.
 
+* server cert: /etc/cfssl/servercerts/centminmod.com.pem
+* server key: /etc/cfssl/servercerts/centminmod.com-key.pem
+* server csr: /etc/cfssl/servercerts/centminmod.com.csr
+* server csr profile: /etc/cfssl/servercerts/centminmod.com.csr.json
+
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600 wildcard
 
@@ -384,6 +389,11 @@ ssl_certificate_key  /etc/cfssl/servercerts/centminmod.com-key.pem;
 
 Generate self-signed server SSL certificate with CA signing for centminmod.com with `TLS Web Server Authentication`
 
+* server cert: /etc/cfssl/servercerts/centminmod.com.pem
+* server key: /etc/cfssl/servercerts/centminmod.com-key.pem
+* server csr: /etc/cfssl/servercerts/centminmod.com.csr
+* server csr profile: /etc/cfssl/servercerts/centminmod.com.csr.json
+
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600
 
@@ -491,6 +501,11 @@ ssl_certificate_key  /etc/cfssl/servercerts/centminmod.com-key.pem;
 ```
 
 Generate self-signed server SSL certificate with CA signing for server.centminmod.com subdomain with `TLS Web Server Authentication`
+
+* server cert: /etc/cfssl/servercerts/server.centminmod.com.pem
+* server key: /etc/cfssl/servercerts/server.centminmod.com-key.pem
+* server csr: /etc/cfssl/servercerts/server.centminmod.com.csr
+* server csr profile: /etc/cfssl/servercerts/server.centminmod.com.csr.json
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600 server
@@ -602,6 +617,12 @@ ssl_certificate_key  /etc/cfssl/servercerts/server.centminmod.com-key.pem;
 
 Generate self-signed client SSL certificate with CA signing for centminmod.com with `TLS Web Client Authentication`
 
+* client pkc12: /etc/cfssl/clientcerts/centminmod.com.p12
+* client cert: /etc/cfssl/clientcerts/centminmod.com.pem
+* client key: /etc/cfssl/clientcerts/centminmod.com-key.pem
+* client csr: /etc/cfssl/clientcerts/centminmod.com.csr
+* client csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
+
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600
 
@@ -709,6 +730,12 @@ client csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
 ```
 
 Generate self-signed client SSL certificate with CA signing for client.centminmod.com subdomain with `TLS Web Client Authentication`
+
+* client pkc12: /etc/cfssl/clientcerts/client.centminmod.com.p12
+* client cert: /etc/cfssl/clientcerts/client.centminmod.com.pem
+* client key: /etc/cfssl/clientcerts/client.centminmod.com-key.pem
+* client csr: /etc/cfssl/clientcerts/client.centminmod.com.csr
+* client csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600 client
@@ -820,6 +847,12 @@ client csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
 
 Generate self-signed peer wildcard SSL certificate with CA signing for centminmod.com subdomain with `TLS Web Client Authentication` and `TLS Web Server Authentication` 
 
+* peer pkc12: /etc/cfssl/peercerts/centminmod.com.p12
+* peer cert: /etc/cfssl/peercerts/centminmod.com.pem
+* peer key: /etc/cfssl/peercerts/centminmod.com-key.pem
+* peer csr: /etc/cfssl/peercerts/centminmod.com.csr
+* peer csr profile: /etc/cfssl/peercerts/centminmod.com.csr.json
+
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer centminmod.com 87600 wildcard
 
@@ -930,6 +963,12 @@ peer csr profile: /etc/cfssl/peercerts/centminmod.com.csr.json
 # Peer SSL Certificate
 
 Generate self-signed peer SSL certificate with CA signing for peer.centminmod.com subdomain with `TLS Web Client Authentication` and `TLS Web Server Authentication` 
+
+* peer pkc12: /etc/cfssl/peercerts/peer.centminmod.com.p12
+* peer cert: /etc/cfssl/peercerts/peer.centminmod.com.pem
+* peer key: /etc/cfssl/peercerts/peer.centminmod.com-key.pem
+* peer csr: /etc/cfssl/peercerts/peer.centminmod.com.csr
+* peer csr profile: /etc/cfssl/peercerts/peer.centminmod.com.csr.json
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer centminmod.com 87600 peer
