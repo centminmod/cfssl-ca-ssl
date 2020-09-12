@@ -43,19 +43,19 @@ Generate CA certificate & keys
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-ca domain.com expiryhrs
 
 Generate TLS server certificate & keys
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server domain.com expiryhrs server
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server ca-domain.com expiryhrs server sitedomain.com
 
 Generate TLS server wildcard certificate & keys
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server domain.com expiryhrs wildcard
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server ca-domain.com expiryhrs wildcard sitedomain.com
 
 Generate TLS Client certificate & keys
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client domain.com expiryhrs client
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client ca-domain.com expiryhrs client sitedomain.com
 
 Generate TLS Peer certificate & keys
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer domain.com expiryhrs peer
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer ca-domain.com expiryhrs peer sitedomain.com
 
 Generate TLS Peer wildcard certificate & keys
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer domain.com expiryhrs wildcard
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer ca-domain.com expiryhrs wildcard sitedomain.com
 ```
 
 # CA Certificate
@@ -279,7 +279,7 @@ Generate self-signed server wildcard SSL certificate with CA signing for centmin
 * server csr profile: /etc/cfssl/servercerts/centminmod.com.csr.json
 
 ```
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600 wildcard
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600 wildcard centminmod.com
 
 cfssl gencert -config /etc/cfssl/profile.json -profile server -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.com-ca-intermediate-key.pem centminmod.com.csr.json > centminmod.com.json
 2020/09/12 13:22:33 [INFO] generate received request
@@ -508,7 +508,7 @@ Generate self-signed server SSL certificate with CA signing for server.centminmo
 * server csr profile: /etc/cfssl/servercerts/server.centminmod.com.csr.json
 
 ```
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600 server
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600 server centminmod.com
 
 cfssl gencert -config /etc/cfssl/profile.json -profile server -cn server.centminmod.com -hostname server.centminmod.com -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.comca-intermediate-key.pem server.centminmod.com.csr.json > server.centminmod.com.json
 2020/09/12 13:23:57 [INFO] generate received request
@@ -738,7 +738,7 @@ Generate self-signed client SSL certificate with CA signing for client.centminmo
 * client csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
 
 ```
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600 client
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600 client centminmod.com
 
 cfssl gencert -config /etc/cfssl/profile.json -profile client -cn client.centminmod.com -hostname client.centminmod.com -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.comca-intermediate-key.pem client.centminmod.com.csr.json > client.centminmod.com.json
 2020/09/12 13:43:10 [INFO] generate received request
@@ -854,7 +854,7 @@ Generate self-signed peer wildcard SSL certificate with CA signing for centminmo
 * peer csr profile: /etc/cfssl/peercerts/centminmod.com.csr.json
 
 ```
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer centminmod.com 87600 wildcard
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer centminmod.com 87600 wildcard centminmod.com
 
 cfssl gencert -config /etc/cfssl/profile.json -profile peer -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.com-ca-intermediate-key.pem centminmod.com.csr.json > centminmod.com.json
 2020/09/12 13:48:15 [INFO] generate received request
@@ -971,7 +971,7 @@ Generate self-signed peer SSL certificate with CA signing for peer.centminmod.co
 * peer csr profile: /etc/cfssl/peercerts/peer.centminmod.com.csr.json
 
 ```
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer centminmod.com 87600 peer
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer centminmod.com 87600 peer centminmod.com
 
 cfssl gencert -config /etc/cfssl/profile.json -profile peer -cn peer.centminmod.com -hostname peer.centminmod.com -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.comca-intermediate-key.pem peer.centminmod.com.csr.json > peer.centminmod.com.json
 2020/09/12 13:48:43 [INFO] generate received request

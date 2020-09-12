@@ -139,21 +139,36 @@ ca_gen() {
 server_gen() {
   d=${1:-centminmod.com}
   subdomain=${3:-server}
-  if [ "$3" = 'wildcard' ]; then
-    serverdomain="$d"
+  sitedomain=${4:-centminmod.com}
+  if [[ "$3" = 'wildcard' ]]; then
+    serverdomain="$sitedomain"
+    domain=${serverdomain}
+  elif [[ "$3" = 'www' ]]; then
+    serverdomain="${subdomain}.${sitedomain}"
+    domain=${sitedomain}
   elif [ "$3" ]; then
-    serverdomain="${subdomain}.$d"
+    serverdomain="${subdomain}.${sitedomain}"
+    domain=${serverdomain}
   else
-    serverdomain="$d"
+    serverdomain="${sitedomain}"
+    domain=${serverdomain}
   fi
-  domain=${serverdomain}
   expiry=${2:-87600}
   if [[ -f "${cfdir}/profile.json" && -f "${cfdir}/${d}-ca-intermediate.pem" && -f "${cfdir}/${d}-ca-intermediate-key.pem" ]]; then
     mkdir -p "${servercerts_dir}"
     cd "${servercerts_dir}"
     cfssl print-defaults csr | jq 'del(.CN, .hosts)' > "${domain}.csr.json"
-    if [ "$3" = 'wildcard' ]; then
-      echo "{\"CN\":\"${serverdomain}\",\"hosts\":[\"${serverdomain}\",\"*.${serverdomain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
+    if [[ "$3" = 'wildcard' ]]; then
+      echo "{\"CN\":\"${domain}\",\"hosts\":[\"${domain}\",\"*.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
+      if [[ "$debug" = [yY] ]]; then
+        echo
+        echo "cfssl gencert -config ${cfdir}/profile.json -profile server -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}-ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
+      fi
+      cfssl gencert -config "${cfdir}/profile.json" -profile server \
+            -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
+            "${domain}.csr.json" > "${domain}.json"
+    elif [ "$3" = 'www' ]; then
+      echo "{\"CN\":\"${domain}\",\"hosts\":[\"${domain}\",\"www.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
       if [[ "$debug" = [yY] ]]; then
         echo
         echo "cfssl gencert -config ${cfdir}/profile.json -profile server -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}-ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
@@ -169,17 +184,17 @@ server_gen() {
       cfssl gencert -config "${cfdir}/profile.json" -profile server -cn "${domain}" -hostname "${domain}" \
           -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
           "${domain}.csr.json" > "${domain}.json"
-  fi
+    fi
     if [[ "$debug" = [yY] ]]; then
       echo
-        echo "cfssljson -f ${domain}.json -bare ${domain}"
-        echo
+      echo "cfssljson -f ${domain}.json -bare ${domain}"
+      echo
     fi
     cfssljson -f "${domain}.json" -bare "${domain}"
     if [[ "$debug" = [yY] ]]; then
       echo
-        echo "openssl x509 -in "${domain}.pem" -text -noout"
-        echo
+      echo "openssl x509 -in "${domain}.pem" -text -noout"
+      echo
     fi
     openssl x509 -in "${domain}.pem" -text -noout
     echo
@@ -211,24 +226,52 @@ server_gen() {
 client_gen() {
   d=${1:-centminmod.com}
   subdomain=${3:-client}
-  if [ "$3" ]; then
-    clientdomain="${subdomain}.$d"
+  sitedomain=${4:-centminmod.com}
+  if [[ "$3" = 'wildcard' ]]; then
+    clientdomain="$sitedomain"
+    domain=${clientdomain}
+  elif [[ "$3" = 'www' ]]; then
+    clientdomain="${subdomain}.${sitedomain}"
+    domain=${sitedomain}
+  elif [ "$3" ]; then
+    clientdomain="${subdomain}.${sitedomain}"
+    domain=${clientdomain}
   else
-    clientdomain="$d"
+    clientdomain="${sitedomain}"
+    domain=${serverdomain}
   fi
-  domain=${clientdomain}
   expiry=${2:-87600}
   if [[ -f "${cfdir}/profile.json" && -f "${cfdir}/${d}-ca-intermediate.pem" && -f "${cfdir}/${d}-ca-intermediate-key.pem" ]]; then
     mkdir -p "${clientcerts_dir}"
     cd "${clientcerts_dir}"
     cfssl print-defaults csr | jq 'del(.CN, .hosts)' > "${domain}.csr.json"
-    if [[ "$debug" = [yY] ]]; then
-      echo
-      echo "cfssl gencert -config ${cfdir}/profile.json -profile client -cn ${domain} -hostname ${domain} -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
-    fi
-    cfssl gencert -config "${cfdir}/profile.json" -profile client -cn "${domain}" -hostname "${domain}" \
+    if [[ "$3" = 'wildcard' ]]; then
+      echo "{\"CN\":\"${domain}\",\"hosts\":[\"${domain}\",\"*.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
+      if [[ "$debug" = [yY] ]]; then
+        echo
+        echo "cfssl gencert -config ${cfdir}/profile.json -profile client -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}-ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
+      fi
+      cfssl gencert -config "${cfdir}/profile.json" -profile client \
+            -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
+            "${domain}.csr.json" > "${domain}.json"
+    elif [ "$3" = 'www' ]; then
+      echo "{\"CN\":\"${domain}\",\"hosts\":[\"${domain}\",\"www.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
+      if [[ "$debug" = [yY] ]]; then
+        echo
+        echo "cfssl gencert -config ${cfdir}/profile.json -profile client -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}-ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
+      fi
+      cfssl gencert -config "${cfdir}/profile.json" -profile client \
+            -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
+            "${domain}.csr.json" > "${domain}.json"
+    else
+      if [[ "$debug" = [yY] ]]; then
+        echo
+        echo "cfssl gencert -config ${cfdir}/profile.json -profile client -cn ${domain} -hostname ${domain} -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
+      fi
+      cfssl gencert -config "${cfdir}/profile.json" -profile server -cn "${domain}" -hostname "${domain}" \
           -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
           "${domain}.csr.json" > "${domain}.json"
+    fi
     if [[ "$debug" = [yY] ]]; then
       echo
       echo "cfssljson -f ${domain}.json -bare ${domain}"
@@ -278,21 +321,37 @@ client_gen() {
 peer_gen() {
   d=${1:-centminmod.com}
   subdomain=${3:-server}
-  if [ "$3" = 'wildcard' ]; then
-    serverdomain="$d"
+  sitedomain=${4:-centminmod.com}
+  if [[ "$3" = 'wildcard' ]]; then
+    peerdomain="$sitedomain"
+    domain=${peerdomain}
+  elif [[ "$3" = 'www' ]]; then
+    peerdomain="${subdomain}.${sitedomain}"
+    domain=${sitedomain}
   elif [ "$3" ]; then
-    serverdomain="${subdomain}.$d"
+    peerdomain="${subdomain}.${sitedomain}"
+    domain=${peerdomain}
   else
-    serverdomain="$d"
+    peerdomain="${sitedomain}"
+    domain=${serverdomain}
   fi
-  domain=${serverdomain}
   expiry=${2:-87600}
   if [[ -f "${cfdir}/profile.json" && -f "${cfdir}/${d}-ca-intermediate.pem" && -f "${cfdir}/${d}-ca-intermediate-key.pem" ]]; then
     mkdir -p "${peercerts_dir}"
     cd "${peercerts_dir}"
     cfssl print-defaults csr | jq 'del(.CN, .hosts)' > "${domain}.csr.json"
-    if [ "$3" = 'wildcard' ]; then
-      echo "{\"CN\":\"${serverdomain}\",\"hosts\":[\"${serverdomain}\",\"*.${serverdomain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
+    if [[ "$3" = 'wildcard' ]]; then
+      echo "{\"CN\":\"${domain}\",\"hosts\":[\"${domain}\",\"*.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
+
+      if [[ "$debug" = [yY] ]]; then
+        echo
+        echo "cfssl gencert -config ${cfdir}/profile.json -profile peer -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}-ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
+      fi
+      cfssl gencert -config "${cfdir}/profile.json" -profile peer \
+            -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
+            "${domain}.csr.json" > "${domain}.json"
+    elif [[ "$3" = 'www' ]]; then
+      echo "{\"CN\":\"${domain}\",\"hosts\":[\"${domain}\",\"www.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
 
       if [[ "$debug" = [yY] ]]; then
         echo
@@ -366,38 +425,38 @@ help_function() {
   echo "$0 gen-ca domain.com expiryhrs"
   echo
   echo "Generate TLS server certificate & keys"
-  echo "$0 gen-server domain.com expiryhrs server"
+  echo "$0 gen-server ca-domain.com expiryhrs server sitedomain.com"
   echo
   echo "Generate TLS server wildcard certificate & keys"
-  echo "$0 gen-server domain.com expiryhrs wildcard"
+  echo "$0 gen-server ca-domain.com expiryhrs wildcard sitedomain.com"
   echo
   echo "Generate TLS Client certificate & keys"
-  echo "$0 gen-client domain.com expiryhrs client"
+  echo "$0 gen-client ca-domain.com expiryhrs client sitedomain.com"
   echo
   echo "Generate TLS Peer certificate & keys"
-  echo "$0 gen-peer domain.com expiryhrs peer"
+  echo "$0 gen-peer ca-domain.com expiryhrs peer sitedomain.com"
   echo
   echo "Generate TLS Peer wildcard certificate & keys"
-  echo "$0 gen-peer domain.com expiryhrs wildcard"
+  echo "$0 gen-peer ca-domain.com expiryhrs wildcard sitedomain.com"
 }
 
 case "$1" in
   gen-all )
     ca_gen $2 $3
-    server_gen $2 $3 $4
-    client_gen $2 $3 $4
+    server_gen $2 $3 $4 $5
+    client_gen $2 $3 $4 $5
     ;;
   gen-ca )
     ca_gen $2 $3
     ;;
   gen-server )
-    server_gen $2 $3 $4
+    server_gen $2 $3 $4 $5
     ;;
   gen-client )
-    client_gen $2 $3 $4
+    client_gen $2 $3 $4 $5
     ;;
   gen-peer )
-    peer_gen $2 $3 $4
+    peer_gen $2 $3 $4 $5
     ;;
   reset )
     reset_dir
