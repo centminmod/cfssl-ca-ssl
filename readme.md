@@ -782,6 +782,33 @@ client key: /etc/cfssl/clientcerts/centminmod.com-key.pem
 client csr: /etc/cfssl/clientcerts/centminmod.com.csr
 client csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
 
+Generate /etc/cfssl/clientcerts/cemtminmod.com-client-bundle.pem
+cat /etc/cfssl/clientcerts/cemtminmod.com.pem /etc/cfssl/centminmod.com-ca-bundle.pem > /etc/cfssl/clientcerts/cemtminmod.com-client-bundle.pem
+client bundle chain: /etc/cfssl/clientcerts/cemtminmod.com-client-bundle.pem
+
+
+Check certificate purpose:
+openssl x509 -in /etc/cfssl/clientcerts/cemtminmod.com.pem -noout -purpose
+Certificate purposes:
+SSL client : Yes
+SSL client CA : No
+SSL server : No
+SSL server CA : No
+Netscape SSL server : No
+Netscape SSL server CA : No
+S/MIME signing : No
+S/MIME signing CA : No
+S/MIME encryption : No
+S/MIME encryption CA : No
+CRL signing : No
+CRL signing CA : No
+Any Purpose : Yes
+Any Purpose CA : Yes
+OCSP helper : Yes
+OCSP helper CA : No
+Time Stamp signing : No
+Time Stamp signing CA : No
+
 {
   "subject": {
     "common_name": "centminmod.com",
@@ -895,6 +922,33 @@ client cert: /etc/cfssl/clientcerts/client.centminmod.com.pem
 client key: /etc/cfssl/clientcerts/client.centminmod.com-key.pem
 client csr: /etc/cfssl/clientcerts/client.centminmod.com.csr
 client csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
+
+Generate /etc/cfssl/clientcerts/client.centminmod.com-client-bundle.pem
+cat /etc/cfssl/clientcerts/client.centminmod.com.pem /etc/cfssl/centminmod.com-ca-bundle.pem > /etc/cfssl/clientcerts/client.centminmod.com-client-bundle.pem
+client bundle chain: /etc/cfssl/clientcerts/client.centminmod.com-client-bundle.pem
+
+
+Check certificate purpose:
+openssl x509 -in /etc/cfssl/clientcerts/client.centminmod.com.pem -noout -purpose
+Certificate purposes:
+SSL client : Yes
+SSL client CA : No
+SSL server : No
+SSL server CA : No
+Netscape SSL server : No
+Netscape SSL server CA : No
+S/MIME signing : No
+S/MIME signing CA : No
+S/MIME encryption : No
+S/MIME encryption CA : No
+CRL signing : No
+CRL signing CA : No
+Any Purpose : Yes
+Any Purpose CA : Yes
+OCSP helper : Yes
+OCSP helper CA : No
+Time Stamp signing : No
+Time Stamp signing CA : No
 
 {
   "subject": {
@@ -1012,6 +1066,33 @@ peer key: /etc/cfssl/peercerts/centminmod.com-key.pem
 peer csr: /etc/cfssl/peercerts/centminmod.com.csr
 peer csr profile: /etc/cfssl/peercerts/centminmod.com.csr.json
 
+Generate /etc/cfssl/peercerts/centminmod.com-peer-bundle.pem
+cat /etc/cfssl/peercerts/centminmod.com.pem /etc/cfssl/centminmod.com-ca-bundle.pem > /etc/cfssl/peercerts/centminmod.com-peer-bundle.pem
+peer bundle chain: /etc/cfssl/clientcerts/centminmod.com-client-bundle.pem
+
+
+Check certificate purpose:
+openssl x509 -in /etc/cfssl/peercerts/centminmod.com.pem -noout -purpose
+Certificate purposes:
+SSL client : Yes
+SSL client CA : No
+SSL server : Yes
+SSL server CA : No
+Netscape SSL server : Yes
+Netscape SSL server CA : No
+S/MIME signing : No
+S/MIME signing CA : No
+S/MIME encryption : No
+S/MIME encryption CA : No
+CRL signing : No
+CRL signing CA : No
+Any Purpose : Yes
+Any Purpose CA : Yes
+OCSP helper : Yes
+OCSP helper CA : No
+Time Stamp signing : No
+Time Stamp signing CA : No
+
 {
   "subject": {
     "common_name": "centminmod.com",
@@ -1128,6 +1209,33 @@ peer cert: /etc/cfssl/peercerts/peer.centminmod.com.pem
 peer key: /etc/cfssl/peercerts/peer.centminmod.com-key.pem
 peer csr: /etc/cfssl/peercerts/peer.centminmod.com.csr
 peer csr profile: /etc/cfssl/peercerts/peer.centminmod.com.csr.json
+
+Generate /etc/cfssl/peercerts/centminmod.com-peer-bundle.pem
+cat /etc/cfssl/peercerts/centminmod.com.pem /etc/cfssl/centminmod.com-ca-bundle.pem > /etc/cfssl/peercerts/centminmod.com-peer-bundle.pem
+peer bundle chain: /etc/cfssl/clientcerts/centminmod.com-client-bundle.pem
+
+
+Check certificate purpose:
+openssl x509 -in /etc/cfssl/peercerts/centminmod.com.pem -noout -purpose
+Certificate purposes:
+SSL client : Yes
+SSL client CA : No
+SSL server : Yes
+SSL server CA : No
+Netscape SSL server : Yes
+Netscape SSL server CA : No
+S/MIME signing : No
+S/MIME signing CA : No
+S/MIME encryption : No
+S/MIME encryption CA : No
+CRL signing : No
+CRL signing CA : No
+Any Purpose : Yes
+Any Purpose CA : Yes
+OCSP helper : Yes
+OCSP helper CA : No
+Time Stamp signing : No
+Time Stamp signing CA : No
 
 {
   "subject": {
