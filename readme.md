@@ -12,6 +12,7 @@ Using [cfssl](https://github.com/cloudflare/cfssl) to generate a CA certificate/
 * [Peer SSL Certificate](#peer-wildcard-ssl-certificate)
 * [Nginx Configuration](#nginx-configuration)
 * [Browser Client TLS Authentication](#browser-client-tls-authentication)
+* [Curl Client TLS Authentication](#curl-client-tls-authentication)
 
 # Usage
 
@@ -1186,7 +1187,7 @@ if ($ssl_client_verify != SUCCESS) {
 
 # Browser Client TLS Authentication
 
-Opera Web Browser Client connection for domain https://cems.msdomain.com adding generated client pkcs12 file /etc/cfssl/clientcerts/cems.msdomain.com.p12 to Opera browser certificates management store.
+Opera Web Browser Client connection for domain https://cems.msdomain.com adding generated client pkcs12 file `/etc/cfssl/clientcerts/cems.msdomain.com.p12` to Opera browser certificates management store.
 
 ```
 # create CA & CA Intermediate certs
@@ -1211,7 +1212,7 @@ Using Opera browser to access site without client TLS certificate will give 400 
 
 ![opera](/screenshots/nginx-tls-client-authentictaion-01.png)
 
-Add to Opera Manage Certificates store the generated client pkcs12 file /etc/cfssl/clientcerts/cems.msdomain.com.p12
+Add to Opera Manage Certificates store the generated client pkcs12 file `/etc/cfssl/clientcerts/cems.msdomain.com.p12`
 
 ![opera](/screenshots/opera-manage-certificates-01.png)
 ![opera](/screenshots/opera-manage-certificates-02.png)
@@ -1226,7 +1227,7 @@ Intended purpose = Client Authentication
 
 ![opera](/screenshots/opera-manage-certificates-09.png)
 
-Opera browser first time only prompt to selct the imported client TLS certificate to use to authenticate against https://cems.msdomain.com Nginx site.
+Opera browser first time only prompt to select the imported client TLS certificate to use to authenticate against https://cems.msdomain.com Nginx site.
 
 ![opera](/screenshots/opera-manage-certificates-10.png)
 
@@ -1234,8 +1235,216 @@ Once authenticated, subsequent access via Opera browser is permitted
 
 ![opera](/screenshots/opera-manage-certificates-11.png)
 
+# Curl Client TLS Authentication
+
+For CentOS 7.x curl, need to add the generated client pkcs12 file `/etc/cfssl/clientcerts/cems.msdomain.com.p12` to nssdb database used by curl. Otherwise, curl requests will get a `HTTP/1.1 400 Bad Request` response. At password prompt just hit enter as no password was assigned.
+
+```
+pk12util -d sql:/etc/pki/nssdb -i /etc/cfssl/clientcerts/cems.msdomain.com.p12
+Enter password for PKCS12 file: 
+pk12util: no nickname for cert in PKCS12 file.
+pk12util: using nickname: cems.msdomain.com
+pk12util: PKCS12 IMPORT SUCCESSFUL
+```
+
+Check added certificate via certutil command
+
+```
+certutil -d sql:/etc/pki/nssdb -L -n cems.msdomain.com
+```
+
+output
+
+```
+certutil -d sql:/etc/pki/nssdb -L -n cems.msdomain.com
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            69:bd:8b:8d:11:2b:05:19:c8:33:be:98:a4:8b:11:38:
+            55:44:1c:11
+        Signature Algorithm: X9.62 ECDSA signature with SHA256
+        Issuer: "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,
+            C=US"
+        Validity:
+            Not Before: Sun Sep 13 11:37:00 2020
+            Not After : Wed Sep 11 11:37:00 2030
+        Subject: "CN=cems.msdomain.com,L=San Francisco,ST=CA,C=US"
+        Subject Public Key Info:
+            Public Key Algorithm: X9.62 elliptic curve public key
+                Args:
+                    06:08:2a:86:48:ce:3d:03:01:07
+            EC Public Key:
+                PublicValue:
+                    04:e2:aa:35:e6:fd:89:e5:ab:f5:b3:ac:97:5d:3d:fb:
+                    cd:78:0f:9b:40:43:c1:7a:ce:e6:e4:d9:f9:0c:55:7c:
+                    a1:3d:54:73:a1:e4:b3:22:b7:3a:ac:2b:fc:a5:ce:66:
+                    ce:02:e0:7a:56:97:f7:15:e0:42:0f:bf:83:8b:d9:8a:
+                    33
+                Curve: ANSI X9.62 elliptic curve prime256v1 (aka secp256r1, NIST P-256)
+        Signed Extensions:
+            Name: Certificate Key Usage
+            Critical: True
+            Usages: Digital Signature
+                    Key Encipherment
+
+            Name: Extended Key Usage
+                TLS Web Client Authentication Certificate
+
+            Name: Certificate Basic Constraints
+            Critical: True
+            Data: Is not a CA.
+
+            Name: Certificate Subject Key ID
+            Data:
+                53:7f:f5:cd:28:e9:db:e4:77:4e:73:2f:43:9a:57:22:
+                9a:11:be:3d
+
+            Name: Certificate Authority Key Identifier
+            Key ID:
+                aa:ec:ed:0a:75:07:ff:2a:e2:72:7e:e4:9a:58:35:70:
+                6f:2f:7a:21
+
+            Name: Certificate Subject Alt Name
+            DNS name: "cems.msdomain.com"
+
+    Signature Algorithm: X9.62 ECDSA signature with SHA256
+    Signature:
+        30:45:02:20:69:e1:17:a6:76:ca:19:a1:56:81:47:50:
+        cd:ce:77:75:d1:a9:c6:fe:cd:c0:12:3b:73:a1:f6:e5:
+        43:f2:c2:eb:02:21:00:f9:d1:5e:72:1f:cf:72:1b:54:
+        3f:3b:91:4f:bb:24:6e:04:1e:61:e7:22:ca:fc:98:b0:
+        f2:1c:08:94:d6:62:ed
+    Fingerprint (SHA-256):
+        3B:3C:C3:5A:86:A0:59:A2:DD:BC:88:C5:6A:DF:11:60:37:C3:9F:AE:28:22:2B:89:DE:83:2C:0E:6C:69:D8:13
+    Fingerprint (SHA1):
+        EC:B6:4E:64:17:A2:5E:7E:71:66:B6:3F:36:91:DA:90:96:00:C6:DB
+
+    Mozilla-CA-Policy: false (attribute missing)
+    Certificate Trust Flags:
+        SSL Flags:
+            User
+        Email Flags:
+            User
+        Object Signing Flags:
+            User
+```
+
+To remove it from nssdb database:
+
+```
+certutil -d sql:/etc/pki/nssdb -D -n cems.msdomain.com
+```
+
+verify you can connect via curl
+
+```
+curl -Ikv https://cems.msdomain.com
+```
+
+output - notice the line `NSS: using client certificate: cems.msdomain.com`
+
+```
+curl -Ikv https://cems.msdomain.com                                                 
+* About to connect() to cems.msdomain.com port 443 (#0)
+*   Trying 192.168.0.18...
+* Connected to cems.msdomain.com (192.168.0.18) port 443 (#0)
+* Initializing NSS with certpath: sql:/etc/pki/nssdb
+* skipping SSL peer certificate verification
+* NSS: using client certificate: cems.msdomain.com
+*       subject: CN=cems.msdomain.com,L=San Francisco,ST=CA,C=US
+*       start date: Sep 13 11:37:00 2020 GMT
+*       expire date: Sep 11 11:37:00 2030 GMT
+*       common name: cems.msdomain.com
+*       issuer: CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US
+* SSL connection using TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+* Server certificate:
+*       subject: CN=cems.msdomain.com,L=San Francisco,ST=CA,C=US
+*       start date: Sep 13 11:27:00 2020 GMT
+*       expire date: Sep 11 11:27:00 2030 GMT
+*       common name: cems.msdomain.com
+*       issuer: CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US
+> HEAD / HTTP/1.1
+> User-Agent: curl/7.29.0
+> Host: cems.msdomain.com
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+HTTP/1.1 200 OK
+< Date: Sun, 13 Sep 2020 13:25:53 GMT
+Date: Sun, 13 Sep 2020 13:25:53 GMT
+< Content-Type: text/html; charset=utf-8
+Content-Type: text/html; charset=utf-8
+< Content-Length: 6597
+Content-Length: 6597
+< Last-Modified: Sun, 13 Sep 2020 08:56:10 GMT
+Last-Modified: Sun, 13 Sep 2020 08:56:10 GMT
+< Connection: keep-alive
+Connection: keep-alive
+< Vary: Accept-Encoding
+Vary: Accept-Encoding
+< ETag: "5f5ddeaa-19c5"
+ETag: "5f5ddeaa-19c5"
+< Server: nginx centminmod
+Server: nginx centminmod
+< X-Powered-By: centminmod
+X-Powered-By: centminmod
+< X-Xss-Protection: 1; mode=block
+X-Xss-Protection: 1; mode=block
+< X-Content-Type-Options: nosniff
+X-Content-Type-Options: nosniff
+< Accept-Ranges: bytes
+Accept-Ranges: bytes
+
+< 
+* Connection #0 to host cems.msdomain.com left intact
+```
+
 # Other Checks
 
 ```
-echo -n | openssl s_client -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem -connect client.centminmod.com:443 
+echo -n | openssl s_client -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem -cert /etc/cfssl/clientcerts/cems.msdomain.com.pem -key /etc/cfssl/clientcerts/cems.msdomain.com-key.pem -connect cems.msdomain.com:443
+```
+```
+echo -n | openssl s_client -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem -cert /etc/cfssl/clientcerts/cems.msdomain.com.pem -key /etc/cfssl/clientcerts/cems.msdomain.com-key.pem -connect cems.msdomain.com:443
+.com:443
+CONNECTED(00000003)
+depth=2 C = US, ST = CA, L = San Francisco, OU = Root CA, CN = Root CA
+verify return:1
+depth=1 C = US, ST = CA, L = San Francisco, OU = Intermediate CA, CN = Intermediate CA
+verify return:1
+depth=0 C = US, ST = CA, L = San Francisco, CN = cems.msdomain.com
+verify return:1
+---
+Certificate chain
+ 0 s:/C=US/ST=CA/L=San Francisco/CN=cems.msdomain.com
+   i:/C=US/ST=CA/L=San Francisco/OU=Intermediate CA/CN=Intermediate CA
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+...snipped...
+-----END CERTIFICATE-----
+subject=/C=US/ST=CA/L=San Francisco/CN=cems.msdomain.com
+issuer=/C=US/ST=CA/L=San Francisco/OU=Intermediate CA/CN=Intermediate CA
+---
+Acceptable client certificate CA names
+/C=US/ST=CA/L=San Francisco/OU=Root CA/CN=Root CA
+/C=US/ST=CA/L=San Francisco/OU=Intermediate CA/CN=Intermediate CA
+Client Certificate Types: RSA sign, DSA sign, ECDSA sign
+Requested Signature Algorithms: ECDSA+SHA256:ECDSA+SHA384:ECDSA+SHA512:0x07+0x08:0x08+0x08:0x09+0x08:0x0A+0x08:0x0B+0x08:0x04+0x08:0x05+0x08:0x06+0x08:RSA+SHA256:RSA+SHA384:RSA+SHA512:ECDSA+SHA224:ECDSA+SHA1:RSA+SHA224:RSA+SHA1:DSA+SHA224:DSA+SHA1:DSA+SHA256:DSA+SHA384:DSA+SHA512
+Shared Requested Signature Algorithms: ECDSA+SHA256:ECDSA+SHA384:ECDSA+SHA512:RSA+SHA256:RSA+SHA384:RSA+SHA512:ECDSA+SHA224:ECDSA+SHA1:RSA+SHA224:RSA+SHA1:DSA+SHA224:DSA+SHA1:DSA+SHA256:DSA+SHA384:DSA+SHA512
+Peer signing digest: SHA256
+Server Temp Key: ECDH, P-256, 256 bits
+---
+SSL handshake has read 1928 bytes and written 2193 bytes
+---
+New, TLSv1/SSLv3, Cipher is ECDHE-ECDSA-AES128-GCM-SHA256
+
+...snipped...
+
+    Start Time: 1600000287
+    Timeout   : 300 (sec)
+    Verify return code: 0 (ok)
+---
+DONE
 ```
