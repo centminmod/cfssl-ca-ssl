@@ -10,6 +10,8 @@ Using [cfssl](https://github.com/cloudflare/cfssl) to generate a CA certificate/
 * [Client SSL Certificate](#client-ssl-certificate)
 * [Peer Wildcard SSL Certificate](#peer-wildcard-ssl-certificate)
 * [Peer SSL Certificate](#peer-wildcard-ssl-certificate)
+* [Nginx Configuration](#nginx-configuration)
+* [Browser Client TLS Authentication](#browser-client-tls-authentication)
 
 # Usage
 
@@ -1219,6 +1221,9 @@ Add to Opera Manage Certificates store the generated client pkcs12 file /etc/cfs
 ![opera](/screenshots/opera-manage-certificates-06.png)
 ![opera](/screenshots/opera-manage-certificates-07.png)
 ![opera](/screenshots/opera-manage-certificates-08.png)
+
+Intended purpose = Client Authentication
+
 ![opera](/screenshots/opera-manage-certificates-09.png)
 
 Opera browser first time only prompt to selct the imported client TLS certificate to use to authenticate against https://cems.msdomain.com Nginx site.
