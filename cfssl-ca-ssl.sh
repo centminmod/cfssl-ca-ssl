@@ -1,5 +1,6 @@
 #!/bin/bash
 # for centminmod.com LEMP stack installations
+ver=0.1
 debug='y'
 cfdir='/etc/cfssl'
 servercerts_dir="${cfdir}/servercerts"
@@ -43,7 +44,7 @@ ca_gen() {
   echo "--------------------------------------"
   # cfssl print-defaults csr | sed -e "s|example.net|${domain}|g" > "${domain}.csr.json"
   # jq --arg expires "${expiry}h" '. + {"CA":{"expiry": $expires,"pathlen":0}}' "${domain}.csr.json" > "${domain}-ca.csr.json"
-  echo "{\"CN\":\"${domain}\",\"hosts\":[\"${domain}\",\"www.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"OU\":\"Root CA\",\"L\":\"San Francisco\"}],\"CA\":{\"expiry\":\"${expiry}h\",\"pathlen\":0}}" | jq > "${domain}-ca.csr.json"
+  echo "{\"CN\":\"Root CA\",\"hosts\":[\"${domain}\",\"www.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"OU\":\"Root CA\",\"L\":\"San Francisco\"}],\"CA\":{\"expiry\":\"${expiry}h\",\"pathlen\":0}}" | jq > "${domain}-ca.csr.json"
   if [[ "$debug" = [yY] ]]; then
     echo
     echo "cfssl gencert -initca ${domain}-ca.csr.json | cfssljson -bare ${domain}-ca"
@@ -85,7 +86,7 @@ ca_gen() {
   cd "${cfdir}"
   # cfssl print-defaults csr | sed -e "s|example.net|${domain}|g" > "${domain}-intermediate.csr.json"
   # jq --arg expires "${expiry}h" '. + {"CA":{"expiry": $expires,"pathlen":0}}' "${domain}-intermediate.csr.json" > "${domain}-ca-intermediate.csr.json"
-  echo "{\"CN\":\"${domain}\",\"hosts\":[\"${domain}\",\"www.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"OU\":\"Intermediate CA\",\"L\":\"San Francisco\"}],\"CA\":{\"expiry\":\"${expiry}h\",\"pathlen\":0}}" | jq > "${domain}-ca-intermediate.csr.json"
+  echo "{\"CN\":\"Intermediate CA\",\"hosts\":[\"${domain}\",\"www.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"OU\":\"Intermediate CA\",\"L\":\"San Francisco\"}],\"CA\":{\"expiry\":\"${expiry}h\",\"pathlen\":0}}" | jq > "${domain}-ca-intermediate.csr.json"
   if [[ "$debug" = [yY] ]]; then
     echo
     echo "cfssl gencert -initca ${domain}-ca-intermediate.csr.json | cfssljson -bare ${domain}-ca-intermediate"
@@ -167,7 +168,7 @@ server_gen() {
       cfssl gencert -config "${cfdir}/profile.json" -profile server \
             -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
             "${domain}.csr.json" > "${domain}.json"
-    elif [ "$3" = 'www' ]; then
+    elif [[ "$3" = 'www' ]]; then
       echo "{\"CN\":\"${domain}\",\"hosts\":[\"${domain}\",\"www.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
       if [[ "$debug" = [yY] ]]; then
         echo
@@ -233,12 +234,12 @@ client_gen() {
   elif [[ "$3" = 'www' ]]; then
     clientdomain="${subdomain}.${sitedomain}"
     domain=${sitedomain}
-  elif [ "$3" ]; then
+  elif [[ "$3" ]]; then
     clientdomain="${subdomain}.${sitedomain}"
     domain=${clientdomain}
   else
     clientdomain="${sitedomain}"
-    domain=${serverdomain}
+    domain=${clientdomain}
   fi
   expiry=${2:-87600}
   if [[ -f "${cfdir}/profile.json" && -f "${cfdir}/${d}-ca-intermediate.pem" && -f "${cfdir}/${d}-ca-intermediate-key.pem" ]]; then
@@ -254,7 +255,7 @@ client_gen() {
       cfssl gencert -config "${cfdir}/profile.json" -profile client \
             -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
             "${domain}.csr.json" > "${domain}.json"
-    elif [ "$3" = 'www' ]; then
+    elif [[ "$3" = 'www' ]]; then
       echo "{\"CN\":\"${domain}\",\"hosts\":[\"${domain}\",\"www.${domain}\"],\"key\":{\"algo\":\"ecdsa\",\"size\":256},\"names\":[{\"C\":\"US\",\"ST\":\"CA\",\"L\":\"San Francisco\"}]}" | jq > "${domain}.csr.json"
       if [[ "$debug" = [yY] ]]; then
         echo
@@ -333,7 +334,7 @@ peer_gen() {
     domain=${peerdomain}
   else
     peerdomain="${sitedomain}"
-    domain=${serverdomain}
+    domain=${peerdomain}
   fi
   expiry=${2:-87600}
   if [[ -f "${cfdir}/profile.json" && -f "${cfdir}/${d}-ca-intermediate.pem" && -f "${cfdir}/${d}-ca-intermediate-key.pem" ]]; then
