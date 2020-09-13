@@ -1237,7 +1237,13 @@ Once authenticated, subsequent access via Opera browser is permitted
 
 # Curl Client TLS Authentication
 
-For CentOS 7.x curl, need to add the generated client pkcs12 file `/etc/cfssl/clientcerts/cems.msdomain.com.p12` to nssdb database used by curl. Otherwise, curl requests will get a `HTTP/1.1 400 Bad Request` response. At password prompt just hit enter as no password was assigned.
+For CentOS 7.x curl, need to use `pk12util` command line tool to add the generated client pkcs12 file `/etc/cfssl/clientcerts/cems.msdomain.com.p12` to nssdb database used by curl. Otherwise, curl requests will get a `HTTP/1.1 400 Bad Request` response. At password prompt just hit enter as no password was assigned.
+
+```
+pk12util -d sql:/etc/pki/nssdb -i /etc/cfssl/clientcerts/cems.msdomain.com.p12
+```
+
+output
 
 ```
 pk12util -d sql:/etc/pki/nssdb -i /etc/cfssl/clientcerts/cems.msdomain.com.p12
