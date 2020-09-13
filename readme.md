@@ -1291,6 +1291,13 @@ ssl_verify_depth 1;
 if ($ssl_client_verify != SUCCESS) {
     return 403;
 }
+
+# optional diagnostic headers
+  add_header SSL-Client-Verify $ssl_client_verify;
+  add_header SSL-FP $ssl_client_fingerprint;
+  add_header SSL-IDN $ssl_client_i_dn;
+  add_header SSL-Client-Subject $ssl_client_s_dn;
+  add_header SSL-Client-Expires $ssl_client_v_end;
 ```
 
 # Browser Client TLS Authentication
@@ -1459,7 +1466,7 @@ curl -Ikv https://cems.msdomain.com
 output - notice the line `NSS: using client certificate: cems.msdomain.com`
 
 ```
-curl -Ikv https://cems.msdomain.com                                                 
+curl -Ikv https://cems.msdomain.com                         
 * About to connect() to cems.msdomain.com port 443 (#0)
 *   Trying 192.168.0.18...
 * Connected to cems.msdomain.com (192.168.0.18) port 443 (#0)
@@ -1485,8 +1492,8 @@ curl -Ikv https://cems.msdomain.com
 > 
 < HTTP/1.1 200 OK
 HTTP/1.1 200 OK
-< Date: Sun, 13 Sep 2020 13:25:53 GMT
-Date: Sun, 13 Sep 2020 13:25:53 GMT
+< Date: Sun, 13 Sep 2020 15:43:03 GMT
+Date: Sun, 13 Sep 2020 15:43:03 GMT
 < Content-Type: text/html; charset=utf-8
 Content-Type: text/html; charset=utf-8
 < Content-Length: 6597
@@ -1503,6 +1510,16 @@ ETag: "5f5ddeaa-19c5"
 Server: nginx centminmod
 < X-Powered-By: centminmod
 X-Powered-By: centminmod
+< SSL-Client-Verify: SUCCESS
+SSL-Client-Verify: SUCCESS
+< SSL-FP: ecb64e6417a25e7e7166b63f3691da909600c6db
+SSL-FP: ecb64e6417a25e7e7166b63f3691da909600c6db
+< SSL-IDN: CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US
+SSL-IDN: CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US
+< SSL-Client-Subject: CN=cems.msdomain.com,L=San Francisco,ST=CA,C=US
+SSL-Client-Subject: CN=cems.msdomain.com,L=San Francisco,ST=CA,C=US
+< SSL-Client-Expires: Sep 11 11:37:00 2030 GMT
+SSL-Client-Expires: Sep 11 11:37:00 2030 GMT
 < X-Xss-Protection: 1; mode=block
 X-Xss-Protection: 1; mode=block
 < X-Content-Type-Options: nosniff
