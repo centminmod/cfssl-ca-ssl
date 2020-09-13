@@ -194,10 +194,10 @@ server_gen() {
     cfssljson -f "${domain}.json" -bare "${domain}"
     if [[ "$debug" = [yY] ]]; then
       echo
-      echo "openssl x509 -in "${domain}.pem" -text -noout"
+      echo "openssl x509 -in ${servercerts_dir}/${domain}.pem -text -noout"
       echo
     fi
-    openssl x509 -in "${domain}.pem" -text -noout
+    openssl x509 -in "${servercerts_dir}/${domain}.pem" -text -noout
     echo
     if [ -f "${servercerts_dir}/${domain}.pem" ]; then
       echo "server cert: ${servercerts_dir}/${domain}.pem"
@@ -218,6 +218,12 @@ server_gen() {
     echo -e "ssl_certificate      ${servercerts_dir}/${domain}.pem;\nssl_certificate_key  ${servercerts_dir}/${domain}-key.pem;\n"
     echo "$certinfo"
     echo
+    echo "verify certificate"
+    if [[ "$debug" = [yY] ]]; then
+      echo
+      echo "openssl verify -CAfile ${cfdir}/${d}-ca-bundle.pem ${servercerts_dir}/${domain}.pem"
+    fi
+    openssl verify -CAfile "${cfdir}/${d}-ca-bundle.pem" "${servercerts_dir}/${domain}.pem"
   else
     echo "error: missing required files:"
     echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca-intermediate.pem\n${cfdir}/${d}-ca-intermediate-key.pem"
@@ -269,7 +275,7 @@ client_gen() {
         echo
         echo "cfssl gencert -config ${cfdir}/profile.json -profile client -cn ${domain} -hostname ${domain} -ca ${cfdir}/${d}-ca-intermediate.pem -ca-key ${cfdir}/${d}ca-intermediate-key.pem ${domain}.csr.json > ${domain}.json"
       fi
-      cfssl gencert -config "${cfdir}/profile.json" -profile server -cn "${domain}" -hostname "${domain}" \
+      cfssl gencert -config "${cfdir}/profile.json" -profile client -cn "${domain}" -hostname "${domain}" \
           -ca "${cfdir}/${d}-ca-intermediate.pem" -ca-key "${cfdir}/${d}-ca-intermediate-key.pem" \
           "${domain}.csr.json" > "${domain}.json"
     fi
@@ -281,10 +287,10 @@ client_gen() {
     cfssljson -f "${domain}.json" -bare "${domain}"
     if [[ "$debug" = [yY] ]]; then
       echo
-      echo "openssl x509 -in ${domain}.pem -text -noout"
+      echo "openssl x509 -in ${clientcerts_dir}/${domain}.pem -text -noout"
       echo
     fi
-    openssl x509 -in "${domain}.pem" -text -noout
+    openssl x509 -in "${clientcerts_dir}/${domain}.pem" -text -noout
     echo
     if [[ -f "${clientcerts_dir}/${domain}-key.pem" && -f "${clientcerts_dir}/${domain}.pem" && -f "${cfdir}/${d}-ca-bundle.pem" ]]; then
       echo "Generate pkcs12 format"
@@ -310,9 +316,23 @@ client_gen() {
     fi
     if [ -f "${clientcerts_dir}/${domain}.csr.json" ]; then
       echo "client csr profile: ${clientcerts_dir}/${domain}.csr.json"
+    fi
+    if [[ -f "${clientcerts_dir}/${domain}.pem" && -f "${cfdir}/${d}-ca-bundle.pem" ]]; then
+      if [[ "$debug" = [yY] ]]; then
+        echo
+        echo "Generate ${clientcerts_dir}/${domain}-client-bundle.pem"
+        echo "cat ${clientcerts_dir}/${domain}.pem ${cfdir}/${d}-ca-bundle.pem > ${clientcerts_dir}/${domain}-client-bundle.pem"
+      fi
+      cat "${clientcerts_dir}/${domain}.pem" "${cfdir}/${d}-ca-bundle.pem" > "${clientcerts_dir}/${domain}-client-bundle.pem"
+      echo "client bundle chain: ${clientcerts_dir}/${domain}-client-bundle.pem"
       echo
     fi
     echo "$certinfo"
+    if [[ "$debug" = [yY] ]]; then
+      echo
+      echo "openssl verify -CAfile ${cfdir}/${d}-ca-bundle.pem ${clientcerts_dir}/${domain}.pem"
+    fi
+    openssl verify -CAfile "${cfdir}/${d}-ca-bundle.pem" "${clientcerts_dir}/${domain}.pem"
   else
     echo "error: missing required files:"
     echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca-intermediate.pem\n${cfdir}/${d}-ca-intermediate-key.pem"
@@ -378,10 +398,10 @@ peer_gen() {
     cfssljson -f "${domain}.json" -bare "${domain}"
     if [[ "$debug" = [yY] ]]; then
       echo
-      echo "openssl x509 -in "${domain}.pem" -text -noout"
+      echo "openssl x509 -in ${peercerts_dir}/${domain}.pem -text -noout"
       echo
     fi
-    openssl x509 -in "${domain}.pem" -text -noout
+    openssl x509 -in "${peercerts_dir}/${domain}.pem" -text -noout
     echo
     if [[ -f "${peercerts_dir}/${domain}-key.pem" && -f "${peercerts_dir}/${domain}.pem" && -f "${cfdir}/${d}-ca-bundle.pem" ]]; then
       echo "Generate pkcs12 format"
@@ -407,9 +427,23 @@ peer_gen() {
     fi
     if [ -f "${peercerts_dir}/${domain}.csr.json" ]; then
       echo "peer csr profile: ${peercerts_dir}/${domain}.csr.json"
+    fi
+    if [[ -f "${peercerts_dir}/${domain}.pem" && -f "${cfdir}/${d}-ca-bundle.pem" ]]; then
+      if [[ "$debug" = [yY] ]]; then
+        echo
+        echo "Generate ${peercerts_dir}/${domain}-peer-bundle.pem"
+        echo "cat ${peercerts_dir}/${domain}.pem ${cfdir}/${d}-ca-bundle.pem > ${peercerts_dir}/${domain}-peer-bundle.pem"
+      fi
+      cat "${peercerts_dir}/${domain}.pem" "${cfdir}/${d}-ca-bundle.pem" > "${peercerts_dir}/${domain}-peer-bundle.pem"
+      echo "peer bundle chain: ${clientcerts_dir}/${domain}-client-bundle.pem"
       echo
     fi
     echo "$certinfo"
+    if [[ "$debug" = [yY] ]]; then
+      echo
+      echo "openssl verify -CAfile ${cfdir}/${d}-ca-bundle.pem ${peercerts_dir}/${domain}.pem"
+    fi
+    openssl verify -CAfile "${cfdir}/${d}-ca-bundle.pem" "${peercerts_dir}/${domain}.pem"
     echo
   else
     echo "error: missing required files:"
