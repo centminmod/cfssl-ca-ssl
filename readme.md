@@ -1,27 +1,6 @@
 Using [cfssl](https://github.com/cloudflare/cfssl) to generate a CA certificate/key and to sign server, client and peer self-signed SSL certificates with it. Mainly intended for [Centmin Mod LEMP stack](https://centminmod.com) installations on CentOS 7.x for creating Nginx based TLS/SSL client certificate authentication via [ssl_client_certificate](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_client_certificate) and [ssl_verify_client](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_verify_client) directives using [gen-client option](#client-ssl-certificate).
 
-Nginx Configuration
-
-```
-cp -a /etc/cfssl/centminmod.com-ca-bundle.pem /usr/local/nginx/conf/ssl/cacerts_certificates/centminmod.com-ca-bundle.pem
-```
-
-```
-ssl_client_certificate /usr/local/nginx/conf/ssl/cacerts_certificates/centminmod.com-ca-bundle.pem;
-ssl_verify_client on;
-
-if ($ssl_client_verify != SUCCESS) {
-    return 403;
-}
-```
-
-Client connection
-
-```
-curl -k --cert /etc/cfssl/clientcerts/client.centminmod.com.pem https://domain.com
-```
-
-# Contents
+# cfssl-ca-ssl.sh Contents
 
 
 * [Usage](#usage)
@@ -1185,4 +1164,62 @@ peer csr profile: /etc/cfssl/peercerts/peer.centminmod.com.csr.json
   "subject_key_id": "B9:B3:51:F9:0B:BD:42:27:8F:E6:99:BA:12:9F:10:BF:D6:CB:3A:4C",
   "pem": "-----BEGIN CERTIFICATE-----\nMIICWDCCAf+gAwIBAgIUGEGdy5goaZwSj4pL/cOHQBIJ9/QwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTMwODE3MDBaFw0zMDA5MTEwODE3MDBaMFAxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEcMBoG\nA1UEAxMTcGVlci5jZW50bWlubW9kLmNvbTBZMBMGByqGSM49AgEGCCqGSM49AwEH\nA0IABGkVBXTqjF7+TDx0HYDErH1KNCyqyAcSpT7W9bdZXMn8j6j/EdYYQcQaXerD\nCzTDlCEjoB0M/rqP2MBpUJJ+vM2jgaAwgZ0wDgYDVR0PAQH/BAQDAgWgMB0GA1Ud\nJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQW\nBBS5s1H5C71CJ4/mmboSnxC/1ss6TDAfBgNVHSMEGDAWgBRi9LjF1FiAqqvqZltS\nWrI9L/pLyDAeBgNVHREEFzAVghNwZWVyLmNlbnRtaW5tb2QuY29tMAoGCCqGSM49\nBAMCA0cAMEQCIFDpXEwY0GWvNDSM+roOtYQe/AjTrC0Z9t9bFrVJZyCmAiAf0ame\n4lZQ+gkXRhs35VcJLvZhRVEbRlB264nA3bXIRw==\n-----END CERTIFICATE-----\n"
 }
+```
+
+# Nginx Configuration
+
+```
+cp -a /etc/cfssl/centminmod.com-ca-bundle.pem /usr/local/nginx/conf/ssl/cacerts_certificates/centminmod.com-ca-bundle.pem
+```
+
+```
+ssl_client_certificate /usr/local/nginx/conf/ssl/cacerts_certificates/centminmod.com-ca-bundle.pem;
+ssl_verify_client on;
+ssl_verify_depth 1;
+
+if ($ssl_client_verify != SUCCESS) {
+    return 403;
+}
+```
+
+# Browser Client TLS Authentication
+
+Opera Web Browser Client connection for domain https://cems.msdomain.com adding generated client pkcs12: /etc/cfssl/clientcerts/cems.msdomain.com.p12 to Opera browser certificates management store.
+
+```
+# create CA & CA Intermediate certs
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-ca centminmod.com 87600
+
+# create client TLS certificate for cems.msdomain.com
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600 cems msdomain.com
+```
+
+client TLS certificates generated for cems.msdomain.com
+
+* client pkcs12: /etc/cfssl/clientcerts/cems.msdomain.com.p12
+* client cert: /etc/cfssl/clientcerts/cems.msdomain.com.pem
+* client key: /etc/cfssl/clientcerts/cems.msdomain.com-key.pem
+* client csr: /etc/cfssl/clientcerts/cems.msdomain.com.csr
+* client csr profile: /etc/cfssl/clientcerts/cems.msdomain.com.csr.json
+* client bundle chain: /etc/cfssl/clientcerts/cems.msdomain.com-client-bundle.pem
+
+Opera Browser
+
+![opera](/screenshorts/nginx-tls-client-authentictaion-01.png)
+![opera](/screenshorts/opera-manage-certificates-01.png)
+![opera](/screenshorts/opera-manage-certificates-02.png)
+![opera](/screenshorts/opera-manage-certificates-03.png)
+![opera](/screenshorts/opera-manage-certificates-04.png)
+![opera](/screenshorts/opera-manage-certificates-05.png)
+![opera](/screenshorts/opera-manage-certificates-06.png)
+![opera](/screenshorts/opera-manage-certificates-07.png)
+![opera](/screenshorts/opera-manage-certificates-08.png)
+![opera](/screenshorts/opera-manage-certificates-09.png)
+![opera](/screenshorts/opera-manage-certificates-10.png)
+![opera](/screenshorts/opera-manage-certificates-11.png)
+
+# Other Checks
+
+```
+echo -n | openssl s_client -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem -connect client.centminmod.com:443 
 ```

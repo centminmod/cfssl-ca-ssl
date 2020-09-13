@@ -327,6 +327,11 @@ client_gen() {
       echo "client bundle chain: ${clientcerts_dir}/${domain}-client-bundle.pem"
       echo
     fi
+    echo
+    echo "Check certificate purpose:"
+    echo "openssl x509 -in ${clientcerts_dir}/${domain}.pem -noout -purpose"
+    openssl x509 -in "${clientcerts_dir}/${domain}.pem" -noout -purpose
+    echo
     echo "$certinfo"
     if [[ "$debug" = [yY] ]]; then
       echo
@@ -438,6 +443,11 @@ peer_gen() {
       echo "peer bundle chain: ${clientcerts_dir}/${domain}-client-bundle.pem"
       echo
     fi
+    echo
+    echo "Check certificate purpose:"
+    echo "openssl x509 -in ${peercerts_dir}/${domain}.pem -noout -purpose"
+    openssl x509 -in "${peercerts_dir}/${domain}.pem" -noout -purpose
+    echo
     echo "$certinfo"
     if [[ "$debug" = [yY] ]]; then
       echo
