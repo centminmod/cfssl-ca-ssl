@@ -1184,7 +1184,7 @@ if ($ssl_client_verify != SUCCESS) {
 
 # Browser Client TLS Authentication
 
-Opera Web Browser Client connection for domain https://cems.msdomain.com adding generated client pkcs12: /etc/cfssl/clientcerts/cems.msdomain.com.p12 to Opera browser certificates management store.
+Opera Web Browser Client connection for domain https://cems.msdomain.com adding generated client pkcs12 file /etc/cfssl/clientcerts/cems.msdomain.com.p12 to Opera browser certificates management store.
 
 ```
 # create CA & CA Intermediate certs
@@ -1205,18 +1205,29 @@ client TLS certificates generated for cems.msdomain.com
 
 Opera Browser
 
-![opera](/screenshorts/nginx-tls-client-authentictaion-01.png)
-![opera](/screenshorts/opera-manage-certificates-01.png)
-![opera](/screenshorts/opera-manage-certificates-02.png)
-![opera](/screenshorts/opera-manage-certificates-03.png)
-![opera](/screenshorts/opera-manage-certificates-04.png)
-![opera](/screenshorts/opera-manage-certificates-05.png)
-![opera](/screenshorts/opera-manage-certificates-06.png)
-![opera](/screenshorts/opera-manage-certificates-07.png)
-![opera](/screenshorts/opera-manage-certificates-08.png)
-![opera](/screenshorts/opera-manage-certificates-09.png)
-![opera](/screenshorts/opera-manage-certificates-10.png)
-![opera](/screenshorts/opera-manage-certificates-11.png)
+Using Opera browser to access site without client TLS certificate will give 400 Bad Request error and prevent site access
+
+![opera](/screenshots/nginx-tls-client-authentictaion-01.png)
+
+Add to Opera Manage Certificates store the generated client pkcs12 file /etc/cfssl/clientcerts/cems.msdomain.com.p12
+
+![opera](/screenshots/opera-manage-certificates-01.png)
+![opera](/screenshots/opera-manage-certificates-02.png)
+![opera](/screenshots/opera-manage-certificates-03.png)
+![opera](/screenshots/opera-manage-certificates-04.png)
+![opera](/screenshots/opera-manage-certificates-05.png)
+![opera](/screenshots/opera-manage-certificates-06.png)
+![opera](/screenshots/opera-manage-certificates-07.png)
+![opera](/screenshots/opera-manage-certificates-08.png)
+![opera](/screenshots/opera-manage-certificates-09.png)
+
+Opera browser first time only prompt to selct the imported client TLS certificate to use to authenticate against https://cems.msdomain.com Nginx site.
+
+![opera](/screenshots/opera-manage-certificates-10.png)
+
+Once authenticated, subsequent access via Opera browser is permitted
+
+![opera](/screenshots/opera-manage-certificates-11.png)
 
 # Other Checks
 
