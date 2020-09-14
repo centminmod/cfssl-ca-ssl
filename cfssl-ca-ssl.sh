@@ -1,6 +1,6 @@
 #!/bin/bash
 # for centminmod.com LEMP stack installations
-ver=0.1
+ver=0.2
 debug='y'
 cfdir='/etc/cfssl'
 servercerts_dir="${cfdir}/servercerts"
@@ -338,6 +338,39 @@ client_gen() {
       echo "openssl verify -CAfile ${cfdir}/${d}-ca-bundle.pem ${clientcerts_dir}/${domain}.pem"
     fi
     openssl verify -CAfile "${cfdir}/${d}-ca-bundle.pem" "${clientcerts_dir}/${domain}.pem"
+    echo
+    echo "---------------------------------------------------------------------------"
+    echo "For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate API Upload"
+    echo "---------------------------------------------------------------------------"
+    echo "- https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname"
+    echo "- https://api.cloudflare.com/#per-hostname-authenticated-origin-pull-upload-a-hostname-client-certificate"
+    echo
+    echo "populate variables"
+    echo
+    echo "MYCERT=\$(cat ${clientcerts_dir}/${domain}.pem |perl -pe 's/\r?\n/\\\n/'|sed -e 's/..$//')"
+    echo "MYKEY=\$(cat ${clientcerts_dir}/${domain}-key.pem | grep -v 'BEGIN EC' |perl -pe 's/\r?\n/\\\n/'|sed -e's/..$//')"
+    echo "request_body=\"{ \"certificate\": \"\$MYCERT\", \"private_key\": \"\$MYKEY\" }\""
+    echo
+    echo "export cfzoneid=cf_zone_id"
+    echo "export cfemail=cf_account_email"
+    echo "export cftoken=cf_account_global_api_keytoken"
+    echo
+    echo "curl -sX POST https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames/certificates -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H Content-Type: application/json' -d \"$request_body\" | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt"
+    echo
+    echo "export clientcert_id=\$(jq -r '.result.id' ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt)"
+    echo
+    echo "---------------------------------------------------------------------------"
+    echo "Enable specific hostname Authenticated Origin Pull via Cloudflare API"
+    echo "---------------------------------------------------------------------------"
+    echo
+    echo "curl -sX PUT https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H Content-Type: application/json' -d '{\"config\":[{\"hostname\":\"\$cf_hostname\",\"cert_id\":\"\$clientcert_id\",\"enabled\":true}]}'"
+    echo
+    echo "---------------------------------------------------------------------------"
+    echo "List uploaded Origin TLS Client Authenticatied Certificates"
+    echo "---------------------------------------------------------------------------"
+    echo
+    echo "curl -X GET \"https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth\" -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H Content-Type: application/json'"
+    echo
   else
     echo "error: missing required files:"
     echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca-intermediate.pem\n${cfdir}/${d}-ca-intermediate-key.pem"
