@@ -25,17 +25,20 @@ There are 4 options
   * First argument defines the CA Intermediate prefix labeled domain defined which is used to sign the server self-signed SSL certificate.
   * The second argument is how long the certificate expiry is in hours i.e. 87600 hrs = 10 yrs, 43800 hrs = 5 yrs. 
   * The third argument defines a subdomain name or special `wildcard` option - which when specified adds `*.domain.com` to the certificate SANs (Subject Alternative Name) entries.
-  * The forth argument is the intended domain name for self-signed SSL certificate. You need to have prior ran the `gen-ca` option for this option to work as it needs the CA Intermediate certificate to sign the server self-signed SSL certificate.
+  * The forth argument is the intended domain name for self-signed SSL certificate.
+  * You need to have prior ran the `gen-ca` option for this option to work as it needs the CA Intermediate certificate to sign the server self-signed SSL certificate.
 * `gen-client` - used to generate client self-signed SSL certificates with x509v3 Extended Key Usage = `TLS Web Client Authentication`. Full example shown below in [Browser Client TLS Authentication](#browser-client-tls-authentication) section.
   * First argument defines the CA Intermediate prefix labeled domain defined which is used to sign the server self-signed SSL certificate.
   * The second argument is how long the certificate expiry is in hours i.e. 87600 hrs = 10 yrs, 43800 hrs = 5 yrs. 
   * The third argument defines a subdomain name.
-  * The forth argument is the intended domain name for self-signed SSL certificate. You need to have prior ran the `gen-ca` option for this option to work as it needs the CA Intermediate certificate to sign the client self-signed SSL certificate.
+  * The forth argument is the intended domain name for self-signed SSL certificate.
+  * You need to have prior ran the `gen-ca` option for this option to work as it needs the CA Intermediate certificate to sign the client self-signed SSL certificate.
 * `gen-peer` - used to generate peer self-signed SSL certificates with x509v3 Extended Key Usage = `TLS Web Server Authentication` + `TLS Web Client Authentication`.
   * First argument defines the CA Intermediate prefix labeled domain defined which is used to sign the server self-signed SSL certificate.
   * The second argument is how long the certificate expiry is in hours i.e. 87600 hrs = 10 yrs, 43800 hrs = 5 yrs. 
   * The third argument defines a subdomain name or special `wildcard` option - which when specified adds `*.domain.com` to the certificate SANs (Subject Alternative Name) entries.
-  * The forth argument is the intended domain name for self-signed SSL certificate. You need to have prior ran the `gen-ca` option for this option to work as it needs the CA Intermediate certificate to sign the peer self-signed SSL certificate.
+  * The forth argument is the intended domain name for self-signed SSL certificate.
+  * You need to have prior ran the `gen-ca` option for this option to work as it needs the CA Intermediate certificate to sign the peer self-signed SSL certificate.
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh
