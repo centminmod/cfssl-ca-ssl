@@ -355,7 +355,7 @@ client_gen() {
     echo "export cfemail=cf_account_email"
     echo "export cftoken=cf_account_global_api_keytoken"
     echo
-    echo "curl -sX POST https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames/certificates -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H Content-Type: application/json' -d \"$request_body\" | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt"
+    echo "curl -sX POST https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames/certificates -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \"$request_body\" | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt"
     echo
     echo "export clientcert_id=\$(jq -r '.result.id' ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt)"
     echo
@@ -363,13 +363,13 @@ client_gen() {
     echo "Enable specific hostname Authenticated Origin Pull via Cloudflare API"
     echo "---------------------------------------------------------------------------"
     echo
-    echo "curl -sX PUT https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H Content-Type: application/json' -d '{\"config\":[{\"hostname\":\"\$cf_hostname\",\"cert_id\":\"\$clientcert_id\",\"enabled\":true}]}'"
+    echo "curl -sX PUT https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d '{\"config\":[{\"hostname\":\"\$cf_hostname\",\"cert_id\":\"\$clientcert_id\",\"enabled\":true}]}'"
     echo
     echo "---------------------------------------------------------------------------"
     echo "List uploaded Origin TLS Client Authenticatied Certificates"
     echo "---------------------------------------------------------------------------"
     echo
-    echo "curl -X GET \"https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth\" -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H Content-Type: application/json'"
+    echo "curl -sX GET \"https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth\" -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\""
     echo
   else
     echo "error: missing required files:"
