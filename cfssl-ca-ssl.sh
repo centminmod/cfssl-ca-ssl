@@ -1,6 +1,6 @@
 #!/bin/bash
 # for centminmod.com LEMP stack installations
-ver=0.3
+ver=0.4
 debug='y'
 cfdir='/etc/cfssl'
 servercerts_dir="${cfdir}/servercerts"
@@ -24,6 +24,11 @@ if [[ ! -f "$cfssl_bin" || ! -f "$cfssljson_bin" || ! -f "$cfsslinfo_bin" ]] && 
   if [ -f "$cfssl_bin" ]; then
     cfssl version
   fi
+fi
+if [ ! "$(env | grep '/root/golang/packages/bin')" ]; then
+  # ensure golang binary path is detected on first time golang.sh
+  # installed SSH session
+  export PATH=/root/golang/packages/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/usr/lib64/ccache:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin:/usr/local/go/bin:/root/bin
 fi
 
 reset_dir() {
@@ -410,15 +415,15 @@ client_gen() {
     echo "populate variables"
     echo
     echo "MYCERT=\$(cat ${clientcerts_dir}/${domain}.pem |perl -pe 's/\r?\n/\\\n/'|sed -e 's/..$//')"
-    echo "MYKEY=\$(cat ${clientcerts_dir}/${domain}-key.pem | grep -v 'BEGIN EC' |perl -pe 's/\r?\n/\\\n/'|sed -e's/..$//')"
-    echo "request_body=\"{ \"certificate\": \"\$MYCERT\", \"private_key\": \"\$MYKEY\" }\""
+    echo "MYKEY=\$(cat ${clientcerts_dir}/${domain}-key.pem | perl -pe 's/\r?\n/\\\n/'|sed -e's/..$//' | sed -e 's|\-\-\-\-\-BEGIN EC PRIVATE KEY\-\-\-\-\-\\\n||' -e 's|\-\-\-\-\-END EC PRIVATE KEY\-\-\-\-\-||')"
+    echo "request_body='$(echo "{ "\"certificate"\": "\"\$MYCERT"\", "\"private_key"\": "\"\$MYKEY"\" }")' " | sed -e 's|\"|\\"|g' -e "s|'|\"|g"
     echo
     echo "export cfzoneid=cf_zone_id"
     echo "export cfemail=cf_account_email"
     echo "export cftoken=cf_account_global_api_keytoken"
     echo "export cf_hostname=domain_name_on_ssl_certificate"
     echo
-    echo "curl -sX POST https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames/certificates -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \"$request_body\" | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt"
+    echo "curl -sX POST https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames/certificates -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \"\$request_body\" | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt"
     echo
     echo "export clientcert_id=\$(jq -r '.result.id' ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt)"
     echo

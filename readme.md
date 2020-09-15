@@ -984,8 +984,8 @@ For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate AP
 populate variables
 
 MYCERT=$(cat /etc/cfssl/clientcerts/centminmod.com.pem |perl -pe 's/\r?\n/\\n/'|sed -e 's/..$//')
-MYKEY=$(cat /etc/cfssl/clientcerts/centminmod.com-key.pem | grep -v 'BEGIN EC' |perl -pe 's/\r?\n/\\n/'|sed -e's/..$//')
-request_body="{ "certificate": "$MYCERT", "private_key": "$MYKEY" }"
+MYKEY=$(cat /etc/cfssl/clientcerts/centminmod.com-key.pem | perl -pe 's/\r?\n/\\n/'|sed -e's/..$//' | sed -e 's|\-\-\-\-\-BEGIN EC PRIVATE KEY\-\-\-\-\-\\n||' -e 's|\-\-\-\-\-END EC PRIVATE KEY\-\-\-\-\-||')
+request_body="{ \"certificate\": \"$MYCERT\", \"private_key\": \"$MYKEY\" }" 
 
 export cfzoneid=cf_zone_id
 export cfemail=cf_account_email
@@ -1174,8 +1174,8 @@ For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate AP
 populate variables
 
 MYCERT=$(cat /etc/cfssl/clientcerts/client.centminmod.com.pem |perl -pe 's/\r?\n/\\n/'|sed -e 's/..$//')
-MYKEY=$(cat /etc/cfssl/clientcerts/client.centminmod.com-key.pem | grep -v 'BEGIN EC' |perl -pe 's/\r?\n/\\n/'|sed -e's/..$//')
-request_body="{ "certificate": "$MYCERT", "private_key": "$MYKEY" }"
+MYKEY=$(cat /etc/cfssl/clientcerts/client.centminmod.com-key.pem | perl -pe 's/\r?\n/\\n/'|sed -e's/..$//' | sed -e 's|\-\-\-\-\-BEGIN EC PRIVATE KEY\-\-\-\-\-\\n||' -e 's|\-\-\-\-\-END EC PRIVATE KEY\-\-\-\-\-||')
+request_body="{ \"certificate\": \"$MYCERT\", \"private_key\": \"$MYKEY\" }" 
 
 export cfzoneid=cf_zone_id
 export cfemail=cf_account_email
