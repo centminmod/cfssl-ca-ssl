@@ -1,6 +1,6 @@
 #!/bin/bash
 # for centminmod.com LEMP stack installations
-ver=0.5
+ver=0.6
 debug='y'
 cfdir='/etc/cfssl'
 servercerts_dir="${cfdir}/servercerts"
@@ -430,6 +430,7 @@ client_gen() {
     echo "curl -sX POST https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames/certificates -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \"\$request_body\" | jq | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt"
     echo
     echo "export clientcert_id=\$(jq -r '.result.id' ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt)"
+    echo "echo \"\$clientcert_id\" > ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload-clientcert-id.txt"
     echo
     echo "---------------------------------------------------------------------------"
     echo "Check uploaded TLS client certificate via CF API"

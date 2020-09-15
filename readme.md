@@ -999,6 +999,7 @@ Upload TLS client certificate via CF API
 curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
 
 export clientcert_id=$(jq -r '.result.id' /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt)
+echo "$clientcert_id" > /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload-clientcert-id.txt
 
 ---------------------------------------------------------------------------
 Check uploaded TLS client certificate via CF API
@@ -1217,6 +1218,7 @@ Upload TLS client certificate via CF API
 curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
 
 export clientcert_id=$(jq -r '.result.id' /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt)
+echo "$clientcert_id" > /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-clientcert-id.txt
 
 ---------------------------------------------------------------------------
 Check uploaded TLS client certificate via CF API
@@ -1439,6 +1441,7 @@ cfssljson -f peer.centminmod.com.json -bare peer.centminmod.com
 Extract peer certificate public key: /etc/cfssl/peercerts/peer.centminmod.com-publickey.pem
 openssl x509 -pubkey -noout -in /etc/cfssl/peercerts/peer.centminmod.com.pem > /etc/cfssl/peercerts/peer.centminmod.com-publickey.pem
 cat /etc/cfssl/peercerts/peer.centminmod.com-publickey.pem
+echo "$clientcert_id" > /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-clientcert-id.txt
 
 -----BEGIN PUBLIC KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEw4/9CH6YdBUa6/YgsvkRAXEhezMN
