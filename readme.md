@@ -740,7 +740,7 @@ Generate self-signed client SSL certificate with CA signing for centminmod.com w
 * client csr: /etc/cfssl/clientcerts/centminmod.com.csr
 * client csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
 
-Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname](https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname).
+Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname](https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname).
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600
@@ -907,7 +907,7 @@ curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_cli
 List uploaded Origin TLS Client Authenticatied Certificates
 ---------------------------------------------------------------------------
 
-curl -X GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json"
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json"
 
 ```
 
@@ -919,7 +919,7 @@ Generate self-signed client SSL certificate with CA signing for client.centminmo
 * client csr: /etc/cfssl/clientcerts/client.centminmod.com.csr
 * client csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
 
-Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname](https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname).
+Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname](https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname).
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600 client centminmod.com
@@ -1451,7 +1451,50 @@ Once authenticated, subsequent access via Opera browser is permitted
 
 # Curl Client TLS Authentication
 
-For CentOS 7.x curl, need to use `pk12util` command line tool to add the generated client pkcs12 file `/etc/cfssl/clientcerts/cems.msdomain.com.p12` to nssdb database used by curl. Otherwise, curl requests will get a `HTTP/1.1 400 Bad Request` response. At password prompt just hit enter as no password was assigned.
+For CentOS 7.x curl, need to use `pk12util` command line tool to add the generated client pkcs12 file `/etc/cfssl/clientcerts/cems.msdomain.com.p12` to nssdb database used by curl. Otherwise, curl requests will get a `HTTP/1.1 400 Bad Request` response.
+
+curl with `Initializing NSS with certpath: sql:/etc/pki/nssdb` and showing `NSS: client certificate not found (nickname not specified)` resulting in `HTTP/1.1 400 Bad Request`
+
+```
+curl -Ikv https://cems.msdomain.com 
+* About to connect() to cems.msdomain.com port 443 (#0)
+*   Trying 192.168.0.18...
+* Connected to cems.msdomain.com (192.168.0.18) port 443 (#0)
+* Initializing NSS with certpath: sql:/etc/pki/nssdb
+* skipping SSL peer certificate verification
+* NSS: client certificate not found (nickname not specified)
+* SSL connection using TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+* Server certificate:
+*       subject: CN=cems.msdomain.com,L=San Francisco,ST=CA,C=US
+*       start date: Sep 13 11:27:00 2020 GMT
+*       expire date: Sep 11 11:27:00 2030 GMT
+*       common name: cems.msdomain.com
+*       issuer: CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US
+> HEAD / HTTP/1.1
+> User-Agent: curl/7.29.0
+> Host: cems.msdomain.com
+> Accept: */*
+> 
+< HTTP/1.1 400 Bad Request
+HTTP/1.1 400 Bad Request
+```
+
+Some guides mention passing the client SSL certificate and key on curl command line. But on CentOS 7 it uses nssdb database it seems
+
+```
+curl -Ikv --cert /etc/cfssl/clientcerts/cems.msdomain.com.pem --key /etc/cfssl/clientcerts/cems.msdomain.com-key.pem https://cems.msdomain.com
+* About to connect() to cems.msdomain.com port 443 (#0)
+*   Trying 192.168.0.18...
+* Connected to cems.msdomain.com (192.168.0.18) port 443 (#0)
+* Initializing NSS with certpath: sql:/etc/pki/nssdb
+* unable to load client key: -8178 (SEC_ERROR_BAD_KEY)
+* NSS error -8178 (SEC_ERROR_BAD_KEY)
+* Peer's public key is invalid.
+* Closing connection 0
+curl: (58) unable to load client key: -8178 (SEC_ERROR_BAD_KEY)
+```
+
+Add the generated client certificate pkcs12 file `/etc/cfssl/clientcerts/cems.msdomain.com.p12` via `pk12util` command line tool. At password prompt just hit enter as no password was assigned.
 
 ```
 pk12util -d sql:/etc/pki/nssdb -i /etc/cfssl/clientcerts/cems.msdomain.com.p12
