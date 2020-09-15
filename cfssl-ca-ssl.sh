@@ -1,6 +1,6 @@
 #!/bin/bash
 # for centminmod.com LEMP stack installations
-ver=0.2
+ver=0.3
 debug='y'
 cfdir='/etc/cfssl'
 servercerts_dir="${cfdir}/servercerts"
@@ -53,10 +53,21 @@ ca_gen() {
   cfssl gencert -initca "${domain}-ca.csr.json" | cfssljson -bare "${domain}-ca"
   if [[ "$debug" = [yY] ]]; then
     echo
-    echo "openssl x509 -in ${domain}-ca.pem -text -noout"
+    echo "openssl x509 -in ${cfdir}/${domain}-ca.pem -text -noout"
     echo
   fi
-  openssl x509 -in "${domain}-ca.pem" -text -noout
+  echo "Extract CA Root certificate public key: ${cfdir}/${domain}-ca-publickey.pem"
+  if [[ "$debug" = [yY] ]]; then
+    echo "openssl x509 -pubkey -noout -in ${cfdir}/${domain}-ca.pem > ${cfdir}/${domain}-ca-publickey.pem"
+    echo "cat ${cfdir}/${domain}-ca-publickey.pem"
+  fi
+  openssl x509 -pubkey -noout -in "${cfdir}/${domain}-ca.pem" > "${cfdir}/${domain}-ca-publickey.pem"
+  echo
+  cat "${cfdir}/${domain}-ca-publickey.pem"
+  echo
+
+  # check cert contents
+  openssl x509 -in "${cfdir}/${domain}-ca.pem" -text -noout
   echo
   if [ -f "${cfdir}/${domain}-ca.pem" ]; then
     echo "ca cert: ${cfdir}/${domain}-ca.pem"
@@ -64,7 +75,11 @@ ca_gen() {
   fi
   if [ -f "${cfdir}/${domain}-ca-key.pem" ]; then
     chmod 0600 "${cfdir}/${domain}-ca-key.pem"
-    echo "ca key: ${cfdir}/${domain}-ca-key.pem"
+    echo "ca private key: ${cfdir}/${domain}-ca-key.pem"
+  fi
+  if [ -f "${cfdir}/${domain}-ca-publickey.pem" ]; then
+    chmod 0600 "${cfdir}/${domain}-ca-publickey.pem"
+    echo "ca public key: ${cfdir}/${domain}-ca-publickey.pem"
   fi
   if [ -f "${cfdir}/${domain}-ca.csr" ]; then
     echo "ca csr: ${cfdir}/${domain}-ca.csr"
@@ -104,7 +119,18 @@ ca_gen() {
     echo "openssl x509 -in ${domain}-ca-intermediate.pem -text -noout"
     echo
   fi
-  openssl x509 -in "${domain}-ca-intermediate.pem" -text -noout
+  echo "Extract CA Intermediate certificate public key: ${cfdir}/${domain}-ca-intermediate-publickey.pem"
+  if [[ "$debug" = [yY] ]]; then
+    echo "openssl x509 -pubkey -noout -in ${cfdir}/${domain}-ca-intermediate.pem > ${cfdir}/${domain}-ca-intermediate-publickey.pem"
+    echo "cat ${cfdir}/${domain}-ca-intermediate-publickey.pem"
+  fi
+  openssl x509 -pubkey -noout -in "${cfdir}/${domain}-ca-intermediate.pem" > "${cfdir}/${domain}-ca-intermediate-publickey.pem"
+  echo
+  cat "${cfdir}/${domain}-ca-intermediate-publickey.pem"
+  echo
+
+  # check cert contents
+  openssl x509 -in "${cfdir}/${domain}-ca-intermediate.pem" -text -noout
   echo
   if [ -f "${cfdir}/${domain}-ca-intermediate.pem" ]; then
     echo "ca intermediate cert: ${cfdir}/${domain}-ca-intermediate.pem"
@@ -112,7 +138,11 @@ ca_gen() {
   fi
   if [ -f "${cfdir}/${domain}-ca-intermediate-key.pem" ]; then
     chmod 0600 "${cfdir}/${domain}-ca-intermediate-key.pem"
-    echo "ca intermediate key: ${cfdir}/${domain}-ca-intermediate-key.pem"
+    echo "ca intermediate private key: ${cfdir}/${domain}-ca-intermediate-key.pem"
+  fi
+  if [ -f "${cfdir}/${domain}-ca-intermediate-publickey.pem" ]; then
+    chmod 0600 "${cfdir}/${domain}-ca-intermediate-publickey.pem"
+    echo "ca intermediate public key: ${cfdir}/${domain}-ca-intermediate-publickey.pem"
   fi
   if [ -f "${cfdir}/${domain}-ca-intermediate.csr" ]; then
     echo "ca intermediate csr: ${cfdir}/${domain}-ca-intermediate.csr"
@@ -192,6 +222,18 @@ server_gen() {
       echo
     fi
     cfssljson -f "${domain}.json" -bare "${domain}"
+
+    echo "Extract server certificate public key: ${servercerts_dir}/${domain}-publickey.pem"
+    if [[ "$debug" = [yY] ]]; then
+      echo "openssl x509 -pubkey -noout -in ${servercerts_dir}/${domain}.pem > ${servercerts_dir}/${domain}-publickey.pem"
+      echo "cat ${servercerts_dir}/${domain}-publickey.pem"
+    fi
+    openssl x509 -pubkey -noout -in "${servercerts_dir}/${domain}.pem" > "${servercerts_dir}/${domain}-publickey.pem"
+    echo
+    cat "${servercerts_dir}/${domain}-publickey.pem"
+    echo
+
+    # check cert contents
     if [[ "$debug" = [yY] ]]; then
       echo
       echo "openssl x509 -in ${servercerts_dir}/${domain}.pem -text -noout"
@@ -205,7 +247,11 @@ server_gen() {
     fi
     if [ -f "${servercerts_dir}/${domain}-key.pem" ]; then
       chmod 0600 "${servercerts_dir}/${domain}-key.pem"
-      echo "server key: ${servercerts_dir}/${domain}-key.pem"
+      echo "server private key: ${servercerts_dir}/${domain}-key.pem"
+    fi
+    if [ -f "${servercerts_dir}/${domain}-publickey.pem" ]; then
+      chmod 0600 "${servercerts_dir}/${domain}-publickey.pem"
+      echo "server public key: ${servercerts_dir}/${domain}-publickey.pem"
     fi
     if [ -f "${servercerts_dir}/${domain}.csr" ]; then
       echo "server csr: ${servercerts_dir}/${domain}.csr"
@@ -285,6 +331,18 @@ client_gen() {
       echo
     fi
     cfssljson -f "${domain}.json" -bare "${domain}"
+
+    echo "Extract client certificate public key: ${clientcerts_dir}/${domain}-publickey.pem"
+    if [[ "$debug" = [yY] ]]; then
+      echo "openssl x509 -pubkey -noout -in ${clientcerts_dir}/${domain}.pem > ${clientcerts_dir}/${domain}-publickey.pem"
+      echo "cat ${clientcerts_dir}/${domain}-publickey.pem"
+    fi
+    openssl x509 -pubkey -noout -in "${clientcerts_dir}/${domain}.pem" > "${clientcerts_dir}/${domain}-publickey.pem"
+    echo
+    cat "${clientcerts_dir}/${domain}-publickey.pem"
+    echo
+
+    # check cert contents
     if [[ "$debug" = [yY] ]]; then
       echo
       echo "openssl x509 -in ${clientcerts_dir}/${domain}.pem -text -noout"
@@ -309,7 +367,11 @@ client_gen() {
     fi
     if [ -f "${clientcerts_dir}/${domain}-key.pem" ]; then
       chmod 0600 "${clientcerts_dir}/${domain}-key.pem"
-      echo "client key: ${clientcerts_dir}/${domain}-key.pem"
+      echo "client private key: ${clientcerts_dir}/${domain}-key.pem"
+    fi
+    if [ -f "${clientcerts_dir}/${domain}-publickey.pem" ]; then
+      chmod 0600 "${clientcerts_dir}/${domain}-publickey.pem"
+      echo "client public key: ${clientcerts_dir}/${domain}-publickey.pem"
     fi
     if [ -f "${clientcerts_dir}/${domain}.csr" ]; then
       echo "client csr: ${clientcerts_dir}/${domain}.csr"
@@ -434,6 +496,18 @@ peer_gen() {
       echo
     fi
     cfssljson -f "${domain}.json" -bare "${domain}"
+
+    echo "Extract peer certificate public key: ${peercerts_dir}/${domain}-publickey.pem"
+    if [[ "$debug" = [yY] ]]; then
+      echo "openssl x509 -pubkey -noout -in ${peercerts_dir}/${domain}.pem > ${peercerts_dir}/${domain}-publickey.pem"
+      echo "cat ${peercerts_dir}/${domain}-publickey.pem"
+    fi
+    openssl x509 -pubkey -noout -in "${peercerts_dir}/${domain}.pem" > "${peercerts_dir}/${domain}-publickey.pem"
+    echo
+    cat "${peercerts_dir}/${domain}-publickey.pem"
+    echo
+
+    # check cert contents
     if [[ "$debug" = [yY] ]]; then
       echo
       echo "openssl x509 -in ${peercerts_dir}/${domain}.pem -text -noout"
@@ -458,7 +532,11 @@ peer_gen() {
     fi
     if [ -f "${peercerts_dir}/${domain}-key.pem" ]; then
       chmod 0600 "${peercerts_dir}/${domain}-key.pem"
-      echo "peer key: ${peercerts_dir}/${domain}-key.pem"
+      echo "peer private key: ${peercerts_dir}/${domain}-key.pem"
+    fi
+    if [ -f "${peercerts_dir}/${domain}-publickey.pem" ]; then
+      chmod 0600 "${peercerts_dir}/${domain}-publickey.pem"
+      echo "peer public key: ${peercerts_dir}/${domain}-publickey.pem"
     fi
     if [ -f "${peercerts_dir}/${domain}.csr" ]; then
       echo "peer csr: ${peercerts_dir}/${domain}.csr"
