@@ -416,6 +416,7 @@ client_gen() {
     echo "export cfzoneid=cf_zone_id"
     echo "export cfemail=cf_account_email"
     echo "export cftoken=cf_account_global_api_keytoken"
+    echo "export cf_hostname=domain_name_on_ssl_certificate"
     echo
     echo "curl -sX POST https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames/certificates -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \"$request_body\" | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt"
     echo

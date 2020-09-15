@@ -990,6 +990,7 @@ request_body="{ "certificate": "$MYCERT", "private_key": "$MYKEY" }"
 export cfzoneid=cf_zone_id
 export cfemail=cf_account_email
 export cftoken=cf_account_global_api_keytoken
+export cf_hostname=domain_name_on_ssl_certificate
 
 curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "" | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
 
@@ -1179,6 +1180,7 @@ request_body="{ "certificate": "$MYCERT", "private_key": "$MYKEY" }"
 export cfzoneid=cf_zone_id
 export cfemail=cf_account_email
 export cftoken=cf_account_global_api_keytoken
+export cf_hostname=domain_name_on_ssl_certificate
 
 curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "" | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
 
