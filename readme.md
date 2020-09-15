@@ -984,7 +984,7 @@ For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate AP
 populate variables
 
 MYCERT=$(cat /etc/cfssl/clientcerts/centminmod.com.pem |perl -pe 's/\r?\n/\\n/'|sed -e 's/..$//')
-MYKEY=$(cat /etc/cfssl/clientcerts/centminmod.com-key.pem | perl -pe 's/\r?\n/\\n/'|sed -e's/..$//' | sed -e 's|\-\-\-\-\-BEGIN EC PRIVATE KEY\-\-\-\-\-\\n||' -e 's|\-\-\-\-\-END EC PRIVATE KEY\-\-\-\-\-||')
+MYKEY=$(cat /etc/cfssl/clientcerts/centminmod.com-key.pem | perl -pe 's/\r?\n/\\n/'|sed -e's/..$//')
 request_body="{ \"certificate\": \"$MYCERT\", \"private_key\": \"$MYKEY\" }" 
 
 export cfzoneid=cf_zone_id
@@ -992,21 +992,49 @@ export cfemail=cf_account_email
 export cftoken=cf_account_global_api_keytoken
 export cf_hostname=domain_name_on_ssl_certificate
 
-curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
+---------------------------------------------------------------------------
+Upload TLS client certificate via CF API
+---------------------------------------------------------------------------
+
+curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
 
 export clientcert_id=$(jq -r '.result.id' /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt)
+
+---------------------------------------------------------------------------
+Check uploaded TLS client certificate via CF API
+---------------------------------------------------------------------------
+
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload-status.txt
+
+---------------------------------------------------------------------------
+To delete uploaded TLS client certificate via CF API
+---------------------------------------------------------------------------
+
+curl -sX DELETE "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload-delete.txt
 
 ---------------------------------------------------------------------------
 Enable specific hostname Authenticated Origin Pull via Cloudflare API
 ---------------------------------------------------------------------------
 
-curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"config":[{"hostname":"$cf_hostname","cert_id":"$clientcert_id","enabled":true}]}'
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"config":[{"hostname":"$cf_hostname","cert_id":"$clientcert_id","enabled":true}]}' | jq
+
+---------------------------------------------------------------------------
+Disable specific hostname Authenticated Origin Pull via Cloudflare API
+---------------------------------------------------------------------------
+
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"config":[{"hostname":"$cf_hostname","cert_id":"$clientcert_id","enabled":false}]}' | jq
+
+---------------------------------------------------------------------------
+Check CF Status for specific hostname Authenticated Origin Pull via Cloudflare API
+---------------------------------------------------------------------------
+
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/$cf_hostname" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" | jq
 
 ---------------------------------------------------------------------------
 List uploaded Origin TLS Client Authenticatied Certificates
 ---------------------------------------------------------------------------
 
-curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json"
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" | jq
 ```
 
 Generate self-signed client SSL certificate with CA signing for client.centminmod.com subdomain with `TLS Web Client Authentication`
@@ -1174,7 +1202,7 @@ For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate AP
 populate variables
 
 MYCERT=$(cat /etc/cfssl/clientcerts/client.centminmod.com.pem |perl -pe 's/\r?\n/\\n/'|sed -e 's/..$//')
-MYKEY=$(cat /etc/cfssl/clientcerts/client.centminmod.com-key.pem | perl -pe 's/\r?\n/\\n/'|sed -e's/..$//' | sed -e 's|\-\-\-\-\-BEGIN EC PRIVATE KEY\-\-\-\-\-\\n||' -e 's|\-\-\-\-\-END EC PRIVATE KEY\-\-\-\-\-||')
+MYKEY=$(cat /etc/cfssl/clientcerts/client.centminmod.com-key.pem | perl -pe 's/\r?\n/\\n/'|sed -e's/..$//')
 request_body="{ \"certificate\": \"$MYCERT\", \"private_key\": \"$MYKEY\" }" 
 
 export cfzoneid=cf_zone_id
@@ -1182,21 +1210,49 @@ export cfemail=cf_account_email
 export cftoken=cf_account_global_api_keytoken
 export cf_hostname=domain_name_on_ssl_certificate
 
-curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
+---------------------------------------------------------------------------
+Upload TLS client certificate via CF API
+---------------------------------------------------------------------------
+
+curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
 
 export clientcert_id=$(jq -r '.result.id' /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt)
+
+---------------------------------------------------------------------------
+Check uploaded TLS client certificate via CF API
+---------------------------------------------------------------------------
+
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-status.txt
+
+---------------------------------------------------------------------------
+To delete uploaded TLS client certificate via CF API
+---------------------------------------------------------------------------
+
+curl -sX DELETE "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-delete.txt
 
 ---------------------------------------------------------------------------
 Enable specific hostname Authenticated Origin Pull via Cloudflare API
 ---------------------------------------------------------------------------
 
-curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"config":[{"hostname":"$cf_hostname","cert_id":"$clientcert_id","enabled":true}]}'
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"config":[{"hostname":"$cf_hostname","cert_id":"$clientcert_id","enabled":true}]}' | jq
+
+---------------------------------------------------------------------------
+Disable specific hostname Authenticated Origin Pull via Cloudflare API
+---------------------------------------------------------------------------
+
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"config":[{"hostname":"$cf_hostname","cert_id":"$clientcert_id","enabled":false}]}' | jq
+
+---------------------------------------------------------------------------
+Check CF Status for specific hostname Authenticated Origin Pull via Cloudflare API
+---------------------------------------------------------------------------
+
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/$cf_hostname" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" | jq
 
 ---------------------------------------------------------------------------
 List uploaded Origin TLS Client Authenticatied Certificates
 ---------------------------------------------------------------------------
 
-curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json"
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" | jq
 ```
 
 # Peer Wildcard SSL Certificate
