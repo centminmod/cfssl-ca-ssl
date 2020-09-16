@@ -1,6 +1,6 @@
 #!/bin/bash
 # for centminmod.com LEMP stack installations
-ver=0.6
+ver=0.7
 debug='y'
 cfdir='/etc/cfssl'
 servercerts_dir="${cfdir}/servercerts"
@@ -448,13 +448,13 @@ client_gen() {
     echo "Enable specific hostname Authenticated Origin Pull via Cloudflare API"
     echo "---------------------------------------------------------------------------"
     echo
-    echo "curl -sX PUT https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d '{\"config\":[{\"hostname\":\"\$cf_hostname\",\"cert_id\":\"\$clientcert_id\",\"enabled\":true}]}' | jq"
+    echo "curl -sX PUT https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \$(jq -c -n --arg cf_hostname \$cf_hostname --arg clientcert_id \$clientcert_id \$(echo \"{\\\"config\\\":[{\\\"hostname\\\":\\\"\$cf_hostname\\\",\\\"cert_id\\\":\\\"\$clientcert_id\\\",\\\"enabled\\\":true}]}\")) | jq"
     echo
     echo "---------------------------------------------------------------------------"
     echo "Disable specific hostname Authenticated Origin Pull via Cloudflare API"
     echo "---------------------------------------------------------------------------"
     echo
-    echo "curl -sX PUT https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d '{\"config\":[{\"hostname\":\"\$cf_hostname\",\"cert_id\":\"\$clientcert_id\",\"enabled\":false}]}' | jq"
+    echo "curl -sX PUT https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \$(jq -c -n --arg cf_hostname \$cf_hostname --arg clientcert_id \$clientcert_id \$(echo \"{\\\"config\\\":[{\\\"hostname\\\":\\\"\$cf_hostname\\\",\\\"cert_id\\\":\\\"\$clientcert_id\\\",\\\"enabled\\\":false}]}\")) | jq"
     echo
     echo "---------------------------------------------------------------------------"
     echo "Check CF Status for specific hostname Authenticated Origin Pull via Cloudflare API"

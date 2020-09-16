@@ -1017,13 +1017,13 @@ curl -sX DELETE "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls
 Enable specific hostname Authenticated Origin Pull via Cloudflare API
 ---------------------------------------------------------------------------
 
-curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"config":[{"hostname":"$cf_hostname","cert_id":"$clientcert_id","enabled":true}]}' | jq
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d $(jq -c -n --arg cf_hostname $cf_hostname --arg clientcert_id $clientcert_id $(echo "{\"config\":[{\"hostname\":\"$cf_hostname\",\"cert_id\":\"$clientcert_id\",\"enabled\":true}]}")) | jq 
 
 ---------------------------------------------------------------------------
 Disable specific hostname Authenticated Origin Pull via Cloudflare API
 ---------------------------------------------------------------------------
 
-curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"config":[{"hostname":"$cf_hostname","cert_id":"$clientcert_id","enabled":false}]}' | jq
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d $(jq -c -n --arg cf_hostname $cf_hostname --arg clientcert_id $clientcert_id $(echo "{\"config\":[{\"hostname\":\"$cf_hostname\",\"cert_id\":\"$clientcert_id\",\"enabled\":false}]}")) | jq
 
 ---------------------------------------------------------------------------
 Check CF Status for specific hostname Authenticated Origin Pull via Cloudflare API
@@ -1236,13 +1236,13 @@ curl -sX DELETE "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls
 Enable specific hostname Authenticated Origin Pull via Cloudflare API
 ---------------------------------------------------------------------------
 
-curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"config":[{"hostname":"$cf_hostname","cert_id":"$clientcert_id","enabled":true}]}' | jq
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d $(jq -c -n --arg cf_hostname $cf_hostname --arg clientcert_id $clientcert_id $(echo "{\"config\":[{\"hostname\":\"$cf_hostname\",\"cert_id\":\"$clientcert_id\",\"enabled\":true}]}")) | jq 
 
 ---------------------------------------------------------------------------
 Disable specific hostname Authenticated Origin Pull via Cloudflare API
 ---------------------------------------------------------------------------
 
-curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"config":[{"hostname":"$cf_hostname","cert_id":"$clientcert_id","enabled":false}]}' | jq
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d $(jq -c -n --arg cf_hostname $cf_hostname --arg clientcert_id $clientcert_id $(echo "{\"config\":[{\"hostname\":\"$cf_hostname\",\"cert_id\":\"$clientcert_id\",\"enabled\":false}]}")) | jq
 
 ---------------------------------------------------------------------------
 Check CF Status for specific hostname Authenticated Origin Pull via Cloudflare API
@@ -1576,6 +1576,7 @@ openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/peerce
 # Nginx Configuration
 
 ```
+mkdir -p /usr/local/nginx/conf/ssl/cacerts_certificates
 cp -a /etc/cfssl/centminmod.com-ca-bundle.pem /usr/local/nginx/conf/ssl/cacerts_certificates/centminmod.com-ca-bundle.pem
 ```
 
