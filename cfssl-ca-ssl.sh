@@ -1,6 +1,6 @@
 #!/bin/bash
 # for centminmod.com LEMP stack installations
-ver=0.7
+ver=0.8
 debug='y'
 cfdir='/etc/cfssl'
 servercerts_dir="${cfdir}/servercerts"
@@ -414,7 +414,8 @@ client_gen() {
     echo
     echo "populate variables"
     echo
-    echo "MYCERT=\$(cat ${clientcerts_dir}/${domain}.pem |perl -pe 's/\r?\n/\\\n/'|sed -e 's/..$//')"
+    #echo "MYCERT=\$(cat ${clientcerts_dir}/${domain}.pem |perl -pe 's/\r?\n/\\\n/'|sed -e 's/..$//')"
+    echo "MYCERT=\$(cfssl-certinfo -cert ${clientcerts_dir}/${domain}.pem | jq '.pem' | sed -e 's|\"||g')"
     echo "MYKEY=\$(cat ${clientcerts_dir}/${domain}-key.pem | perl -pe 's/\r?\n/\\\n/'|sed -e's/..$//')"
     echo "request_body='$(echo "{ "\"certificate"\": "\"\$MYCERT"\", "\"private_key"\": "\"\$MYKEY"\" }")' " | sed -e 's|\"|\\"|g' -e "s|'|\"|g"
     echo

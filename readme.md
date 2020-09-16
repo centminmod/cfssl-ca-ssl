@@ -983,7 +983,7 @@ For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate AP
 
 populate variables
 
-MYCERT=$(cat /etc/cfssl/clientcerts/centminmod.com.pem |perl -pe 's/\r?\n/\\n/'|sed -e 's/..$//')
+MYCERT=$(cfssl-certinfo -cert /etc/cfssl/clientcerts/centminmod.com.pem | jq '.pem' | sed -e 's|"||g')
 MYKEY=$(cat /etc/cfssl/clientcerts/centminmod.com-key.pem | perl -pe 's/\r?\n/\\n/'|sed -e's/..$//')
 request_body="{ \"certificate\": \"$MYCERT\", \"private_key\": \"$MYKEY\" }" 
 
@@ -1202,7 +1202,7 @@ For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate AP
 
 populate variables
 
-MYCERT=$(cat /etc/cfssl/clientcerts/client.centminmod.com.pem |perl -pe 's/\r?\n/\\n/'|sed -e 's/..$//')
+MYCERT=$(cfssl-certinfo -cert /etc/cfssl/clientcerts/client.centminmod.com.pem | jq '.pem' | sed -e 's|"||g')
 MYKEY=$(cat /etc/cfssl/clientcerts/client.centminmod.com-key.pem | perl -pe 's/\r?\n/\\n/'|sed -e's/..$//')
 request_body="{ \"certificate\": \"$MYCERT\", \"private_key\": \"$MYKEY\" }" 
 
@@ -1583,6 +1583,8 @@ cp -a /etc/cfssl/centminmod.com-ca-bundle.pem /usr/local/nginx/conf/ssl/cacerts_
 ```
 ssl_client_certificate /usr/local/nginx/conf/ssl/cacerts_certificates/centminmod.com-ca-bundle.pem;
 ssl_verify_client on;
+# switch to optional_no_ca if troubleshooting issues with client verification
+#ssl_verify_client optional_no_ca;
 ssl_verify_depth 1;
 
 if ($ssl_client_verify != SUCCESS) {
@@ -1590,6 +1592,8 @@ if ($ssl_client_verify != SUCCESS) {
 }
 
 # optional diagnostic headers
+  # enable to check the client SSL certificate contents being sent to Nginx
+  #add_header SSL-Client-Cert $ssl_client_cert;
   add_header SSL-Client-Verify $ssl_client_verify;
   add_header SSL-FP $ssl_client_fingerprint;
   add_header SSL-IDN $ssl_client_i_dn;
