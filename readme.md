@@ -1593,7 +1593,6 @@ if ($ssl_client_verify != SUCCESS) {
 
 # optional diagnostic headers
   # enable to check the client SSL certificate contents being sent to Nginx
-  #add_header SSL-Client-Cert $ssl_client_cert;
   add_header SSL-Client-Verify $ssl_client_verify;
   add_header SSL-FP $ssl_client_fingerprint;
   add_header SSL-IDN $ssl_client_i_dn;
