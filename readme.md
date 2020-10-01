@@ -1654,9 +1654,19 @@ Once authenticated, subsequent access via Opera browser is permitted
 
 # Curl Client TLS Authentication
 
-For CentOS 7.x curl, need to use `pk12util` command line tool to add the generated client pkcs12 file `/etc/cfssl/clientcerts/cems.msdomain.com.p12` to nssdb database used by curl. Otherwise, curl requests will get a `HTTP/1.1 400 Bad Request` response.
+For CentOS 7.x curl, need to use `pk12util` command line tool to add the generated client pkcs12 file `/etc/cfssl/clientcerts/cems.msdomain.com.p12` to nssdb database used by curl. Otherwise, curl requests will get a `HTTP/1.1 400 Bad Request` response. On Ubuntu systems, curl doesn't use NSS database.
 
-curl with `Initializing NSS with certpath: sql:/etc/pki/nssdb` and showing `NSS: client certificate not found (nickname not specified)` resulting in `HTTP/1.1 400 Bad Request`
+On Ubuntu systems curl, you can check with curl command where `YOUR_ORIGIN_IP` is your origin IP and
+
+* client cert: /etc/cfssl/clientcerts/cems.msdomain.com.pem
+* client key: /etc/cfssl/clientcerts/cems.msdomain.com-key.pem
+* CA root bundle chain: /etc/cfssl/centminmod.com-ca-bundle.pem
+
+```
+curl -4Ivk https://cems.msdomain.com --resolve cems.msdomain.com:443:YOUR_ORIGIN_IP --cert /etc/cfssl/clientcerts/cems.msdomain.com.pem --key /etc/cfssl/clientcerts/cems.msdomain.com-key.pem --cacert /etc/cfssl/centminmod.com-ca-bundle.pem
+```
+
+CentOS 7.x curl with `Initializing NSS with certpath: sql:/etc/pki/nssdb` and showing `NSS: client certificate not found (nickname not specified)` resulting in `HTTP/1.1 400 Bad Request`
 
 ```
 curl -Ikv https://cems.msdomain.com 
