@@ -828,7 +828,10 @@ Generate self-signed client SSL certificate with CA signing for centminmod.com w
 * client csr: /etc/cfssl/clientcerts/centminmod.com.csr
 * client csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
 
-Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname](https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname).
+Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname).
+
+> ​Per-Hostname Authenticated Origin Pull using customer certificates {#per-hostname}
+> When enabling Authenticated Origin Pull per hostname, all proxied traffic to the specified hostname is authenticated at the origin web server. Customers can use client certificates from their Private PKI to authenticate connections from Cloudflare.
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600
@@ -978,7 +981,7 @@ openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/client
 ---------------------------------------------------------------------------
 For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate API Upload
 ---------------------------------------------------------------------------
-- https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname
+- https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname
 - https://api.cloudflare.com/#per-hostname-authenticated-origin-pull-upload-a-hostname-client-certificate
 
 populate variables
@@ -1047,7 +1050,7 @@ Generate self-signed client SSL certificate with CA signing for client.centminmo
 * client csr: /etc/cfssl/clientcerts/client.centminmod.com.csr
 * client csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
 
-Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname](https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname).
+Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname).
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600 client centminmod.com
@@ -1197,7 +1200,7 @@ openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/client
 ---------------------------------------------------------------------------
 For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate API Upload
 ---------------------------------------------------------------------------
-- https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname
+- https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname
 - https://api.cloudflare.com/#per-hostname-authenticated-origin-pull-upload-a-hostname-client-certificate
 
 populate variables
