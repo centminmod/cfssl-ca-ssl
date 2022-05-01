@@ -445,7 +445,15 @@ client_gen() {
     echo "Upload TLS client certificate via CF API"
     echo "---------------------------------------------------------------------------"
     echo
+    echo "For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com"
+    echo "https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates"
+    echo
     echo "curl -sX POST https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames/certificates -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \"\$request_body\" | jq | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt"
+    echo
+    echo "Or for apex non-subdomains i.e. domain.com"
+    echo "https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#zone-level--customer-certificates"
+    echo
+    echo "curl -sX POST https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \"\$request_body\" | jq | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt"
     echo
     echo "export clientcert_id=\$(jq -r '.result.id' ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt)"
     echo "echo \"\$clientcert_id\" > ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload-clientcert-id.txt"
@@ -454,7 +462,15 @@ client_gen() {
     echo "Check uploaded TLS client certificate via CF API"
     echo "---------------------------------------------------------------------------"
     echo
+    echo "For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com"
+    echo "https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates"
+    echo
     echo "curl -sX GET \"https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames/certificates/\$clientcert_id\" -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \"\$request_body\" | jq | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload-status.txt"
+    echo
+    echo "Or for apex non-subdomains i.e. domain.com"
+    echo "https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#zone-level--customer-certificates"
+    echo
+    echo "curl -sX GET \"https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/\$clientcert_id\" -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \"\$request_body\" | jq | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload-status.txt"
     echo
     echo "---------------------------------------------------------------------------"
     echo "To delete uploaded TLS client certificate via CF API"
