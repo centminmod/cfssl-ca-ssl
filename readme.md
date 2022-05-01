@@ -19,30 +19,32 @@ Using [cfssl](https://github.com/cloudflare/cfssl) to generate a CA certificate/
 
 # Usage
 
-There are 5 options
+There are 7 options
 
-* `gen-ca` - used to generate the CA Root and CA Intermediate certificates where CA Intermediate is signed by CA Root and it accepts 2 arguments. 
+* `gen-ca` - used to generate the CA Root and CA Intermediate certificates where CA Intermediate is signed by CA Root and it accepts 2 arguments. [[jump to section](#ca-certificate)]
   * First argument is the intended CA domain prefix label for the certificates - specify centminmod.com would label name certs as `/etc/cfssl/centminmod.com-ca.pem`, `/etc/cfssl/centminmod.com-ca-intermediate.pem` and bundle as `/etc/cfssl/centminmod.com-ca-bundle.pem`.
   * The second argument is how long the certificate expiry is in hours i.e. 87600 hrs = 10 yrs, 43800 hrs = 5 yrs. This allows for creating multiple CA Root/CA Intermediate/CA Bundle grouped by domain file name.
-* `gen-server` - used to generate server self-signed SSL certificates with x509v3 Extended Key Usage = `TLS Web Server Authentication`.
+* `gen-server` - used to generate server self-signed SSL certificates with x509v3 Extended Key Usage = `TLS Web Server Authentication`. [[jump to section](#server-ssl-certificate)]
   * First argument defines the CA Intermediate prefix labeled domain defined which is used to sign the server self-signed SSL certificate.
   * The second argument is how long the certificate expiry is in hours i.e. 87600 hrs = 10 yrs, 43800 hrs = 5 yrs. 
   * The third argument defines a subdomain name or special `wildcard` option - which when specified adds `*.domain.com` to the certificate SANs (Subject Alternative Name) entries. Example at [Server Wildcard SSL Certificate](#server-wildcard-ssl-certificate).
   * The forth argument is the intended domain name for self-signed SSL certificate.
   * You need to have prior ran the `gen-ca` option for this option to work as it needs the CA Intermediate certificate to sign the server self-signed SSL certificate.
-* `gen-client` - used to generate client self-signed SSL certificates with x509v3 Extended Key Usage = `TLS Web Client Authentication`. Full example shown below in [Browser Client TLS Authentication](#browser-client-tls-authentication) and [Curl Client TLS Authentication](#curl-client-tls-authentication) sections.
+* `gen-client` - used to generate client self-signed SSL certificates with x509v3 Extended Key Usage = `TLS Web Client Authentication`. [[jump to section](#client-ssl-certificate)].  Full example shown below in [Browser Client TLS Authentication](#browser-client-tls-authentication) and [Curl Client TLS Authentication](#curl-client-tls-authentication) sections.
   * First argument defines the CA Intermediate prefix labeled domain defined which is used to sign the server self-signed SSL certificate.
   * The second argument is how long the certificate expiry is in hours i.e. 87600 hrs = 10 yrs, 43800 hrs = 5 yrs. 
   * The third argument defines a subdomain name.
   * The forth argument is the intended domain name for self-signed SSL certificate.
   * You need to have prior ran the `gen-ca` option for this option to work as it needs the CA Intermediate certificate to sign the client self-signed SSL certificate.
-* `gen-peer` - used to generate peer self-signed SSL certificates with x509v3 Extended Key Usage = `TLS Web Server Authentication` + `TLS Web Client Authentication`.
+* `gen-peer` - used to generate peer self-signed SSL certificates with x509v3 Extended Key Usage = `TLS Web Server Authentication` + `TLS Web Client Authentication`. [[jump to section](#peer-wildcard-ssl-certificate)]
   * First argument defines the CA Intermediate prefix labeled domain defined which is used to sign the server self-signed SSL certificate.
   * The second argument is how long the certificate expiry is in hours i.e. 87600 hrs = 10 yrs, 43800 hrs = 5 yrs. 
   * The third argument defines a subdomain name or special `wildcard` option - which when specified adds `*.domain.com` to the certificate SANs (Subject Alternative Name) entries. Example at [Peer Wildcard SSL Certificate](#peer-wildcard-ssl-certificate).
   * The forth argument is the intended domain name for self-signed SSL certificate.
   * You need to have prior ran the `gen-ca` option for this option to work as it needs the CA Intermediate certificate to sign the peer self-signed SSL certificate.
-* `selfsigned` - standalone selfsigned SSL wildcard certificate generation routine outlined [here](https://github.com/centminmod/cfssl-ca-ssl#selfsigned-ssl-wildcard-certificate)
+* `selfsigned` - standalone selfsigned SSL wildcard certificate generation routine. [[jump to section](#selfsigned-ssl-wildcard-certificate)]
+* `cforigin-cert-list` - allows you to list all Cloudflare Origin CA certificates you have created for your specific Cloudflare domain zone account which are used to setup HTTPS and SSL on your origin web server for use with Cloudflare Full Strict SSL mode. [[jump to section](#list-cloudflare-origin-ca-certificates)]
+* `cforigin-create` - allows you to create your own Cloudflare Origina CA certificates via Cloudflare API using your Cloudflare Zone ID and Cloudflare `X-AUTH-USER-SERVICE-KEY` credentials for setting up HTTPS and SSL on your origin web server for use with Cloudflare Full Strict SSL mode.
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh
