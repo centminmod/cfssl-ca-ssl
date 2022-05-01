@@ -43,8 +43,8 @@ There are 7 options
   * The forth argument is the intended domain name for self-signed SSL certificate.
   * You need to have prior ran the `gen-ca` option for this option to work as it needs the CA Intermediate certificate to sign the peer self-signed SSL certificate.
 * `selfsigned` - standalone selfsigned SSL wildcard certificate generation routine. [[jump to section](#selfsigned-ssl-wildcard-certificate)]
-* `cforigin-cert-list` - allows you to list all Cloudflare Origin CA certificates you have created for your specific Cloudflare domain zone account which are used to setup HTTPS and SSL on your origin web server for use with Cloudflare Full Strict SSL mode. [[jump to section](#list-cloudflare-origin-ca-certificates)]
-* `cforigin-create` - allows you to create your own Cloudflare Origina CA certificates via Cloudflare API using your Cloudflare Zone ID and Cloudflare `X-AUTH-USER-SERVICE-KEY` credentials for setting up HTTPS and SSL on your origin web server for use with Cloudflare Full Strict SSL mode. [[jump to section](#create-cloudflare-origin-ca-certificates)]
+* `cforigin-cert-list` - allows you to list all Cloudflare Origin CA certificates you have created for your specific Cloudflare domain zone account which are used to setup HTTPS and SSL on your origin web server for use with [Cloudflare Full Strict SSL mode](#with-cloudflare-full-strict-ssl-mode). [[jump to section](#list-cloudflare-origin-ca-certificates)]
+* `cforigin-create` - allows you to create your own Cloudflare Origina CA certificates via Cloudflare API using your Cloudflare Zone ID and Cloudflare `X-AUTH-USER-SERVICE-KEY` credentials for setting up HTTPS and SSL on your origin web server for use with [Cloudflare Full Strict SSL mode](#with-cloudflare-full-strict-ssl-mode). [[jump to section](#create-cloudflare-origin-ca-certificates)]
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh
