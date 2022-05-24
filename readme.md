@@ -1148,6 +1148,9 @@ curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_cl
 Verifying final status and getting info for uploaded custom apex domain client TLS certificate:
 
 ```
+export clientcert_id=$(jq -r '.result.id' /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt)
+echo "$clientcert_id" > /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload-clientcert-id.txt
+
 curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload-status.txt
 {
   "success": true,
@@ -1268,11 +1271,11 @@ Included in output are Cloudflare API instructions for uploading the generated c
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600 client centminmod.com
 
 cfssl gencert -config /etc/cfssl/profile.json -profile client -cn client.centminmod.com -hostname client.centminmod.com -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.comca-intermediate-key.pem client.centminmod.com.csr.json > client.centminmod.com.json
-2020/09/15 04:46:12 [INFO] generate received request
-2020/09/15 04:46:12 [INFO] received CSR
-2020/09/15 04:46:12 [INFO] generating key: ecdsa-256
-2020/09/15 04:46:12 [INFO] encoded CSR
-2020/09/15 04:46:12 [INFO] signed certificate with serial number 330776793857179573011736319641964465614109840512
+2022/05/24 17:55:36 [INFO] generate received request
+2022/05/24 17:55:36 [INFO] received CSR
+2022/05/24 17:55:36 [INFO] generating key: ecdsa-256
+2022/05/24 17:55:36 [INFO] encoded CSR
+2022/05/24 17:55:36 [INFO] signed certificate with serial number 584692600676493439512096317492143492518858226170
 
 cfssljson -f client.centminmod.com.json -bare client.centminmod.com
 
@@ -1281,8 +1284,8 @@ openssl x509 -pubkey -noout -in /etc/cfssl/clientcerts/client.centminmod.com.pem
 cat /etc/cfssl/clientcerts/client.centminmod.com-publickey.pem
 
 -----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEZcH4s8d49ToL5xZzbsXLz706ziqs
-AKMCTkXgcvm0dJcNqhKv9HzuJDviDxnsz9eV1dSd+pF9WtnVZTfHQh6hVQ==
+MFkwEwYHKxxxxxj0CAQYIKxxxxxj0DAQcDQgAEXyp84zF8aQN+NgYz9R0ybj3WUtob
+IW+VR+8Sn8XqEcvLkKSHIbkE8d0QxVcorJj1WT8VGVsGoPEoFAFCgTWDEA==
 -----END PUBLIC KEY-----
 
 
@@ -1292,22 +1295,22 @@ Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            39:f0:8b:5f:67:d2:9a:71:cb:b2:03:48:c6:f7:23:f0:59:dc:94:80
+            66:6a:85:e2:a8:32:bb:23:4d:af:05:63:cf:32:cd:1c:06:c8:79:fa
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, OU=Intermediate CA, CN=Intermediate CA
         Validity
-            Not Before: Sep 15 04:41:00 2020 GMT
-            Not After : Sep 13 04:41:00 2030 GMT
+            Not Before: May 24 17:51:00 2022 GMT
+            Not After : May 21 17:51:00 2032 GMT
         Subject: C=US, ST=CA, L=San Francisco, CN=client.centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:65:c1:f8:b3:c7:78:f5:3a:0b:e7:16:73:6e:c5:
-                    cb:cf:bd:3a:ce:2a:ac:00:a3:02:4e:45:e0:72:f9:
-                    b4:74:97:0d:aa:12:af:f4:7c:ee:24:3b:e2:0f:19:
-                    ec:cf:d7:95:d5:d4:9d:fa:91:7d:5a:d9:d5:65:37:
-                    c7:42:1e:a1:55
+                    04:5f:2a:7c:e3:31:7c:69:03:7e:36:06:33:f5:1d:
+                    32:6e:3d:d6:52:da:1b:21:6f:95:47:ef:12:9f:c5:
+                    ea:11:cb:cb:90:a4:87:21:b9:04:f1:dd:10:c5:57:
+                    28:ac:98:f5:59:3f:15:19:5b:06:a0:f1:28:14:01:
+                    42:81:35:83:10
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -1318,17 +1321,17 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:FALSE
             X509v3 Subject Key Identifier: 
-                9C:8E:FB:6F:90:6D:B7:E4:D7:1C:59:DC:DF:BF:EC:69:9E:34:D6:7D
+                DE:75:63:31:0C:51:5C:76:D9:E0:C1:C3:10:7C:8A:3B:DF:8B:08:02
             X509v3 Authority Key Identifier: 
-                keyid:81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8
+                keyid:06:69:E7:C5:F2:FD:3A:2E:30:D7:1F:7D:7F:B9:DE:9B:52:B9:D4:77
 
             X509v3 Subject Alternative Name: 
                 DNS:client.centminmod.com
     Signature Algorithm: ecdsa-with-SHA256
-         30:46:02:21:00:e7:c1:d9:1f:8a:52:92:7e:23:29:33:a5:63:
-         fa:88:a5:2b:f2:73:5b:4d:e3:a0:2e:09:4b:6e:19:f3:a0:92:
-         be:02:21:00:a9:d9:8e:17:ba:94:4c:52:44:b2:2a:11:0f:1f:
-         12:fc:68:ad:ef:dc:39:f5:b2:c5:b8:08:d8:24:3f:b7:64:57
+         30:45:02:20:26:cd:c1:c2:13:39:6c:45:20:98:66:76:53:5a:
+         8b:a6:94:93:69:eb:1f:84:eb:1c:c1:38:6a:1c:17:81:1d:3f:
+         02:21:00:c2:c3:c0:e2:e4:1b:84:a0:c3:0a:c9:97:d2:9f:fa:
+         cc:2e:91:0b:17:73:2a:85:36:bd:07:a3:ed:05:30:74:d7
 
 Generate pkcs12 format
 openssl pkcs12 -export -out /etc/cfssl/clientcerts/client.centminmod.com.p12 -inkey /etc/cfssl/clientcerts/client.centminmod.com-key.pem -in /etc/cfssl/clientcerts/client.centminmod.com.pem -certfile /etc/cfssl/centminmod.com-ca-bundle.pem -passin pass: -passout pass:
@@ -1394,16 +1397,16 @@ Time Stamp signing CA : No
       "Intermediate CA"
     ]
   },
-  "serial_number": "330776793857179573011736319641964465614109840512",
+  "serial_number": "584692600676493439512096317492143492518858226170",
   "sans": [
     "client.centminmod.com"
   ],
-  "not_before": "2020-09-15T04:41:00Z",
-  "not_after": "2030-09-13T04:41:00Z",
+  "not_before": "2022-05-24T17:51:00Z",
+  "not_after": "2032-05-21T17:51:00Z",
   "sigalg": "ECDSAWithSHA256",
-  "authority_key_id": "81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8",
-  "subject_key_id": "9C:8E:FB:6F:90:6D:B7:E4:D7:1C:59:DC:DF:BF:EC:69:9E:34:D6:7D",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICVDxxxxxxmgAwIBAgIUOfCLX2fSmnHLsgNIxvcj8FnclIAwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTUwNDQxMDBaFw0zMDA5MTMwNDQxMDBaMFIxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEeMBwG\nA1UEAxMVY2xpZW50LmNlbnRtaW5tb2QuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEZcH4s8d49ToL5xZzbsXLz706ziqsAKMCTkXgcvm0dJcNqhKv9HzuJDvi\nDxnsz9eV1dSd+pF9WtnVZTfHQh6hVaOBmDCBlTAOBgNVHQ8BAf8EBAMCBaAwEwYD\nVR0lBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQUnI77b5Bt\nt+TXHFnc37/saZ401n0wHwYDVR0jBBgwFoAUgWkVV71s/uSIPaqJ+zCKAlK2MOgw\nIAYDVR0RBBkwF4IVY2xpZW50LmNlbnRtaW5tb2QuY29tMAoGCCqGSM49BAMCA0kA\nMEYCIQDnwdkfilKSfiMpM6Vj+oilK/JzW03joC4JS24Z86CSvgIhAKnZjhe6lExS\nRLIqEQ8fEvxore/cOfWyxbgI2CQ/t2RX\n-----END CERTIFICATE-----\n"
+  "authority_key_id": "06:69:E7:C5:F2:FD:3A:2E:30:D7:1F:7D:7F:B9:DE:9B:52:B9:D4:77",
+  "subject_key_id": "DE:75:63:31:0C:51:5C:76:D9:E0:C1:C3:10:7C:8A:3B:DF:8B:08:02",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICTTCCAfOgAwIBAgIUZmqF4qgyuyNNrwVjzzLNHAbIefowCgYIKxxxxxj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNzUxMDBaFw0zMjA1MjExNzUxMDBaME8xCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEbMBkG\nA1UEAxMSY2xpZW50LmNlbnRtaW4uZGV2MFkwEwYHKxxxxxj0CAQYIKxxxxxj0DAQcD\nQgAEXyp84zF8aQN+NgYz9R0ybj3WUtobIW+VR+8Sn8XqEcvLkKSHIbkE8d0QxVco\nrJj1WT8VGVsGoPEoFAFCgTWDEKOBlTCBkjAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0l\nBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQU3nVjMQxRXHbZ\n4MHDEHyKO9+LCAIwHwYDVR0jBBgwFoAUBmnnxfL9Oi4w1x99f7nem1K51HcwHQYD\nVR0RBBYwFIISY2xpZW50LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUCICbN\nwcITOWxFIJhmdlNai6aUk2nrH4TrHME4ahwXgR0/AiEAwsPA4uQbhKDDCsmX0p/6\nzC6RCxdzKoU2vQej7QUwdNc=\n-----END CERTIFICATE-----\n"
 }
 
 openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/clientcerts/client.centminmod.com.pem
@@ -1430,7 +1433,15 @@ export cf_hostname=domain_name_on_ssl_certificate
 Upload TLS client certificate via CF API
 ---------------------------------------------------------------------------
 
+For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com
+https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates
+
 curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
+
+Or for apex non-subdomains i.e. domain.com
+https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#zone-level--customer-certificates
+
+curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
 
 export clientcert_id=$(jq -r '.result.id' /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt)
 echo "$clientcert_id" > /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-clientcert-id.txt
@@ -1439,37 +1450,64 @@ echo "$clientcert_id" > /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-t
 Check uploaded TLS client certificate via CF API
 ---------------------------------------------------------------------------
 
+For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com
+https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates
+
 curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-status.txt
+
+Or for apex non-subdomains i.e. domain.com
+https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#zone-level--customer-certificates
+
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-status.txt
 
 ---------------------------------------------------------------------------
 To delete uploaded TLS client certificate via CF API
 ---------------------------------------------------------------------------
 
+For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com
 curl -sX DELETE "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-delete.txt
+
+Or for apex non-subdomains i.e. domain.com
+curl -sX DELETE "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-delete.txt
 
 ---------------------------------------------------------------------------
 Enable specific hostname Authenticated Origin Pull via Cloudflare API
 ---------------------------------------------------------------------------
 
-curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d $(jq -c -n --arg cf_hostname $cf_hostname --arg clientcert_id $clientcert_id $(echo "{\"config\":[{\"hostname\":\"$cf_hostname\",\"cert_id\":\"$clientcert_id\",\"enabled\":true}]}")) | jq 
+For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d $(jq -c -n --arg cf_hostname $cf_hostname --arg clientcert_id $clientcert_id $(echo "{\"config\":[{\"hostname\":\"$cf_hostname\",\"cert_id\":\"$clientcert_id\",\"enabled\":true}]}")) | jq
+
+Or for apex non-subdomains i.e. domain.com
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/settings -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"enabled":true}' | jq
 
 ---------------------------------------------------------------------------
 Disable specific hostname Authenticated Origin Pull via Cloudflare API
 ---------------------------------------------------------------------------
 
+For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com
 curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d $(jq -c -n --arg cf_hostname $cf_hostname --arg clientcert_id $clientcert_id $(echo "{\"config\":[{\"hostname\":\"$cf_hostname\",\"cert_id\":\"$clientcert_id\",\"enabled\":false}]}")) | jq
+
+Or for apex non-subdomains i.e. domain.com
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/settings -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"enabled":false}' | jq
 
 ---------------------------------------------------------------------------
 Check CF Status for specific hostname Authenticated Origin Pull via Cloudflare API
 ---------------------------------------------------------------------------
 
+For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com
 curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/$cf_hostname" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" | jq
+
+Or for apex non-subdomains i.e. domain.com
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/settings" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" | jq
 
 ---------------------------------------------------------------------------
 List uploaded Origin TLS Client Authenticatied Certificates
 ---------------------------------------------------------------------------
 
 curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" | jq
+
+Cleanup script created: /etc/cfssl/cleanup/remove-clientcert-client.centminmod.com.sh
+To clean up run: bash /etc/cfssl/cleanup/remove-clientcert-client.centminmod.com.sh
 ```
 
 # Peer Wildcard SSL Certificate
@@ -1628,6 +1666,195 @@ Time Stamp signing CA : No
 
 openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/peercerts/centminmod.com.pem
 /etc/cfssl/peercerts/centminmod.com.pem: OK
+```
+
+# Cloudflare Authenticated Origin Pull Custom Hostname Domain Client TLS Certificate Upload
+
+An example of Cloudflare Authenticated Origin Pull certificate using custom hostname domain.
+
+Uploading via Cloudflare API a custom hostname domain client TLS certificate created and signed with previous created CA intermediate root certificate:
+
+```
+MYCERT=$(cfssl-certinfo -cert /etc/cfssl/clientcerts/client.centminmod.com.pem | jq '.pem' | sed -e 's|"||g')
+MYKEY=$(cat /etc/cfssl/clientcerts/client.centminmod.com-key.pem | perl -pe 's/\r?\n/\\n/'|sed -e's/..$//')
+request_body="{ \"certificate\": \"$MYCERT\", \"private_key\": \"$MYKEY\" }" 
+
+export cfzoneid=cf_zone_id
+export cfemail=cf_account_email
+export cftoken=cf_account_global_api_keytoken
+export cf_hostname=client.centminmod.com
+
+curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "id": "608cc597-64c5-4797-874b-fa6263f52572",
+    "status": "pending_deployment",
+    "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
+    "signature": "ECDSA-SHA256",
+    "serial_number": "584692600676493439512096317492143492518858226170",
+    "certificate": "-----BEGIN CERTIFICATE-----\nMIICTTCCAfOgAwIBAgIUZmqF4qgyuyNNrwVjzzLNHAbIefowCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBxxxVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNzUxMDBaFw0zMjA1MjExNzUxMDBaME8xCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEbMBkG\nA1UEAxMSY2xpZW50LmNlbnRtaW4uZGV2MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD\nQgAEXyp84zF8aQN+NgYz9R0ybj3WUtobIW+VR+8Sn8XqEcvLkKSHIbkE8d0QxVco\nrJj1WT8VGVsGoPEoFAFCgTWDEKOBlTCBkjAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0l\nBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQU3nVjMQxRXHbZ\n4MHDEHyKO9+LCAIwHwYDVR0jBBgwFoAUBmnnxfL9Oi4w1x99f7nem1K51HcwHQYD\nVR0RBBYwFIISY2xpZW50LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUCICbN\nwcITOWxFIJhmdlNai6aUk2nrH4TrHME4ahwXgR0/AiEAwsPA4uQbhKDDCsmX0p/6\nzC6RCxdzKoU2vQej7QUwdNc=\n-----END CERTIFICATE-----\n",
+    "uploaded_on": "2022-05-24T18:03:17.950644Z",
+    "updated_at": "2022-05-24T18:03:17.950644Z",
+    "expires_on": "2032-05-21T17:51:00Z"
+  }
+}
+```
+
+Verifying final status and getting info for uploaded custom hostname domain client TLS certificate:
+
+```
+export clientcert_id=$(jq -r '.result.id' /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt)
+echo "$clientcert_id" > /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-clientcert-id.txt
+
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-status.txt
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "id": "608cc597-64c5-4797-874b-fa6263f52572",
+    "status": "active",
+    "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
+    "signature": "ECDSA-SHA256",
+    "serial_number": "584692600676493439512096317492143492518858226170",
+    "certificate": "-----BEGIN CERTIFICATE-----\nMIICTTCCAfOgAwIBAgIUZmqF4qgyuyNNrwVjzzLNHAbIefowCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBxxxVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNzUxMDBaFw0zMjA1MjExNzUxMDBaME8xCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEbMBkG\nA1UEAxMSY2xpZW50LmNlbnRtaW4uZGV2MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD\nQgAEXyp84zF8aQN+NgYz9R0ybj3WUtobIW+VR+8Sn8XqEcvLkKSHIbkE8d0QxVco\nrJj1WT8VGVsGoPEoFAFCgTWDEKOBlTCBkjAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0l\nBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQU3nVjMQxRXHbZ\n4MHDEHyKO9+LCAIwHwYDVR0jBBgwFoAUBmnnxfL9Oi4w1x99f7nem1K51HcwHQYD\nVR0RBBYwFIISY2xpZW50LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUCICbN\nwcITOWxFIJhmdlNai6aUk2nrH4TrHME4ahwXgR0/AiEAwsPA4uQbhKDDCsmX0p/6\nzC6RCxdzKoU2vQej7QUwdNc=\n-----END CERTIFICATE-----\n",
+    "uploaded_on": "2022-05-24T18:03:17.950644Z",
+    "expires_on": "2032-05-21T17:51:00Z"
+  }
+}
+```
+
+Enabling Cloudflare Authenticated Origin Pull with custom hostname domain client TLS certificate at the zone level:
+
+```
+export cfzoneid=cf_zone_id
+export cfemail=cf_account_email
+export cftoken=cf_account_global_api_keytoken
+
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d $(jq -c -n --arg cf_hostname $cf_hostname --arg clientcert_id $clientcert_id $(echo "{\"config\":[{\"hostname\":\"$cf_hostname\",\"cert_id\":\"$clientcert_id\",\"enabled\":true}]}")) | jq
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": [
+    {
+      "hostname": "client.centminmod.com",
+      "cert_id": "608cc597-64c5-4797-874b-fa6263f52572",
+      "enabled": true,
+      "status": "pending_deployment",
+      "created_at": "2022-05-24T18:08:10.64646Z",
+      "updated_at": "2022-05-24T18:08:10.64646Z",
+      "cert_status": "active",
+      "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
+      "signature": "ECDSA-SHA256",
+      "serial_number": "584692600676493439512096317492143492518858226170",
+      "certificate": "-----BEGIN CERTIFICATE-----\nMIICTTCCAfOgAwIBAgIUZmqF4qgyuyNNrwVjzzLNHAbIefowCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBxxxVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNzUxMDBaFw0zMjA1MjExNzUxMDBaME8xCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEbMBkG\nA1UEAxMSY2xpZW50LmNlbnRtaW4uZGV2MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD\nQgAEXyp84zF8aQN+NgYz9R0ybj3WUtobIW+VR+8Sn8XqEcvLkKSHIbkE8d0QxVco\nrJj1WT8VGVsGoPEoFAFCgTWDEKOBlTCBkjAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0l\nBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQU3nVjMQxRXHbZ\n4MHDEHyKO9+LCAIwHwYDVR0jBBgwFoAUBmnnxfL9Oi4w1x99f7nem1K51HcwHQYD\nVR0RBBYwFIISY2xpZW50LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUCICbN\nwcITOWxFIJhmdlNai6aUk2nrH4TrHME4ahwXgR0/AiEAwsPA4uQbhKDDCsmX0p/6\nzC6RCxdzKoU2vQej7QUwdNc=\n-----END CERTIFICATE-----\n",
+      "cert_uploaded_on": "2022-05-24T18:03:17.950644Z",
+      "cert_updated_at": "2022-05-24T18:03:18.670801Z",
+      "expires_on": "2032-05-21T17:51:00Z"
+    }
+  ]
+}
+```
+
+Checking status for Cloudflare Authenticated Origin Pull with custom hostname domain client TLS certificate at the zone level:
+
+```
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/$cf_hostname" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" | jq
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "hostname": "client.centminmod.com",
+    "cert_id": "608cc597-64c5-4797-874b-fa6263f52572",
+    "enabled": true,
+    "status": "active",
+    "created_at": "2022-05-24T18:08:10.64646Z",
+    "updated_at": "2022-05-24T18:08:12.059714Z",
+    "cert_status": "active",
+    "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
+    "signature": "ECDSA-SHA256",
+    "serial_number": "584692600676493439512096317492143492518858226170",
+    "certificate": "-----BEGIN CERTIFICATE-----\nMIICTTCCAfOgAwIBAgIUZmqF4qgyuyNNrwVjzzLNHAbIefowCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBxxxVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNzUxMDBaFw0zMjA1MjExNzUxMDBaME8xCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEbMBkG\nA1UEAxMSY2xpZW50LmNlbnRtaW4uZGV2MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD\nQgAEXyp84zF8aQN+NgYz9R0ybj3WUtobIW+VR+8Sn8XqEcvLkKSHIbkE8d0QxVco\nrJj1WT8VGVsGoPEoFAFCgTWDEKOBlTCBkjAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0l\nBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQU3nVjMQxRXHbZ\n4MHDEHyKO9+LCAIwHwYDVR0jBBgwFoAUBmnnxfL9Oi4w1x99f7nem1K51HcwHQYD\nVR0RBBYwFIISY2xpZW50LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUCICbN\nwcITOWxFIJhmdlNai6aUk2nrH4TrHME4ahwXgR0/AiEAwsPA4uQbhKDDCsmX0p/6\nzC6RCxdzKoU2vQej7QUwdNc=\n-----END CERTIFICATE-----\n",
+    "cert_uploaded_on": "2022-05-24T18:03:17.950644Z",
+    "cert_updated_at": "2022-05-24T18:03:18.670801Z",
+    "expires_on": "2032-05-21T17:51:00Z"
+  }
+}
+```
+
+Disable Cloudflare Authenticated Origin Pull with custom hostname domain client TLS certificate at the zone level:
+
+```
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d $(jq -c -n --arg cf_hostname $cf_hostname --arg clientcert_id $clientcert_id $(echo "{\"config\":[{\"hostname\":\"$cf_hostname\",\"cert_id\":\"$clientcert_id\",\"enabled\":false}]}")) | jq
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": [
+    {
+      "hostname": "client.centminmod.com",
+      "cert_id": "608cc597-64c5-4797-874b-fa6263f52572",
+      "enabled": false,
+      "status": "pending_deployment",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "2022-05-24T18:09:59.585901Z",
+      "cert_status": "active",
+      "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
+      "signature": "ECDSA-SHA256",
+      "serial_number": "584692600676493439512096317492143492518858226170",
+      "certificate": "-----BEGIN CERTIFICATE-----\nMIICTTCCAfOgAwIBAgIUZmqF4qgyuyNNrwVjzzLNHAbIefowCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBxxxVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNzUxMDBaFw0zMjA1MjExNzUxMDBaME8xCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEbMBkG\nA1UEAxMSY2xpZW50LmNlbnRtaW4uZGV2MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD\nQgAEXyp84zF8aQN+NgYz9R0ybj3WUtobIW+VR+8Sn8XqEcvLkKSHIbkE8d0QxVco\nrJj1WT8VGVsGoPEoFAFCgTWDEKOBlTCBkjAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0l\nBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQU3nVjMQxRXHbZ\n4MHDEHyKO9+LCAIwHwYDVR0jBBgwFoAUBmnnxfL9Oi4w1x99f7nem1K51HcwHQYD\nVR0RBBYwFIISY2xpZW50LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUCICbN\nwcITOWxFIJhmdlNai6aUk2nrH4TrHME4ahwXgR0/AiEAwsPA4uQbhKDDCsmX0p/6\nzC6RCxdzKoU2vQej7QUwdNc=\n-----END CERTIFICATE-----\n",
+      "cert_uploaded_on": "2022-05-24T18:03:17.950644Z",
+      "cert_updated_at": "2022-05-24T18:03:18.670801Z",
+      "expires_on": "2032-05-21T17:51:00Z"
+    }
+  ]
+}
+```
+Delete Cloudflare Authenticated Origin Pull with custom hostname domain client TLS certificate at the zone level:
+
+```
+curl -sX DELETE "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-delete.txt
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "id": "608cc597-64c5-4797-874b-fa6263f52572",
+    "status": "pending_deletion",
+    "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
+    "signature": "ECDSA-SHA256",
+    "serial_number": "584692600676493439512096317492143492518858226170",
+    "certificate": "-----BEGIN CERTIFICATE-----\nMIICTTCCAfOgAwIBAgIUZmqF4qgyuyNNrwVjzzLNHAbIefowCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBxxxVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNzUxMDBaFw0zMjA1MjExNzUxMDBaME8xCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEbMBkG\nA1UEAxMSY2xpZW50LmNlbnRtaW4uZGV2MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD\nQgAEXyp84zF8aQN+NgYz9R0ybj3WUtobIW+VR+8Sn8XqEcvLkKSHIbkE8d0QxVco\nrJj1WT8VGVsGoPEoFAFCgTWDEKOBlTCBkjAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0l\nBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQU3nVjMQxRXHbZ\n4MHDEHyKO9+LCAIwHwYDVR0jBBgwFoAUBmnnxfL9Oi4w1x99f7nem1K51HcwHQYD\nVR0RBBYwFIISY2xpZW50LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUCICbN\nwcITOWxFIJhmdlNai6aUk2nrH4TrHME4ahwXgR0/AiEAwsPA4uQbhKDDCsmX0p/6\nzC6RCxdzKoU2vQej7QUwdNc=\n-----END CERTIFICATE-----\n",
+    "uploaded_on": "2022-05-24T18:03:17.950644Z",
+    "expires_on": "2032-05-21T17:51:00Z"
+  }
+}
+```
+
+Verify deletion:
+
+```
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/client.centminmod.com-cf-origin-tls-cleint-auth-cert-upload-status.txt
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "id": "608cc597-64c5-4797-874b-fa6263f52572",
+    "status": "deleted",
+    "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
+    "signature": "ECDSA-SHA256",
+    "serial_number": "584692600676493439512096317492143492518858226170",
+    "certificate": "-----BEGIN CERTIFICATE-----\nMIICTTCCAfOgAwIBAgIUZmqF4qgyuyNNrwVjzzLNHAbIefowCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBxxxVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNzUxMDBaFw0zMjA1MjExNzUxMDBaME8xCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEbMBkG\nA1UEAxMSY2xpZW50LmNlbnRtaW4uZGV2MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD\nQgAEXyp84zF8aQN+NgYz9R0ybj3WUtobIW+VR+8Sn8XqEcvLkKSHIbkE8d0QxVco\nrJj1WT8VGVsGoPEoFAFCgTWDEKOBlTCBkjAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0l\nBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQU3nVjMQxRXHbZ\n4MHDEHyKO9+LCAIwHwYDVR0jBBgwFoAUBmnnxfL9Oi4w1x99f7nem1K51HcwHQYD\nVR0RBBYwFIISY2xpZW50LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUCICbN\nwcITOWxFIJhmdlNai6aUk2nrH4TrHME4ahwXgR0/AiEAwsPA4uQbhKDDCsmX0p/6\nzC6RCxdzKoU2vQej7QUwdNc=\n-----END CERTIFICATE-----\n",
+    "uploaded_on": "2022-05-24T18:03:17.950644Z",
+    "expires_on": "2032-05-21T17:51:00Z"
+  }
+}
 ```
 
 # Peer SSL Certificate
