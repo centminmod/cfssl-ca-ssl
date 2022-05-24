@@ -487,7 +487,7 @@ client_gen() {
     openssl verify -CAfile "${cfdir}/${d}-ca-bundle.pem" "${clientcerts_dir}/${domain}.pem"
     echo
     echo "---------------------------------------------------------------------------"
-    echo "For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate API Upload"
+    echo "For Cloudflare custom Authenticated Origin Pull Client Certificate API Upload"
     echo "---------------------------------------------------------------------------"
     echo "- https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates"
     echo "- https://api.cloudflare.com/#per-hostname-authenticated-origin-pull-upload-a-hostname-client-certificate"

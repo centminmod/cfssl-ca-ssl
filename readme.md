@@ -1013,7 +1013,7 @@ openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/client
 /etc/cfssl/clientcerts/centminmod.com.pem: OK
 
 ---------------------------------------------------------------------------
-For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate API Upload
+For Cloudflare custom Authenticated Origin Pull Client Certificate API Upload
 ---------------------------------------------------------------------------
 - https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates
 - https://api.cloudflare.com/#per-hostname-authenticated-origin-pull-upload-a-hostname-client-certificate
@@ -1413,7 +1413,7 @@ openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/client
 /etc/cfssl/clientcerts/client.centminmod.com.pem: OK
 
 ---------------------------------------------------------------------------
-For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate API Upload
+For Cloudflare custom Authenticated Origin Pull Client Certificate API Upload
 ---------------------------------------------------------------------------
 - https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates
 - https://api.cloudflare.com/#per-hostname-authenticated-origin-pull-upload-a-hostname-client-certificate
