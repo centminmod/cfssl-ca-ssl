@@ -1,8 +1,9 @@
 #!/bin/bash
 # for centminmod.com LEMP stack installations
-ver=1.0
+ver=1.1
 debug='y'
 cfdir='/etc/cfssl'
+cfcleanupdir="${cfdir}/cleanup"
 servercerts_dir="${cfdir}/servercerts"
 servercerts_selfsign_dir="${cfdir}/servercerts_selfsigned"
 clientcerts_dir="${cfdir}/clientcerts"
@@ -19,6 +20,9 @@ servercerts_cforigin_dir="${cfdir}/servercerts_cforigin"
 
 if [ ! -d "$cfdir" ]; then
   mkdir -p "$cfdir"
+fi
+if [ ! -d "${cfcleanupdir}" ]; then
+  mkdir -p "${cfcleanupdir}"
 fi
 if [ -f "$cfdir/cfssl.ini" ]; then
   source "$cfdir/cfssl.ini"
@@ -187,6 +191,44 @@ ca_gen() {
     echo "cat ${cfdir}/${domain}-ca.pem ${cfdir}/${domain}-ca-intermediate.pem > ${cfdir}/${domain}-ca-bundle.pem"
     echo
   fi
+
+  # Cleanup create "${cfcleanupdir}/remove-ca-${domain}.sh"
+  if [ -f "${cfdir}/${domain}-ca.pem" ]; then
+    echo "rm -f ${cfdir}/${domain}-ca.pem" > "${cfcleanupdir}/remove-ca-${domain}.sh"
+  fi
+  if [ -f "${cfdir}/${domain}-ca-key.pem" ]; then
+    echo "rm -f ${cfdir}/${domain}-ca-key.pem" >> "${cfcleanupdir}/remove-ca-${domain}.sh"
+  fi
+  if [ -f "${cfdir}/${domain}-ca-publickey.pem" ]; then
+    echo "rm -f ${cfdir}/${domain}-ca-publickey.pem" >> "${cfcleanupdir}/remove-ca-${domain}.sh"
+  fi
+  if [ -f "${cfdir}/${domain}-ca.csr" ]; then
+    echo "rm -f ${cfdir}/${domain}-ca.csr" >> "${cfcleanupdir}/remove-ca-${domain}.sh"
+  fi
+  if [ -f "${cfdir}/${domain}-ca.csr.json" ]; then
+    echo "rm -f ${cfdir}/${domain}-ca.csr.json" >> "${cfcleanupdir}/remove-ca-${domain}.sh"
+  fi
+  if [ -f "${cfdir}/profile.json" ]; then
+    echo "rm -f ${cfdir}/profile.json" >> "${cfcleanupdir}/remove-ca-${domain}.sh"
+  fi
+  if [ -f "${cfdir}/${domain}-ca-intermediate.pem" ]; then
+    echo "rm -f ${cfdir}/${domain}-ca-intermediate.pem" >> "${cfcleanupdir}/remove-ca-${domain}.sh"
+  fi
+  if [ -f "${cfdir}/${domain}-ca-intermediate-key.pem" ]; then
+    echo "rm -f ${cfdir}/${domain}-ca-intermediate-key.pem" >> "${cfcleanupdir}/remove-ca-${domain}.sh"
+  fi
+  if [ -f "${cfdir}/${domain}-ca-intermediate-publickey.pem" ]; then
+    echo "rm -f ${cfdir}/${domain}-ca-intermediate-publickey.pem" >> "${cfcleanupdir}/remove-ca-${domain}.sh"
+  fi
+  if [ -f "${cfdir}/${domain}-ca-intermediate.csr" ]; then
+    echo "rm -f ${cfdir}/${domain}-ca-intermediate.csr" >> "${cfcleanupdir}/remove-ca-${domain}.sh"
+  fi
+  if [ -f "${cfdir}/${domain}-ca-intermediate.csr.json" ]; then
+    echo "rm -f ${cfdir}/${domain}-ca-intermediate.csr.json" >> "${cfcleanupdir}/remove-ca-${domain}.sh"
+  fi
+  chmod +x "${cfcleanupdir}/remove-ca-${domain}.sh"
+  echo "Cleanup script created: ${cfcleanupdir}/remove-ca-${domain}.sh"
+  echo "To clean up run: bash ${cfcleanupdir}/remove-ca-${domain}.sh"
 }
 
 server_gen() {
@@ -296,6 +338,27 @@ server_gen() {
     echo "error: missing required files:"
     echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca-intermediate.pem\n${cfdir}/${d}-ca-intermediate-key.pem"
   fi
+
+  # clean up
+  echo
+  if [ -f "${servercerts_dir}/${domain}.pem" ]; then
+    echo "rm -f ${servercerts_dir}/${domain}.pem" > "${cfcleanupdir}/remove-servercert-${domain}.sh"
+  fi
+  if [ -f "${servercerts_dir}/${domain}-key.pem" ]; then
+    echo "rm -f ${servercerts_dir}/${domain}-key.pem" >> "${cfcleanupdir}/remove-servercert-${domain}.sh"
+  fi
+  if [ -f "${servercerts_dir}/${domain}-publickey.pem" ]; then
+    echo "rm -f ${servercerts_dir}/${domain}-publickey.pem" >> "${cfcleanupdir}/remove-servercert-${domain}.sh"
+  fi
+  if [ -f "${servercerts_dir}/${domain}.csr" ]; then
+    echo "rm -f ${servercerts_dir}/${domain}.csr" >> "${cfcleanupdir}/remove-servercert-${domain}.sh"
+  fi
+  if [ -f "${servercerts_dir}/${domain}.csr.json" ]; then
+    echo "rm -f ${servercerts_dir}/${domain}.csr.json" >> "${cfcleanupdir}/remove-servercert-${domain}.sh"
+  fi
+  chmod +x "${cfcleanupdir}/remove-servercert-${domain}.sh"
+  echo "Cleanup script created: ${cfcleanupdir}/remove-servercert-${domain}.sh"
+  echo "To clean up run: bash ${cfcleanupdir}/remove-servercert-${domain}.sh"
 }
 
 client_gen() {
@@ -426,7 +489,7 @@ client_gen() {
     echo "---------------------------------------------------------------------------"
     echo "For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate API Upload"
     echo "---------------------------------------------------------------------------"
-    echo "- https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname"
+    echo "- https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates"
     echo "- https://api.cloudflare.com/#per-hostname-authenticated-origin-pull-upload-a-hostname-client-certificate"
     echo
     echo "populate variables"
@@ -476,25 +539,41 @@ client_gen() {
     echo "To delete uploaded TLS client certificate via CF API"
     echo "---------------------------------------------------------------------------"
     echo
+    echo "For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com"
     echo "curl -sX DELETE \"https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames/certificates/\$clientcert_id\" -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \"\$request_body\" | jq | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload-delete.txt"
+    echo
+    echo "Or for apex non-subdomains i.e. domain.com"
+    echo "curl -sX DELETE \"https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/\$clientcert_id\" -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \"\$request_body\" | jq | tee ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload-delete.txt"
     echo
     echo "---------------------------------------------------------------------------"
     echo "Enable specific hostname Authenticated Origin Pull via Cloudflare API"
     echo "---------------------------------------------------------------------------"
     echo
+    echo "For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com"
     echo "curl -sX PUT https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \$(jq -c -n --arg cf_hostname \$cf_hostname --arg clientcert_id \$clientcert_id \$(echo \"{\\\"config\\\":[{\\\"hostname\\\":\\\"\$cf_hostname\\\",\\\"cert_id\\\":\\\"\$clientcert_id\\\",\\\"enabled\\\":true}]}\")) | jq"
+    echo
+    echo "Or for apex non-subdomains i.e. domain.com"
+    echo "curl -sX PUT https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/settings -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d '{\"enabled\":true}' | jq"
     echo
     echo "---------------------------------------------------------------------------"
     echo "Disable specific hostname Authenticated Origin Pull via Cloudflare API"
     echo "---------------------------------------------------------------------------"
     echo
+    echo "For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com"
     echo "curl -sX PUT https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d \$(jq -c -n --arg cf_hostname \$cf_hostname --arg clientcert_id \$clientcert_id \$(echo \"{\\\"config\\\":[{\\\"hostname\\\":\\\"\$cf_hostname\\\",\\\"cert_id\\\":\\\"\$clientcert_id\\\",\\\"enabled\\\":false}]}\")) | jq"
+    echo
+    echo "Or for apex non-subdomains i.e. domain.com"
+    echo "curl -sX PUT https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/settings -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" -d '{\"enabled\":false}' | jq"
     echo
     echo "---------------------------------------------------------------------------"
     echo "Check CF Status for specific hostname Authenticated Origin Pull via Cloudflare API"
     echo "---------------------------------------------------------------------------"
     echo
+    echo "For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com"
     echo "curl -sX GET \"https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/hostnames/\$cf_hostname\" -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" | jq"
+    echo
+    echo "Or for apex non-subdomains i.e. domain.com"
+    echo "curl -sX GET \"https://api.cloudflare.com/client/v4/zones/\$cfzoneid/origin_tls_client_auth/settings\" -H \"X-Auth-Email: \$cfemail\" -H \"X-Auth-Key: \$cftoken\" -H \"Content-Type: application/json\" | jq"
     echo
     echo "---------------------------------------------------------------------------"
     echo "List uploaded Origin TLS Client Authenticatied Certificates"
@@ -506,6 +585,44 @@ client_gen() {
     echo "error: missing required files:"
     echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca-intermediate.pem\n${cfdir}/${d}-ca-intermediate-key.pem"
   fi
+  # cleanup
+  echo
+  if [ -f "${clientcerts_dir}/${domain}.p12" ]; then
+    echo "rm -f ${clientcerts_dir}/${domain}.p12" > "${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  fi
+  if [ -f "${clientcerts_dir}/${domain}.pem" ]; then
+    echo "rm -f ${clientcerts_dir}/${domain}.pem" >> "${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  fi
+  if [ -f "${clientcerts_dir}/${domain}-key.pem" ]; then
+    echo "rm -f ${clientcerts_dir}/${domain}-key.pem" >> "${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  fi
+  if [ -f "${clientcerts_dir}/${domain}-publickey.pem" ]; then
+    echo "rm -f ${clientcerts_dir}/${domain}-publickey.pem" >> "${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  fi
+  if [ -f "${clientcerts_dir}/${domain}.csr" ]; then
+    echo "rm -f ${clientcerts_dir}/${domain}.csr" >> "${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  fi
+  if [ -f "${clientcerts_dir}/${domain}.csr.json" ]; then
+    echo "rm -f ${clientcerts_dir}/${domain}.csr.json" >> "${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  fi
+  if [ -f "${clientcerts_dir}/${domain}-client-bundle.pem" ]; then
+    echo "rm -f ${clientcerts_dir}/${domain}-client-bundle.pem" >> "${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  fi
+  if [ -f "${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt" ]; then
+    echo "rf -f ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload.txt" >> "${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  fi
+  if [ -f "${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload-clientcert-id.txt" ]; then
+    echo "rf -f ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload-clientcert-id.txt" >> "${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  fi
+  if [ -f "${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload-status.txt" ]; then
+    echo "rf -f ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload-status.txt" >> "${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  fi
+  if [ -f "${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload-delete.txt" ]; then
+    echo "rf -f ${clientcerts_dir}/${domain}-cf-origin-tls-cleint-auth-cert-upload-delete.txt" >> "${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  fi
+  chmod +x "${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  echo "Cleanup script created: ${cfcleanupdir}/remove-clientcert-${domain}.sh"
+  echo "To clean up run: bash ${cfcleanupdir}/remove-clientcert-${domain}.sh"
 }
 
 peer_gen() {
@@ -639,6 +756,33 @@ peer_gen() {
     echo "error: missing required files:"
     echo -e "${cfdir}/profile.json\n${cfdir}/${d}-ca-intermediate.pem\n${cfdir}/${d}-ca-intermediate-key.pem"
   fi
+
+  # cleanup
+  echo
+    if [ -f "${peercerts_dir}/${domain}.p12" ]; then
+        echo "rm -f ${peercerts_dir}/${domain}.p12" > "${cfcleanupdir}/remove-peercert-${domain}.sh"
+    fi
+    if [ -f "${peercerts_dir}/${domain}.pem" ]; then
+      echo "rm -f ${peercerts_dir}/${domain}.pem" >> "${cfcleanupdir}/remove-peercert-${domain}.sh"
+    fi
+    if [ -f "${peercerts_dir}/${domain}-key.pem" ]; then
+      echo "rm -f ${peercerts_dir}/${domain}-key.pem" >> "${cfcleanupdir}/remove-peercert-${domain}.sh"
+    fi
+    if [ -f "${peercerts_dir}/${domain}-publickey.pem" ]; then
+      echo "rm -f ${peercerts_dir}/${domain}-publickey.pem" >> "${cfcleanupdir}/remove-peercert-${domain}.sh"
+    fi
+    if [ -f "${peercerts_dir}/${domain}.csr" ]; then
+      echo "rm -f ${peercerts_dir}/${domain}.csr" >> "${cfcleanupdir}/remove-peercert-${domain}.sh"
+    fi
+    if [ -f "${peercerts_dir}/${domain}.csr.json" ]; then
+      echo "rm -f ${peercerts_dir}/${domain}.csr.json" >> "${cfcleanupdir}/remove-peercert-${domain}.sh"
+    fi
+    if [ -f "${clientcerts_dir}/${domain}-client-bundle.pem" ]; then
+      echo "rm -f ${clientcerts_dir}/${domain}-client-bundle.pem" >> "${cfcleanupdir}/remove-peercert-${domain}.sh"
+    fi
+  chmod +x "${cfcleanupdir}/remove-peercert-${domain}.sh"
+  echo "Cleanup script created: ${cfcleanupdir}/remove-peercert-${domain}.sh"
+  echo "To clean up run: bash ${cfcleanupdir}/remove-peercert-${domain}.sh"
 }
 
 selfsign_gen() {

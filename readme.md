@@ -89,6 +89,7 @@ Generate CA & CA Intermediate signed certificates for centminmod.com with 87600 
 * CA Intermediate certificate private key /etc/cfssl/centminmod.com-ca-intermediate-key.pem
 * CA Intermediate certificate public key /etc/cfssl/centminmod.com-ca-intermediate-publickey.pem
 * CA Bundle certificate /etc/cfssl/centminmod.com-ca-bundle.pem
+* cleanup certs script: /etc/cfssl/cleanup/remove-ca-centminmod.com.sh
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-ca centminmod.com 87600
@@ -98,44 +99,44 @@ CA generation
 
 cfssl gencert -initca centminmod.com-ca.csr.json | cfssljson -bare centminmod.com-ca
 
-2020/09/15 04:31:34 [INFO] generating a new CA key and certificate from CSR
-2020/09/15 04:31:34 [INFO] generate received request
-2020/09/15 04:31:34 [INFO] received CSR
-2020/09/15 04:31:34 [INFO] generating key: ecdsa-256
-2020/09/15 04:31:34 [INFO] encoded CSR
-2020/09/15 04:31:34 [INFO] signed certificate with serial number 686727792341884987952702873227439390181235858982
+2022/05/24 16:11:57 [INFO] generating a new CA key and certificate from CSR
+2022/05/24 16:11:57 [INFO] generate received request
+2022/05/24 16:11:57 [INFO] received CSR
+2022/05/24 16:11:57 [INFO] generating key: ecdsa-256
+2022/05/24 16:11:57 [INFO] encoded CSR
+2022/05/24 16:11:57 [INFO] signed certificate with serial number 35651131195992397763074176049994050494553241085
 
 openssl x509 -in /etc/cfssl/centminmod.com-ca.pem -text -noout
 
-Extract CA Root certicate public key: /etc/cfssl/centminmod.com-ca-publickey.pem
+Extract CA Root certificate public key: /etc/cfssl/centminmod.com-ca-publickey.pem
 openssl x509 -pubkey -noout -in /etc/cfssl/centminmod.com-ca.pem > /etc/cfssl/centminmod.com-ca-publickey.pem
 cat /etc/cfssl/centminmod.com-ca-publickey.pem
 
 -----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAECJ2jViJih2HZQqgx38O7psazhDWn
-gM5jxVmbfjfyecQYCDkUhdYhZr2ym/D74sG9aeL3kzvb8mANiNMsfKkQZw==
+MFkxxxKoZIzj0CAQYIKoZIzj0DAQcDQgAEo9o5Iwre92nyepKbBFAXSprTNj78
+Zfa5XLU+8qanijuSAca8aXmCchsrNARbKYQhnUT7F1n69Z3lz1G3h6PppQ==
 -----END PUBLIC KEY-----
 
 Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            78:49:f0:71:20:59:94:a3:6d:41:9f:ee:0d:dc:d3:37:51:a7:9e:26
+            06:3e:a6:ea:4d:a3:f8:02:4a:1e:58:ef:d1:89:4a:01:d2:c9:b5:fd
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, OU=Root CA, CN=Root CA
         Validity
-            Not Before: Sep 15 04:27:00 2020 GMT
-            Not After : Sep 13 04:27:00 2030 GMT
+            Not Before: May 24 16:07:00 2022 GMT
+            Not After : May 21 16:07:00 2032 GMT
         Subject: C=US, ST=CA, L=San Francisco, OU=Root CA, CN=Root CA
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:08:9d:a3:56:22:62:87:61:d9:42:a8:31:df:c3:
-                    bb:a6:c6:b3:84:35:a7:80:ce:63:c5:59:9b:7e:37:
-                    f2:79:c4:18:08:39:14:85:d6:21:66:bd:b2:9b:f0:
-                    fb:e2:c1:bd:69:e2:f7:93:3b:db:f2:60:0d:88:d3:
-                    2c:7c:a9:10:67
+                    04:a3:da:39:23:0a:de:f7:69:f2:7a:92:9b:04:50:
+                    17:4a:9a:d3:36:3e:fc:65:f6:b9:5c:b5:3e:f2:a6:
+                    a7:8a:3b:92:01:c6:bc:69:79:82:72:1b:2b:34:04:
+                    5b:29:84:21:9d:44:fb:17:59:fa:f5:9d:e5:cf:51:
+                    b7:87:a3:e9:a5
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -144,12 +145,12 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:TRUE
             X509v3 Subject Key Identifier: 
-                AF:7E:B8:E6:E0:47:22:71:FC:94:74:DF:9E:50:B2:0A:C2:76:D1:44
+                42:xx:64:10:3A:B3:BF:87:4F:B3:E2:17:B0:DA:4C:D3:2C:BF:42:2A
     Signature Algorithm: ecdsa-with-SHA256
-         30:46:02:21:00:ed:f5:c2:b0:7d:96:4e:59:b5:85:80:b6:7f:
-         e1:55:42:ad:85:15:36:c2:2f:3d:93:24:7c:35:c2:cd:84:48:
-         f8:02:21:00:c9:18:28:f7:35:91:fc:d0:b9:85:f9:a2:73:66:
-         a8:7c:fb:67:de:2f:2c:1f:aa:c4:50:63:38:95:15:58:c2:a5
+         30:44:02:20:6f:ac:43:08:ff:e8:50:ad:d3:0c:3b:ca:19:b7:
+         46:30:e6:6f:0d:7b:57:81:4d:33:9f:5d:7a:bc:b2:e7:fd:fc:
+         02:20:22:e0:c3:6d:8b:e2:3b:37:77:93:92:67:3c:9b:70:b2:
+         66:60:c3:c0:cb:e4:ce:15:95:9e:b6:7c:5f:f6:14:dc
 
 ca cert: /etc/cfssl/centminmod.com-ca.pem
 ca private key: /etc/cfssl/centminmod.com-ca-key.pem
@@ -187,13 +188,13 @@ ca profile: /etc/cfssl/profile.json
       "Root CA"
     ]
   },
-  "serial_number": "686727792341884987952702873227439390181235858982",
-  "not_before": "2020-09-15T04:27:00Z",
-  "not_after": "2030-09-13T04:27:00Z",
+  "serial_number": "35651131195992397763074176049994050494553241085",
+  "not_before": "2022-05-24T16:07:00Z",
+  "not_after": "2032-05-21T16:07:00Z",
   "sigalg": "ECDSAWithSHA256",
   "authority_key_id": "",
-  "subject_key_id": "AF:7E:B8:E6:E0:47:22:71:FC:94:74:DF:9E:50:B2:0A:C2:76:D1:44",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIIB8TCCAZagAwIBAgIUeEnwcSBZlKNtQZ/uDdzTN1GnniYwCgYIKoZIzj0EAwIw\nVjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRAwDgYDVQQLEwdSb290IENBMRAwDgYDVQQDEwdSb290IENBMB4XDTIwMDkx\nNTA0MjcwMFoXDTMwMDkxMzA0MjcwMFowVjELMAkGA1UEBhMCVVMxCzAJBgNVBAgT\nAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNpc2NvMRAwDgYDVQQLEwdSb290IENBMRAw\nDgYDVQQDEwdSb290IENBMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAECJ2jViJi\nh2HZQqgx38O7psazhDWngM5jxVmbfjfyecQYCDkUhdYhZr2ym/D74sG9aeL3kzvb\n8mANiNMsfKkQZ6NCMEAwDgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8w\nHQYDVR0OBBYEFK9+uObgRyJx/JR0355QsgrCdtFEMAoGCCqGSM49BAMCA0kAMEYC\nIQDt9cKwfZZOWbWFgLZ/4VVCrYUVNsIvPZMkfDXCzYRI+AIhAMkYKPc1kfzQuYX5\nonNmqHz7Z94vLB+qxFBjOJUVWMKl\n-----END CERTIFICATE-----\n"
+  "subject_key_id": "42:xx:64:10:3A:B3:BF:87:4F:B3:E2:17:B0:DA:4C:D3:2C:BF:42:2A",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIIB7zCCAZagAwIBAgIUBj6m6k2j+AJKHljv0YlKAdLJtf0wCgYIKoZIzj0EAwIw\nVjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRAwDgYDVQQLEwdSb290IENBMRAwDgYDVQQDEwdSb290IENBMB4XDTIyMDUy\nNDE2MDcwMFoXDTMyMDUyMTE2MDcwMFowVjELMAkGA1UEBhMCVVMxCzAJBgNVBAgT\nAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNpc2NvMRAwDgYDVQQLEwdSb290IENBMRAw\nDgYDVQQDEwdSb290IENBMFkxxxKoZIzj0CAQYIKoZIzj0DAQcDQgAEo9o5Iwre\n92nyepKbBFAXSprTNj78Zfa5XLU+8qanijuSAca8aXmCchsrNARbKYQhnUT7F1n6\n9Z3lz1G3h6PppaNCMEAwDgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8w\nHQYDVR0OBBYEFELUZBA6s7+HT7PiF7DaTNMsv0IqMAoGCCqGSM49BAMCA0cAMEQC\nIG+sQwj/6FCt0ww7yhm3RjDmbw17V4FNM59deryy5/38AiAi4MNti+I7N3eTkmc8\nm3CyZmDDwMvkzhWVnrZ8X/YU3A==\n-----END CERTIFICATE-----\n"
 }
 
 --------------------------------------
@@ -202,47 +203,47 @@ CA Intermediate generation
 
 cfssl gencert -initca centminmod.com-ca-intermediate.csr.json | cfssljson -bare centminmod.com-ca-intermediate
 
-2020/09/15 04:31:34 [INFO] generating a new CA key and certificate from CSR
-2020/09/15 04:31:34 [INFO] generate received request
-2020/09/15 04:31:34 [INFO] received CSR
-2020/09/15 04:31:34 [INFO] generating key: ecdsa-256
-2020/09/15 04:31:34 [INFO] encoded CSR
-2020/09/15 04:31:34 [INFO] signed certificate with serial number 563144683109045093924274326758394013884429079825
+2022/05/24 16:11:57 [INFO] generating a new CA key and certificate from CSR
+2022/05/24 16:11:57 [INFO] generate received request
+2022/05/24 16:11:57 [INFO] received CSR
+2022/05/24 16:11:57 [INFO] generating key: ecdsa-256
+2022/05/24 16:11:57 [INFO] encoded CSR
+2022/05/24 16:11:57 [INFO] signed certificate with serial number 310941443649610619220709820661281448885533827331
 
 cfssl sign -ca /etc/cfssl/centminmod.com-ca.pem -ca-key /etc/cfssl/centminmod.com-ca-key.pem -config /etc/cfssl/profile.json -profile intermediate_ca centminmod.comca-intermediate.csr | cfssljson -bare centminmod.com-ca-intermediate
-2020/09/15 04:31:34 [INFO] signed certificate with serial number 236486850035850570205586586246618168815674568042
+2022/05/24 16:11:57 [INFO] signed certificate with serial number 607572148517706135605174118526259042263255209665
 
 openssl x509 -in centminmod.com-ca-intermediate.pem -text -noout
 
-Extract CA Intermediate certicate public key: /etc/cfssl/centminmod.com-ca-intermediate-publickey.pem
+Extract CA Intermediate certificate public key: /etc/cfssl/centminmod.com-ca-intermediate-publickey.pem
 openssl x509 -pubkey -noout -in /etc/cfssl/centminmod.com-ca-intermediate.pem > /etc/cfssl/centminmod.com-ca-intermediate-publickey.pem
 cat /etc/cfssl/centminmod.com-ca-intermediate-publickey.pem
 
 -----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEpEW5geBSvpWNKfPEEeubYWO6TYcN
-KYvj4iB6yKNJf45p4a424GoL8+Fxww1HiJlLCmpu3s/d/627NEUA394NqA==
+MFkxxxKoZIzj0CAQYIKoZIzj0DAQcDQgAET3aFypl4XFyNr2Hc+SJpbwbdkzpB
+1fZeBGaDMvi/taliCH22hJIfHDLIP0RCaU5e+/mvxDFiDfXSUDt4TXdW/Q==
 -----END PUBLIC KEY-----
 
 Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            29:6c:6f:e6:a6:f9:d3:cf:09:04:08:49:07:3f:9c:84:83:d9:ad:6a
+            6a:6c:7a:36:bf:b1:eb:01:e8:c8:24:18:55:bb:ba:c6:e6:5b:d6:c1
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, OU=Root CA, CN=Root CA
         Validity
-            Not Before: Sep 15 04:27:00 2020 GMT
-            Not After : Sep 13 04:27:00 2030 GMT
+            Not Before: May 24 16:07:00 2022 GMT
+            Not After : May 21 16:07:00 2032 GMT
         Subject: C=US, ST=CA, L=San Francisco, OU=Intermediate CA, CN=Intermediate CA
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:a4:45:b9:81:e0:52:be:95:8d:29:f3:c4:11:eb:
-                    9b:61:63:ba:4d:87:0d:29:8b:e3:e2:20:7a:c8:a3:
-                    49:7f:8e:69:e1:ae:36:e0:6a:0b:f3:e1:71:c3:0d:
-                    47:88:99:4b:0a:6a:6e:de:cf:dd:ff:ad:bb:34:45:
-                    00:df:de:0d:a8
+                    04:4f:76:85:ca:99:78:5c:5c:8d:af:61:dc:f9:22:
+                    69:6f:xx:dd:93:3a:41:d5:f6:5e:04:66:83:32:f8:
+                    bf:b5:a9:62:08:7d:b6:84:92:1f:1c:32:c8:3f:44:
+                    42:69:4e:5e:fb:f9:af:c4:31:62:0d:f5:d2:50:3b:
+                    78:4d:77:56:fd
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -253,15 +254,15 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:TRUE, pathlen:0
             X509v3 Subject Key Identifier: 
-                81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8
+                06:xx:E7:C5:F2:FD:3A:2E:30:D7:1F:7D:7F:B9:DE:9B:52:B9:D4:77
             X509v3 Authority Key Identifier: 
-                keyid:AF:7E:B8:E6:E0:47:22:71:FC:94:74:DF:9E:50:B2:0A:C2:76:D1:44
+                keyid:42:xx:64:10:3A:B3:BF:87:4F:B3:E2:17:B0:DA:4C:D3:2C:BF:42:2A
 
     Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:20:34:e2:0b:9a:99:69:57:74:93:73:95:41:91:25:
-         46:a7:77:f9:c3:3f:ef:99:c0:3e:56:05:f3:b1:50:c6:0e:86:
-         02:21:00:d5:57:b5:0c:ff:df:65:65:23:ae:56:5a:2d:6f:9e:
-         26:3d:f9:7d:2e:7a:5b:e8:83:b8:4d:e1:14:1e:fb:be:51
+         30:45:02:20:69:4c:8c:b7:e9:65:6d:ec:11:29:c1:dc:d4:bb:
+         10:9d:1b:fd:2c:42:5a:2c:be:2b:85:f4:db:44:c3:01:be:c8:
+         02:21:00:b5:f7:40:4d:2d:c9:7e:d4:39:50:9a:b5:41:be:9f:
+         fe:5d:33:2c:07:b0:0b:0a:a7:80:4e:a1:35:c0:71:20:e3
 
 ca intermediate cert: /etc/cfssl/centminmod.com-ca-intermediate.pem
 ca intermediate private key: /etc/cfssl/centminmod.com-ca-intermediate-key.pem
@@ -299,18 +300,21 @@ ca intermediate profile: /etc/cfssl/profile.json
       "Root CA"
     ]
   },
-  "serial_number": "236486850035850570205586586246618168815674568042",
-  "not_before": "2020-09-15T04:27:00Z",
-  "not_after": "2030-09-13T04:27:00Z",
+  "serial_number": "607572148517706135605174118526259042263255209665",
+  "not_before": "2022-05-24T16:07:00Z",
+  "not_after": "2032-05-21T16:07:00Z",
   "sigalg": "ECDSAWithSHA256",
-  "authority_key_id": "AF:7E:B8:E6:E0:47:22:71:FC:94:74:DF:9E:50:B2:0A:C2:76:D1:44",
-  "subject_key_id": "81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICRTCCAeugAwIBAgIUKWxv5qb5088JBAhJBz+chIPZrWowCgYIKoZIzj0EAwIw\nVjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRAwDgYDVQQLEwdSb290IENBMRAwDgYDVQQDEwdSb290IENBMB4XDTIwMDkx\nNTA0MjcwMFoXDTMwMDkxMzA0MjcwMFowZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgT\nAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNpc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlh\ndGUgQ0ExGDAWBgNVBAMTD0ludGVybWVkaWF0ZSBDQTBZMBMGByqGSM49AgEGCCqG\nSM49AwEHA0IABKRFuYHgUr6VjSnzxBHrm2Fjuk2HDSmL4+IgesijSX+OaeGuNuBq\nC/PhccMNR4iZSwpqbt7P3f+tuzRFAN/eDaijgYYwgYMwDgYDVR0PAQH/BAQDAgGm\nMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjASBgNVHRMBAf8ECDAGAQH/\nAgEAMB0GA1UdDgQWBBSBaRVXvWz+5Ig9qon7MIoCUrYw6DAfBgNVHSMEGDAWgBSv\nfrjm4EcicfyUdN+eULIKwnbRRDAKBggqhkjOPQQDAgNIADBFAiA04guamWlXdJNz\nlUGRJUand/nDP++ZwD5WBfOxUMYOhgIhANVXtQz/32VlI65WWi1vniY9+X0uelvo\ng7hN4RQe+75R\n-----END CERTIFICATE-----\n"
+  "authority_key_id": "42:xx:64:10:3A:B3:BF:87:4F:B3:E2:17:B0:DA:4C:D3:2C:BF:42:2A",
+  "subject_key_id": "06:xx:E7:C5:F2:FD:3A:2E:30:D7:1F:7D:7F:B9:DE:9B:52:B9:D4:77",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIIxxxCCAeugAwIBAgIUamx6Nr+x6wHoyCQYVbu6xuZb1sEwCgYIKoZIzj0EAwIw\nVjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRAwDgYDVQQLEwdSb290IENBMRAwDgYDVQQDEwdSb290IENBMB4XDTIyMDUy\nNDE2MDcwMFoXDTMyMDUyMTE2MDcwMFowZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgT\nAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNpc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlh\ndGUgQ0ExGDAWBgNVBAMTD0ludGVybWVkaWF0ZSBDQTBZMBMGByqGSM49AgEGCCqG\nSM49AwEHA0IABE92hcqZeFxcja9h3PkiaW8G3ZM6QdX2XgRmgzL4v7WpYgh9toSS\nHxwyyD9EQmlOXvv5r8QxYg310lA7eE13Vv2jgYYwgYMwDgYDVR0PAQH/BAQDAgGm\nMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjASBgNVHRMBAf8ECDAGAQH/\nAgEAMB0GA1UdDgQWBBQGaefF8v06LjDXH31/ud6bUrnUdzAfBgNVHSMEGDAWgBRC\n1GQQOrO/h0+z4hew2kzTLL9CKjAKBggqhkjOPQQDAgNIADBFAiBpTIy36WVt7BEp\nwdzUuxCdG/0sQlosviuF9NtEwwG+yAIhALX3QE0tyX7UOVCatUG+n/5dMywHsAsK\np4BOoTXAcSDj\n-----END CERTIFICATE-----\n"
 }
 
 CA Bundle generated: /etc/cfssl/centminmod.com-ca-bundle.pem
 
 cat /etc/cfssl/centminmod.com-ca.pem /etc/cfssl/centminmod.com-ca-intermediate.pem > /etc/cfssl/centminmod.com-ca-bundle.pem
+
+Cleanup script created: /etc/cfssl/cleanup/remove-ca-centminmod.com.sh
+To clean up run: bash /etc/cfssl/cleanup/remove-ca-centminmod.com.sh
 ```
 
 # Server Wildcard SSL Certificate
@@ -322,16 +326,17 @@ Generate self-signed server wildcard SSL certificate with CA signing for centmin
 * server public key: /etc/cfssl/servercerts/centminmod.com-publickey.pem
 * server csr: /etc/cfssl/servercerts/centminmod.com.csr
 * server csr profile: /etc/cfssl/servercerts/centminmod.com.csr.json
+* cleanup certs script: /etc/cfssl/cleanup/remove-servercert-centminmod.com.sh
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600 wildcard centminmod.com
 
 cfssl gencert -config /etc/cfssl/profile.json -profile server -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.com-ca-intermediate-key.pem centminmod.com.csr.json > centminmod.com.json
-2020/09/15 04:49:10 [INFO] generate received request
-2020/09/15 04:49:10 [INFO] received CSR
-2020/09/15 04:49:10 [INFO] generating key: ecdsa-256
-2020/09/15 04:49:10 [INFO] encoded CSR
-2020/09/15 04:49:10 [INFO] signed certificate with serial number 686335107459070952849333303480510685099787931238
+2022/05/24 16:18:47 [INFO] generate received request
+2022/05/24 16:18:47 [INFO] received CSR
+2022/05/24 16:18:47 [INFO] generating key: ecdsa-256
+2022/05/24 16:18:47 [INFO] encoded CSR
+2022/05/24 16:18:47 [INFO] signed certificate with serial number 111006835185520546510962729424954801507256110809
 
 cfssljson -f centminmod.com.json -bare centminmod.com
 
@@ -340,8 +345,8 @@ openssl x509 -pubkey -noout -in /etc/cfssl/servercerts/centminmod.com.pem > /etc
 cat /etc/cfssl/servercerts/centminmod.com-publickey.pem
 
 -----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAET2WEiAQeC1dsanL90YJ1lNSrlNqa
-iRl+UTXul7EqxqY6/uWa5cbMSLEC0fOgcg/7pk5ne+4zbwiUumvrClAwFg==
+MFkwEwxxxxZIzj0CAQYIKoZIzj0DAQcDQgAEBcfb3+p1agsC8vcu5dh80j9XdxYB
+PFjWYvZH4IYko6cRZacaRwv6LkwYwbbUflyc+ZIGlCpjZjsADNi2RAtQvw==
 -----END PUBLIC KEY-----
 
 
@@ -351,22 +356,22 @@ Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            78:38:54:a3:f9:0d:9b:38:a7:9b:1a:74:05:2a:83:92:ac:d1:ce:66
+            13:71:xx:f9:28:79:43:a4:62:d2:b8:fd:07:ae:4b:37:64:42:0e:d9
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, OU=Intermediate CA, CN=Intermediate CA
         Validity
-            Not Before: Sep 15 04:44:00 2020 GMT
-            Not After : Sep 13 04:44:00 2030 GMT
+            Not Before: May 24 16:14:00 2022 GMT
+            Not After : May 21 16:14:00 2032 GMT
         Subject: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:4f:65:84:88:04:1e:0b:57:6c:6a:72:fd:d1:82:
-                    75:94:d4:ab:94:da:9a:89:19:7e:51:35:ee:97:b1:
-                    2a:c6:a6:3a:fe:e5:9a:e5:c6:cc:48:b1:02:d1:f3:
-                    a0:72:0f:fb:a6:4e:67:7b:ee:33:6f:08:94:ba:6b:
-                    eb:0a:50:30:16
+                    04:05:c7:db:df:ea:75:6a:0b:02:f2:f7:2e:e5:d8:
+                    7c:xx:3f:57:77:16:01:3c:58:d6:62:f6:47:e0:86:
+                    24:a3:a7:11:65:a7:1a:47:0b:fa:2e:4c:18:c1:b6:
+                    d4:7e:5c:9c:f9:92:06:94:2a:63:66:3b:00:0c:d8:
+                    b6:44:0b:50:bf
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -377,17 +382,17 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:FALSE
             X509v3 Subject Key Identifier: 
-                03:89:47:A5:01:80:07:A2:63:37:B4:51:A8:4E:4F:95:1F:6A:80:79
+                31:8A:xx:31:33:11:6F:3F:CE:89:FC:8A:8C:F6:B5:26:5C:E4:26:05
             X509v3 Authority Key Identifier: 
-                keyid:81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8
+                keyid:06:69:E7:C5:F2:FD:3A:2E:30:D7:1F:7D:7F:B9:DE:9B:52:B9:D4:77
 
             X509v3 Subject Alternative Name: 
                 DNS:centminmod.com, DNS:*.centminmod.com
     Signature Algorithm: ecdsa-with-SHA256
-         30:43:02:20:2c:80:9a:c2:62:49:5d:94:6f:e8:93:d5:ad:6e:
-         f2:0a:36:a1:19:9a:4a:6a:a5:6e:21:00:57:64:43:9f:13:a3:
-         02:1f:6c:4e:86:fc:54:84:48:ad:fc:71:ef:10:cb:e6:8d:00:
-         cf:4f:d3:37:a3:2c:32:9c:0b:65:2c:87:61:3f:9b
+         30:45:02:21:00:ed:d8:70:f9:a8:f0:6f:73:ab:be:3f:55:6f:
+         ea:1b:cc:c4:c5:69:fd:f6:fe:ad:42:68:71:db:1d:64:9d:2a:
+         0d:02:20:69:da:d8:91:e1:40:e4:8b:75:8c:fb:97:ff:0c:cf:
+         46:66:76:8f:e0:4f:39:1f:3a:31:40:52:be:23:27:cb:3e
 
 server cert: /etc/cfssl/servercerts/centminmod.com.pem
 server private key: /etc/cfssl/servercerts/centminmod.com-key.pem
@@ -426,23 +431,26 @@ ssl_certificate_key  /etc/cfssl/servercerts/centminmod.com-key.pem;
       "Intermediate CA"
     ]
   },
-  "serial_number": "686335107459070952849333303480510685099787931238",
+  "serial_number": "111006835185520546510962729424954801507256110809",
   "sans": [
     "centminmod.com",
     "*.centminmod.com"
   ],
-  "not_before": "2020-09-15T04:44:00Z",
-  "not_after": "2030-09-13T04:44:00Z",
+  "not_before": "2022-05-24T16:14:00Z",
+  "not_after": "2032-05-21T16:14:00Z",
   "sigalg": "ECDSAWithSHA256",
-  "authority_key_id": "81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8",
-  "subject_key_id": "03:89:47:A5:01:80:07:A2:63:37:B4:51:A8:4E:4F:95:1F:6A:80:79",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICVTCCAf2gAwIBAgIUeDhUo/kNmzinmxp0BSqDkqzRzmYwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTUwNDQ0MDBaFw0zMDA5MTMwNDQ0MDBaMEsxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEXMBUG\nA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAARP\nZYSIBB4LV2xqcv3RgnWU1KuU2pqJGX5RNe6XsSrGpjr+5ZrlxsxIsQLR86ByD/um\nTmd77jNvCJS6a+sKUDAWo4GjMIGgMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAK\nBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQDiUelAYAHomM3tFGo\nTk+VH2qAeTAfBgNVHSMEGDAWgBSBaRVXvWz+5Ig9qon7MIoCUrYw6DArBgNVHREE\nJDAigg5jZW50bWlubW9kLmNvbYIQKi5jZW50bWlubW9kLmNvbTAKBggqhkjOPQQD\nAgNGADBDAiAsgJrCYkldlG/ok9WtbvIKNqEZmkpqpW4hAFdkQ58TowIfbE6G/FSE\nSK38ce8Qy+aNAM9P0zejLDKcC2Ush2E/mw==\n-----END CERTIFICATE-----\n"
+  "authority_key_id": "06:69:E7:C5:F2:FD:3A:2E:30:D7:1F:7D:7F:B9:DE:9B:52:B9:D4:77",
+  "subject_key_id": "31:8A:xx:31:33:11:6F:3F:CE:89:FC:8A:8C:F6:B5:26:5C:E4:26:05",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICTxxxAfSgAwIBAgIUE3G3+Sh5Q6Ri0rj9B65LN2RCDtkwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNjE0MDBaFw0zMjA1MjExNjE0MDBaMEgxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEUMBIG\nA1UEAxMLY2VudG1pbi5kZXYwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQFx9vf\n6nVqCwLy9y7l2HzSP1d3FgE8WNZi9kfghiSjpxFlpxpHC/ouTBjBttR+XJz5kgaU\nKmNmOwAM2LZEC1C/o4GdMIGaMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAKBggr\nBgEFBQcDATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQxiocxMxFvP86J/IqM9rUm\nXOQmBTAfBgNVHSMEGDAWgBQGaefF8v06LjDXH31/ud6bUrnUdzAlBgNVHREEHjAc\nggtjZW50bWluLmRldoINKi5jZW50bWluLmRldjAKBggqhkjOPQQDAgNIADBFAiEA\n7dhw+ajwb3Orvj9Vb+obzMTFaf32/q1CaHHbHWSdKg0CIGna2JHhQOSLdYz7l/8M\nz0Zmdo/gTzkfOjFAUr4jJ8s+\n-----END CERTIFICATE-----\n"
 }
 
 verify certificate
 
 openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/servercerts/centminmod.com.pem
 /etc/cfssl/servercerts/centminmod.com.pem: OK
+
+Cleanup script created: /etc/cfssl/cleanup/remove-servercert-centminmod.com.sh
+To clean up run: bash /etc/cfssl/cleanup/remove-servercert-centminmod.com.sh
 ```
 
 # Server SSL Certificate
@@ -454,6 +462,7 @@ Generate self-signed server SSL certificate with CA signing for centminmod.com w
 * server public key: /etc/cfssl/servercerts/centminmod.com-publickey.pem
 * server csr: /etc/cfssl/servercerts/centminmod.com.csr
 * server csr profile: /etc/cfssl/servercerts/centminmod.com.csr.json
+* cleanup certs script: /etc/cfssl/cleanup/remove-servercert-centminmod.com.sh
 
 domain with www subdomain inclusion tag `www centminmod.com` on end
 
@@ -461,11 +470,11 @@ domain with www subdomain inclusion tag `www centminmod.com` on end
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-server centminmod.com 87600 www centminmod.com
 
 cfssl gencert -config /etc/cfssl/profile.json -profile server -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.com-ca-intermediate-key.pem centminmod.com.csr.json > centminmod.com.json
-2020/09/15 04:48:40 [INFO] generate received request
-2020/09/15 04:48:40 [INFO] received CSR
-2020/09/15 04:48:40 [INFO] generating key: ecdsa-256
-2020/09/15 04:48:40 [INFO] encoded CSR
-2020/09/15 04:48:40 [INFO] signed certificate with serial number 600883771385211323262033291545446809811689207610
+2022/05/24 16:27:48 [INFO] generate received request
+2022/05/24 16:27:48 [INFO] received CSR
+2022/05/24 16:27:48 [INFO] generating key: ecdsa-256
+2022/05/24 16:27:48 [INFO] encoded CSR
+2022/05/24 16:27:48 [INFO] signed certificate with serial number 397208991870665559551094003120075055800797186423
 
 cfssljson -f centminmod.com.json -bare centminmod.com
 
@@ -474,8 +483,8 @@ openssl x509 -pubkey -noout -in /etc/cfssl/servercerts/centminmod.com.pem > /etc
 cat /etc/cfssl/servercerts/centminmod.com-publickey.pem
 
 -----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEJUSa1nXSeOHnPsP9GkFkgnde31fr
-oK+8QWtpqqRUQZZwkB6i97PfCxGDiN0FZb9h7OlGVrHBf52ZtTsWRrljxg==
+MFkwEwYHKoxxxj0CAQYIKoxxxj0DAQcDQgAEW9uOWWGDII4IjaVqajTIDxNUaEuv
+64eAsDtkJ9LxbVpr0QQSu+7cH/kXsl+toxsMz2ykGG+pYCMktqmq7GgudA==
 -----END PUBLIC KEY-----
 
 
@@ -485,22 +494,22 @@ Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            69:40:8f:68:e9:07:42:33:db:e9:0d:47:bc:6c:e6:df:68:a8:f7:3a
+            45:93:77:9b:19:76:18:0a:dc:d6:d5:86:9d:0d:60:16:b1:99:49:77
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, OU=Intermediate CA, CN=Intermediate CA
         Validity
-            Not Before: Sep 15 04:44:00 2020 GMT
-            Not After : Sep 13 04:44:00 2030 GMT
+            Not Before: May 24 16:23:00 2022 GMT
+            Not After : May 21 16:23:00 2032 GMT
         Subject: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:25:44:9a:d6:75:d2:78:e1:e7:3e:c3:fd:1a:41:
-                    64:82:77:5e:df:57:eb:a0:af:bc:41:6b:69:aa:a4:
-                    54:41:96:70:90:1e:a2:f7:b3:df:0b:11:83:88:dd:
-                    05:65:bf:61:ec:e9:46:56:b1:c1:7f:9d:99:b5:3b:
-                    16:46:b9:63:c6
+                    04:5b:xx:8e:59:61:83:20:8e:08:8d:a5:6a:6a:34:
+                    c8:0f:13:54:68:4b:af:eb:87:80:b0:3b:64:27:d2:
+                    f1:6d:5a:6b:d1:04:12:bb:ee:dc:1f:f9:17:b2:5f:
+                    ad:a3:1b:0c:cf:6c:a4:18:6f:a9:60:23:24:b6:a9:
+                    aa:ec:68:2e:74
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -511,17 +520,17 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:FALSE
             X509v3 Subject Key Identifier: 
-                39:10:D9:08:7E:36:5C:14:F5:1F:39:2A:8E:C1:D9:B2:70:97:F4:88
+                5E:xx:CA:1F:26:72:18:75:3E:6F:AD:F3:D9:79:AA:FE:58:C6:3A:54
             X509v3 Authority Key Identifier: 
-                keyid:81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8
+                keyid:06:69:E7:C5:F2:FD:3A:2E:30:D7:1F:7D:7F:B9:DE:9B:52:B9:D4:77
 
             X509v3 Subject Alternative Name: 
                 DNS:centminmod.com, DNS:www.centminmod.com
     Signature Algorithm: ecdsa-with-SHA256
-         30:44:02:20:33:1b:4c:8b:7a:59:67:01:2e:75:2b:36:9b:a9:
-         6e:4e:73:88:6c:ad:5a:f0:83:a2:87:e1:28:b4:a1:ad:ac:eb:
-         02:20:1c:30:b8:2c:1f:59:ca:59:9b:d1:4f:8f:22:0c:60:2d:
-         1b:37:1d:35:29:1f:70:bd:70:79:04:62:d5:e9:d3:e4
+         30:45:02:20:3d:79:d1:ab:6b:7e:e3:b8:4a:09:8a:21:74:bf:
+         47:38:60:db:25:83:92:55:0a:18:41:c1:14:0f:9b:00:34:11:
+         02:21:00:e7:5e:f3:12:2f:af:65:09:a6:1f:2b:bf:8e:e3:1b:
+         67:e2:3c:d3:45:07:f8:7d:f5:b6:69:f4:c2:a4:a0:ab:98
 
 server cert: /etc/cfssl/servercerts/centminmod.com.pem
 server private key: /etc/cfssl/servercerts/centminmod.com-key.pem
@@ -560,23 +569,26 @@ ssl_certificate_key  /etc/cfssl/servercerts/centminmod.com-key.pem;
       "Intermediate CA"
     ]
   },
-  "serial_number": "600883771385211323262033291545446809811689207610",
+  "serial_number": "397208991870665559551094003120075055800797186423",
   "sans": [
     "centminmod.com",
     "www.centminmod.com"
   ],
-  "not_before": "2020-09-15T04:44:00Z",
-  "not_after": "2030-09-13T04:44:00Z",
+  "not_before": "2022-05-24T16:23:00Z",
+  "not_after": "2032-05-21T16:23:00Z",
   "sigalg": "ECDSAWithSHA256",
-  "authority_key_id": "81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8",
-  "subject_key_id": "39:10:D9:08:7E:36:5C:14:F5:1F:39:2A:8E:C1:D9:B2:70:97:F4:88",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICWDCCAf+gAwIBAgIUaUCPaOkHQjPb6Q1HvGzm32io9zowCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTUwNDQ0MDBaFw0zMDA5MTMwNDQ0MDBaMEsxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEXMBUG\nA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQl\nRJrWddJ44ec+w/0aQWSCd17fV+ugr7xBa2mqpFRBlnCQHqL3s98LEYOI3QVlv2Hs\n6UZWscF/nZm1OxZGuWPGo4GlMIGiMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAK\nBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQ5ENkIfjZcFPUfOSqO\nwdmycJf0iDAfBgNVHSMEGDAWgBSBaRVXvWz+5Ig9qon7MIoCUrYw6DAtBgNVHREE\nJjAkgg5jZW50bWlubW9kLmNvbYISd3d3LmNlbnRtaW5tb2QuY29tMAoGCCqGSM49\nBAMCA0cAMEQCIDMbTIt6WWcBLnUrNpupbk5ziGytWvCDoofhKLShrazrAiAcMLgs\nH1nKWZvRT48iDGAtGzcdNSkfcL1weQRi1enT5A==\n-----END CERTIFICATE-----\n"
+  "authority_key_id": "06:69:E7:C5:F2:FD:3A:2E:30:D7:1F:7D:7F:B9:DE:9B:52:B9:D4:77",
+  "subject_key_id": "5E:xx:CA:1F:26:72:18:75:3E:6F:AD:F3:D9:79:AA:FE:58:C6:3A:54",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICUDxxxxxxagAwIBAgIURZN3mxl2GArc1tWGnQ1gFrGZSXcwCgYIKoxxxj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNjIzMDBaFw0zMjA1MjExNjIzMDBaMEgxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEUMBIG\nA1UEAxMLY2VudG1pbi5kZXYwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAARb245Z\nYYMgjgiNpWpqNMgPE1RoS6/rh4CwO2Qn0vFtWmvRBBK77twf+ReyX62jGwzPbKQY\nb6lgIyS2qarsaC50o4GfMIGcMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAKBggr\nBgEFBQcDATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBRefsofJnIYdT5vrfPZear+\nWMY6VDAfBgNVHSMEGDAWgBQGaefF8v06LjDXH31/ud6bUrnUdzAnBgNVHREEIDAe\nggtjZW50bWluLmRldoIPd3d3LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUC\nID150atrfuO4SgmKIXS/Rzhg2yWDklUKGEHBFA+bADQRAiEA517zEi+vZQmmHyu/\njuMbZ+I800UH+H31tmn0wqSgq5g=\n-----END CERTIFICATE-----\n"
 }
 
 verify certificate
 
 openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/servercerts/centminmod.com.pem
 /etc/cfssl/servercerts/centminmod.com.pem: OK
+
+Cleanup script created: /etc/cfssl/cleanup/remove-servercert-centminmod.com.sh
+To clean up run: bash /etc/cfssl/cleanup/remove-servercert-centminmod.com.sh
 ```
 
 domain without `www` inclusion
@@ -700,6 +712,9 @@ verify certificate
 
 openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/servercerts/centminmod.com.pem
 /etc/cfssl/servercerts/centminmod.com.pem: OK
+
+Cleanup script created: /etc/cfssl/cleanup/remove-servercert-centminmod.com.sh
+To clean up run: bash /etc/cfssl/cleanup/remove-servercert-centminmod.com.sh
 ```
 
 Generate self-signed server SSL certificate with CA signing for server.centminmod.com subdomain with `TLS Web Server Authentication`
@@ -822,13 +837,16 @@ ssl_certificate_key  /etc/cfssl/servercerts/server.centminmod.com-key.pem;
   "sigalg": "ECDSAWithSHA256",
   "authority_key_id": "81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8",
   "subject_key_id": "4F:50:0B:DB:AC:B4:E6:60:AA:95:4B:9D:50:DB:61:15:AF:31:B8:B0",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICVDCCAfmgAwIBAgIUSXOyFcO0RLPPkEUf/JTTsDgUut4wCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTUwNDQzMDBaFw0zMDA5MTMwNDQzMDBaMFIxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEeMBwG\nA1UEAxMVc2VydmVyLmNlbnRtaW5tb2QuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEkzCCqNjIXot2hdJ1o0NkLRQPFfbxVUQ68o9nuwyouAe5WaPqBsQvOwz5\nWe1m8vCnCzwQPzZ5uWu63orIcj0DeqOBmDCBlTAOBgNVHQ8BAf8EBAMCBaAwEwYD\nVR0lBAwwCgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQUT1AL26y0\n5mCqlUudUNthFa8xuLAwHwYDVR0jBBgwFoAUgWkVV71s/uSIPaqJ+zCKAlK2MOgw\nIAYDVR0RBBkwF4IVc2VydmVyLmNlbnRtaW5tb2QuY29tMAoGCCqGSM49BAMCA0kA\nMEYCIQCwlJ57A7sYp/jWQEydRsJVjVES0/U3n51idp5JNFZbbQIhAOA8DUDgBRtT\nNPQwXhd+kiuyt/IxZRuPODOXD6FezRi6\n-----END CERTIFICATE-----\n"
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICVDxxxxxxmgAwIBAgIUSXOyFcO0RLPPkEUf/JTTsDgUut4wCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTUwNDQzMDBaFw0zMDA5MTMwNDQzMDBaMFIxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEeMBwG\nA1UEAxMVc2VydmVyLmNlbnRtaW5tb2QuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEkzCCqNjIXot2hdJ1o0NkLRQPFfbxVUQ68o9nuwyouAe5WaPqBsQvOwz5\nWe1m8vCnCzwQPzZ5uWu63orIcj0DeqOBmDCBlTAOBgNVHQ8BAf8EBAMCBaAwEwYD\nVR0lBAwwCgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQUT1AL26y0\n5mCqlUudUNthFa8xuLAwHwYDVR0jBBgwFoAUgWkVV71s/uSIPaqJ+zCKAlK2MOgw\nIAYDVR0RBBkwF4IVc2VydmVyLmNlbnRtaW5tb2QuY29tMAoGCCqGSM49BAMCA0kA\nMEYCIQCwlJ57A7sYp/jWQEydRsJVjVES0/U3n51idp5JNFZbbQIhAOA8DUDgBRtT\nNPQwXhd+kiuyt/IxZRuPODOXD6FezRi6\n-----END CERTIFICATE-----\n"
 }
 
 verify certificate
 
 openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/servercerts/server.centminmod.com.pem
 /etc/cfssl/servercerts/server.centminmod.com.pem: OK
+
+Cleanup script created: /etc/cfssl/cleanup/remove-servercert-server.centminmod.com.sh
+To clean up run: bash /etc/cfssl/cleanup/remove-servercert-server.centminmod.com.sh
 ```
 
 # Client SSL Certificate
@@ -842,20 +860,20 @@ Generate self-signed client SSL certificate with CA signing for centminmod.com w
 * client csr: /etc/cfssl/clientcerts/centminmod.com.csr
 * client csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
 
-Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname).
+Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates).
 
 > ​Per-Hostname Authenticated Origin Pull using customer certificates {#per-hostname}
 > When enabling Authenticated Origin Pull per hostname, all proxied traffic to the specified hostname is authenticated at the origin web server. Customers can use client certificates from their Private PKI to authenticate connections from Cloudflare.
 
 ```
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600 www centminmod.com
 
-cfssl gencert -config /etc/cfssl/profile.json -profile client -cn centminmod.com -hostname centminmod.com -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.comca-intermediate-key.pem centminmod.com.csr.json > centminmod.com.json
-2020/09/15 04:46:56 [INFO] generate received request
-2020/09/15 04:46:56 [INFO] received CSR
-2020/09/15 04:46:56 [INFO] generating key: ecdsa-256
-2020/09/15 04:46:56 [INFO] encoded CSR
-2020/09/15 04:46:56 [INFO] signed certificate with serial number 239526218581753485010645879334122855210982084209
+cfssl gencert -config /etc/cfssl/profile.json -profile client -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.com-ca-intermediate-key.pem centminmod.com.csr.json > centminmod.com.json
+2022/05/24 16:56:17 [INFO] generate received request
+2022/05/24 16:56:17 [INFO] received CSR
+2022/05/24 16:56:17 [INFO] generating key: ecdsa-256
+2022/05/24 16:56:17 [INFO] encoded CSR
+2022/05/24 16:56:17 [INFO] signed certificate with serial number 364027147676626726289571183730041490650282141970
 
 cfssljson -f centminmod.com.json -bare centminmod.com
 
@@ -864,8 +882,8 @@ openssl x509 -pubkey -noout -in /etc/cfssl/clientcerts/centminmod.com.pem > /etc
 cat /etc/cfssl/clientcerts/centminmod.com-publickey.pem
 
 -----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEoSEh3BmIOxMVnoT9WY8EJAte19JW
-aPq9gbdPQ5wwGWduY8BeujksIUAnuqe2ArA4iZuV9ctGlkWOB0zyMHAnDQ==
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAElx6Pi1nWSy9BNQ+xfC1HNuEnTvHb
+mX3eKoWmysv5hHMZlGAIjmsHGNKaEPiNcdaQpvlqs6GvQligtgudIvWXbw==
 -----END PUBLIC KEY-----
 
 
@@ -875,22 +893,22 @@ Certificate:
     Data:
         Version: 3 (0x2)
         Serial Number:
-            29:f4:ba:24:0a:ac:23:8a:f4:1e:d2:8e:bc:c2:db:92:9a:3c:8e:71
+            3f:c3:8a:b7:19:7c:fa:fc:65:df:c8:c2:67:ae:09:91:ca:19:29:12
     Signature Algorithm: ecdsa-with-SHA256
         Issuer: C=US, ST=CA, L=San Francisco, OU=Intermediate CA, CN=Intermediate CA
         Validity
-            Not Before: Sep 15 04:42:00 2020 GMT
-            Not After : Sep 13 04:42:00 2030 GMT
+            Not Before: May 24 16:51:00 2022 GMT
+            Not After : May 21 16:51:00 2032 GMT
         Subject: C=US, ST=CA, L=San Francisco, CN=centminmod.com
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
                 pub: 
-                    04:a1:21:21:dc:19:88:3b:13:15:9e:84:fd:59:8f:
-                    04:24:0b:5e:d7:d2:56:68:fa:bd:81:b7:4f:43:9c:
-                    30:19:67:6e:63:c0:5e:ba:39:2c:21:40:27:ba:a7:
-                    b6:02:b0:38:89:9b:95:f5:cb:46:96:45:8e:07:4c:
-                    f2:30:70:27:0d
+                    04:97:1e:8f:8b:59:d6:4b:2f:41:35:0f:b1:7c:2d:
+                    47:36:e1:27:4e:f1:db:99:7d:de:2a:85:a6:ca:cb:
+                    f9:84:73:19:94:60:08:8e:6b:07:18:d2:9a:10:f8:
+                    8d:71:d6:90:a6:f9:6a:b3:a1:af:42:58:a0:b6:0b:
+                    9d:22:f5:97:6f
                 ASN1 OID: prime256v1
                 NIST CURVE: P-256
         X509v3 extensions:
@@ -901,17 +919,17 @@ Certificate:
             X509v3 Basic Constraints: critical
                 CA:FALSE
             X509v3 Subject Key Identifier: 
-                6E:52:E8:0C:A9:F5:D9:25:30:61:D4:77:87:DB:FB:AA:47:54:E9:7C
+                07:1A:1B:12:FE:1E:7A:CC:8F:14:E9:B7:FB:76:F0:1C:AD:BD:9D:4E
             X509v3 Authority Key Identifier: 
-                keyid:81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8
+                keyid:06:69:E7:C5:F2:FD:3A:2E:30:D7:1F:7D:7F:B9:DE:9B:52:B9:D4:77
 
             X509v3 Subject Alternative Name: 
-                DNS:centminmod.com
+                DNS:centminmod.com, DNS:www.centminmod.com
     Signature Algorithm: ecdsa-with-SHA256
-         30:46:02:21:00:92:52:8c:8c:41:9f:fe:b5:d1:a7:14:39:e1:
-         52:a0:63:b7:02:23:63:e8:2f:ce:e0:7a:0c:c0:19:63:89:9c:
-         bb:02:21:00:c5:e7:89:e6:9e:4d:f3:3c:a8:08:8d:2e:8d:43:
-         6c:18:38:99:a1:08:c8:27:1e:6c:5c:a9:7e:bf:64:1e:34:45
+         30:45:02:21:00:fe:0a:76:52:2f:84:bb:8d:da:b8:66:2a:5d:
+         7b:7a:71:00:89:36:a1:f7:54:be:1d:98:ba:86:93:e4:19:07:
+         96:02:20:23:4b:ca:51:64:28:7c:fa:16:ea:f0:7e:54:c2:ee:
+         d0:c0:1c:5c:38:26:93:3e:a2:5f:dc:13:1c:d5:64:ed:43
 
 Generate pkcs12 format
 openssl pkcs12 -export -out /etc/cfssl/clientcerts/centminmod.com.p12 -inkey /etc/cfssl/clientcerts/centminmod.com-key.pem -in /etc/cfssl/clientcerts/centminmod.com.pem -certfile /etc/cfssl/centminmod.com-ca-bundle.pem -passin pass: -passout pass:
@@ -977,16 +995,17 @@ Time Stamp signing CA : No
       "Intermediate CA"
     ]
   },
-  "serial_number": "239526218581753485010645879334122855210982084209",
+  "serial_number": "364027147676626726289571183730041490650282141970",
   "sans": [
-    "centminmod.com"
+    "centminmod.com",
+    "www.centminmod.com"
   ],
-  "not_before": "2020-09-15T04:42:00Z",
-  "not_after": "2030-09-13T04:42:00Z",
+  "not_before": "2022-05-24T16:51:00Z",
+  "not_after": "2032-05-21T16:51:00Z",
   "sigalg": "ECDSAWithSHA256",
-  "authority_key_id": "81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8",
-  "subject_key_id": "6E:52:E8:0C:A9:F5:D9:25:30:61:D4:77:87:DB:FB:AA:47:54:E9:7C",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICRjCCAeugAwIBAgIUKfS6JAqsI4r0HtKOvMLbkpo8jnEwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTUwNDQyMDBaFw0zMDA5MTMwNDQyMDBaMEsxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEXMBUG\nA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASh\nISHcGYg7ExWehP1ZjwQkC17X0lZo+r2Bt09DnDAZZ25jwF66OSwhQCe6p7YCsDiJ\nm5X1y0aWRY4HTPIwcCcNo4GRMIGOMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAK\nBggrBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBRuUugMqfXZJTBh1HeH\n2/uqR1TpfDAfBgNVHSMEGDAWgBSBaRVXvWz+5Ig9qon7MIoCUrYw6DAZBgNVHREE\nEjAQgg5jZW50bWlubW9kLmNvbTAKBggqhkjOPQQDAgNJADBGAiEAklKMjEGf/rXR\npxQ54VKgY7cCI2PoL87gegzAGWOJnLsCIQDF54nmnk3zPKgIjS6NQ2wYOJmhCMgn\nHmxcqX6/ZB40RQ==\n-----END CERTIFICATE-----\n"
+  "authority_key_id": "06:69:E7:C5:F2:FD:3A:2E:30:D7:1F:7D:7F:B9:DE:9B:52:B9:D4:77",
+  "subject_key_id": "07:1A:1B:12:FE:1E:7A:CC:8F:14:E9:B7:FB:76:F0:1C:AD:BD:9D:4E",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICUxxxfagAwIBAgIUP8OKtxl8+vxl38jCZ64JkcoZKRIwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNjUxMDBaFw0zMjA1MjExNjUxMDBaMEgxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEUMBIG\nA1UEAxMLY2VudG1pbi5kZXYwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASXHo+L\nWdZLL0E1D7F8LUc24SdO8duZfd4qhabKy/mEcxmUYAiOawcY0poQ+I1x1pCm+Wqz\noa9CWKC2C50i9Zdvo4GfMIGcMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAKBggr\nBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQHGhsS/h56zI8U6bf7dvAc\nrb2dTjAfBgNVHSMEGDAWgBQGaefF8v06LjDXH31/ud6bUrnUdzAnBgNVHREEIDAe\nggtjZW50bWluLmRldoIPd3d3LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUC\nIQD+CnZSL4S7jdq4Zipde3pxAIk2ofdUvh2YuoaT5BkHlgIgI0vKUWQofPoW6vB+\nVMLu0MAcXDgmkz6iX9wTHNVk7UM=\n-----END CERTIFICATE-----\n"
 }
 
 openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/clientcerts/centminmod.com.pem
@@ -995,7 +1014,7 @@ openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/client
 ---------------------------------------------------------------------------
 For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate API Upload
 ---------------------------------------------------------------------------
-- https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname
+- https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates
 - https://api.cloudflare.com/#per-hostname-authenticated-origin-pull-upload-a-hostname-client-certificate
 
 populate variables
@@ -1013,7 +1032,15 @@ export cf_hostname=domain_name_on_ssl_certificate
 Upload TLS client certificate via CF API
 ---------------------------------------------------------------------------
 
+For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com
+https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates
+
 curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
+
+Or for apex non-subdomains i.e. domain.com
+https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#zone-level--customer-certificates
+
+curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
 
 export clientcert_id=$(jq -r '.result.id' /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt)
 echo "$clientcert_id" > /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload-clientcert-id.txt
@@ -1022,37 +1049,207 @@ echo "$clientcert_id" > /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-clei
 Check uploaded TLS client certificate via CF API
 ---------------------------------------------------------------------------
 
+For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com
+https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates
+
 curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload-status.txt
+
+Or for apex non-subdomains i.e. domain.com
+https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#zone-level--customer-certificates
+
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload-status.txt
 
 ---------------------------------------------------------------------------
 To delete uploaded TLS client certificate via CF API
 ---------------------------------------------------------------------------
 
+For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com
 curl -sX DELETE "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/certificates/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload-delete.txt
+
+Or for apex non-subdomains i.e. domain.com
+curl -sX DELETE "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload-delete.txt
 
 ---------------------------------------------------------------------------
 Enable specific hostname Authenticated Origin Pull via Cloudflare API
 ---------------------------------------------------------------------------
 
-curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d $(jq -c -n --arg cf_hostname $cf_hostname --arg clientcert_id $clientcert_id $(echo "{\"config\":[{\"hostname\":\"$cf_hostname\",\"cert_id\":\"$clientcert_id\",\"enabled\":true}]}")) | jq 
+For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d $(jq -c -n --arg cf_hostname $cf_hostname --arg clientcert_id $clientcert_id $(echo "{\"config\":[{\"hostname\":\"$cf_hostname\",\"cert_id\":\"$clientcert_id\",\"enabled\":true}]}")) | jq
+
+Or for apex non-subdomains i.e. domain.com
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/settings -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"enabled":true}' | jq
 
 ---------------------------------------------------------------------------
 Disable specific hostname Authenticated Origin Pull via Cloudflare API
 ---------------------------------------------------------------------------
 
+For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com
 curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d $(jq -c -n --arg cf_hostname $cf_hostname --arg clientcert_id $clientcert_id $(echo "{\"config\":[{\"hostname\":\"$cf_hostname\",\"cert_id\":\"$clientcert_id\",\"enabled\":false}]}")) | jq
+
+Or for apex non-subdomains i.e. domain.com
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/settings -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"enabled":false}' | jq
 
 ---------------------------------------------------------------------------
 Check CF Status for specific hostname Authenticated Origin Pull via Cloudflare API
 ---------------------------------------------------------------------------
 
+For custom hostname/subdomains i.e. hostname.domain.com or subdomain.domain.com
 curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/hostnames/$cf_hostname" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" | jq
+
+Or for apex non-subdomains i.e. domain.com
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/settings" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" | jq
 
 ---------------------------------------------------------------------------
 List uploaded Origin TLS Client Authenticatied Certificates
 ---------------------------------------------------------------------------
 
 curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" | jq
+
+Cleanup script created: /etc/cfssl/cleanup/remove-clientcert-centminmod.com.sh
+To clean up run: bash /etc/cfssl/cleanup/remove-clientcert-centminmod.com.sh
+```
+
+# Cloudflare Authenticated Origin Pull Custom Apex Domain Client TLS Certificate Upload
+
+An example of Cloudflare Authenticated Origin Pull certificate using custom apex domain.
+
+Uploading via Cloudflare API a custom apex domain client TLS certificate created and signed with previous created CA intermediate root certificate:
+
+```
+MYCERT=$(cfssl-certinfo -cert /etc/cfssl/clientcerts/centminmod.com.pem | jq '.pem' | sed -e 's|"||g')
+MYKEY=$(cat /etc/cfssl/clientcerts/centminmod.com-key.pem | perl -pe 's/\r?\n/\\n/'|sed -e's/..$//')
+request_body="{ \"certificate\": \"$MYCERT\", \"private_key\": \"$MYKEY\" }" 
+
+export cfzoneid=cf_zone_id
+export cfemail=cf_account_email
+export cftoken=cf_account_global_api_keytoken
+export cf_hostname=centminmod.com
+
+curl -sX POST https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload.txt
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "id": "d5035326-5385-4ec3-b77d-d1a122cf3283",
+    "status": "pending_deployment",
+    "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
+    "signature": "ECDSA-SHA256",
+    "serial_number": "364027147676626726289571183730041490650282141970",
+    "certificate": "-----BEGIN CERTIFICATE-----\nMIICUxxxfagAwIBAgIUP8OKtxl8+vxl38jCZ64JkcoZKRIwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNjUxMDBaFw0zMjA1MjExNjUxMDBaMEgxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEUMBIG\nA1UEAxMLY2VudG1pbi5kZXYwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASXHo+L\nWdZLL0E1D7F8LUc24SdO8duZfd4qhabKy/mEcxmUYAiOawcY0poQ+I1x1pCm+Wqz\noa9CWKC2C50i9Zdvo4GfMIGcMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAKBggr\nBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQHGhsS/h56zI8U6bf7dvAc\nrb2dTjAfBgNVHSMEGDAWgBQGaefF8v06LjDXH31/ud6bUrnUdzAnBgNVHREEIDAe\nggtjZW50bWluLmRldoIPd3d3LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUC\nIQD+CnZSL4S7jdq4Zipde3pxAIk2ofdUvh2YuoaT5BkHlgIgI0vKUWQofPoW6vB+\nVMLu0MAcXDgmkz6iX9wTHNVk7UM=\n-----END CERTIFICATE-----\n",
+    "uploaded_on": "2022-05-24T16:57:16.801883Z",
+    "updated_at": "2022-05-24T16:57:16.801883Z",
+    "expires_on": "2032-05-21T16:51:00Z"
+  }
+}
+```
+
+Verifying final status and getting info for uploaded custom apex domain client TLS certificate:
+
+```
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload-status.txt
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "id": "d5035326-5385-4ec3-b77d-d1a122cf3283",
+    "status": "active",
+    "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
+    "signature": "ECDSA-SHA256",
+    "serial_number": "364027147676626726289571183730041490650282141970",
+    "certificate": "-----BEGIN CERTIFICATE-----\nMIICUxxxfagAwIBAgIUP8OKtxl8+vxl38jCZ64JkcoZKRIwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNjUxMDBaFw0zMjA1MjExNjUxMDBaMEgxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEUMBIG\nA1UEAxMLY2VudG1pbi5kZXYwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASXHo+L\nWdZLL0E1D7F8LUc24SdO8duZfd4qhabKy/mEcxmUYAiOawcY0poQ+I1x1pCm+Wqz\noa9CWKC2C50i9Zdvo4GfMIGcMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAKBggr\nBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQHGhsS/h56zI8U6bf7dvAc\nrb2dTjAfBgNVHSMEGDAWgBQGaefF8v06LjDXH31/ud6bUrnUdzAnBgNVHREEIDAe\nggtjZW50bWluLmRldoIPd3d3LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUC\nIQD+CnZSL4S7jdq4Zipde3pxAIk2ofdUvh2YuoaT5BkHlgIgI0vKUWQofPoW6vB+\nVMLu0MAcXDgmkz6iX9wTHNVk7UM=\n-----END CERTIFICATE-----\n",
+    "uploaded_on": "2022-05-24T16:57:16.801883Z",
+    "expires_on": "2032-05-21T16:51:00Z"
+  }
+}
+```
+
+Enabling Cloudflare Authenticated Origin Pull with custom apex domain client TLS certificate at the zone level:
+
+```
+export cfzoneid=cf_zone_id
+export cfemail=cf_account_email
+export cftoken=cf_account_global_api_keytoken
+
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/settings -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"enabled":true}' | jq
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "enabled": true
+  }
+}
+```
+
+Checking status for Cloudflare Authenticated Origin Pull with custom apex domain client TLS certificate at the zone level:
+
+```
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/settings" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" | jq
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "enabled": true
+  }
+}
+```
+
+Disable Cloudflare Authenticated Origin Pull with custom apex domain client TLS certificate at the zone level:
+
+```
+curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/settings -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d '{"enabled":false}' | jq
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "enabled": false
+  }
+}
+```
+And verify deletion:
+
+```
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "id": "d5035326-5385-4ec3-b77d-d1a122cf3283",
+    "status": "deleted",
+    "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
+    "signature": "ECDSA-SHA256",
+    "serial_number": "364027147676626726289571183730041490650282141970",
+    "certificate": "-----BEGIN CERTIFICATE-----\nMIICUDxxxxxxagAwIBAgIUP8OKtxl8+vxl38jCZ64JkcoZKRIwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNjUxMDBaFw0zMjA1MjExNjUxMDBaMEgxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEUMBIG\nA1UEAxMLY2VudG1pbi5kZXYwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASXHo+L\nWdZLL0E1D7F8LUc24SdO8duZfd4qhabKy/mEcxmUYAiOawcY0poQ+I1x1pCm+Wqz\noa9CWKC2C50i9Zdvo4GfMIGcMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAKBggr\nBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQHGhsS/h56zI8U6bf7dvAc\nrb2dTjAfBgNVHSMEGDAWgBQGaefF8v06LjDXH31/ud6bUrnUdzAnBgNVHREEIDAe\nggtjZW50bWluLmRldoIPd3d3LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUC\nIQD+CnZSL4S7jdq4Zipde3pxAIk2ofdUvh2YuoaT5BkHlgIgI0vKUWQofPoW6vB+\nVMLu0MAcXDgmkz6iX9wTHNVk7UM=\n-----END CERTIFICATE-----\n",
+    "uploaded_on": "2022-05-24T16:57:16.801883Z",
+    "expires_on": "2032-05-21T16:51:00Z"
+  }
+}
+```
+
+Delete Cloudflare Authenticated Origin Pull with custom apex domain client TLS certificate at the zone level:
+
+```
+curl -sX DELETE "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq | tee /etc/cfssl/clientcerts/centminmod.com-cf-origin-tls-cleint-auth-cert-upload-delete.txt
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "id": "d5035326-5385-4ec3-b77d-d1a122cf3283",
+    "status": "pending_deletion",
+    "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
+    "signature": "ECDSA-SHA256",
+    "serial_number": "364027147676626726289571183730041490650282141970",
+    "certificate": "-----BEGIN CERTIFICATE-----\nMIICUDxxxxxxagAwIBAgIUP8OKtxl8+vxl38jCZ64JkcoZKRIwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNjUxMDBaFw0zMjA1MjExNjUxMDBaMEgxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEUMBIG\nA1UEAxMLY2VudG1pbi5kZXYwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASXHo+L\nWdZLL0E1D7F8LUc24SdO8duZfd4qhabKy/mEcxmUYAiOawcY0poQ+I1x1pCm+Wqz\noa9CWKC2C50i9Zdvo4GfMIGcMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAKBggr\nBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQHGhsS/h56zI8U6bf7dvAc\nrb2dTjAfBgNVHSMEGDAWgBQGaefF8v06LjDXH31/ud6bUrnUdzAnBgNVHREEIDAe\nggtjZW50bWluLmRldoIPd3d3LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUC\nIQD+CnZSL4S7jdq4Zipde3pxAIk2ofdUvh2YuoaT5BkHlgIgI0vKUWQofPoW6vB+\nVMLu0MAcXDgmkz6iX9wTHNVk7UM=\n-----END CERTIFICATE-----\n",
+    "uploaded_on": "2022-05-24T16:57:16.801883Z",
+    "expires_on": "2032-05-21T16:51:00Z"
+  }
+}
 ```
 
 Generate self-signed client SSL certificate with CA signing for client.centminmod.com subdomain with `TLS Web Client Authentication`
@@ -1064,7 +1261,7 @@ Generate self-signed client SSL certificate with CA signing for client.centminmo
 * client csr: /etc/cfssl/clientcerts/client.centminmod.com.csr
 * client csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
 
-Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname).
+Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates).
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600 client centminmod.com
@@ -1205,7 +1402,7 @@ Time Stamp signing CA : No
   "sigalg": "ECDSAWithSHA256",
   "authority_key_id": "81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8",
   "subject_key_id": "9C:8E:FB:6F:90:6D:B7:E4:D7:1C:59:DC:DF:BF:EC:69:9E:34:D6:7D",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICVDCCAfmgAwIBAgIUOfCLX2fSmnHLsgNIxvcj8FnclIAwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTUwNDQxMDBaFw0zMDA5MTMwNDQxMDBaMFIxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEeMBwG\nA1UEAxMVY2xpZW50LmNlbnRtaW5tb2QuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEZcH4s8d49ToL5xZzbsXLz706ziqsAKMCTkXgcvm0dJcNqhKv9HzuJDvi\nDxnsz9eV1dSd+pF9WtnVZTfHQh6hVaOBmDCBlTAOBgNVHQ8BAf8EBAMCBaAwEwYD\nVR0lBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQUnI77b5Bt\nt+TXHFnc37/saZ401n0wHwYDVR0jBBgwFoAUgWkVV71s/uSIPaqJ+zCKAlK2MOgw\nIAYDVR0RBBkwF4IVY2xpZW50LmNlbnRtaW5tb2QuY29tMAoGCCqGSM49BAMCA0kA\nMEYCIQDnwdkfilKSfiMpM6Vj+oilK/JzW03joC4JS24Z86CSvgIhAKnZjhe6lExS\nRLIqEQ8fEvxore/cOfWyxbgI2CQ/t2RX\n-----END CERTIFICATE-----\n"
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICVDxxxxxxmgAwIBAgIUOfCLX2fSmnHLsgNIxvcj8FnclIAwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTUwNDQxMDBaFw0zMDA5MTMwNDQxMDBaMFIxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEeMBwG\nA1UEAxMVY2xpZW50LmNlbnRtaW5tb2QuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEZcH4s8d49ToL5xZzbsXLz706ziqsAKMCTkXgcvm0dJcNqhKv9HzuJDvi\nDxnsz9eV1dSd+pF9WtnVZTfHQh6hVaOBmDCBlTAOBgNVHQ8BAf8EBAMCBaAwEwYD\nVR0lBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQUnI77b5Bt\nt+TXHFnc37/saZ401n0wHwYDVR0jBBgwFoAUgWkVV71s/uSIPaqJ+zCKAlK2MOgw\nIAYDVR0RBBkwF4IVY2xpZW50LmNlbnRtaW5tb2QuY29tMAoGCCqGSM49BAMCA0kA\nMEYCIQDnwdkfilKSfiMpM6Vj+oilK/JzW03joC4JS24Z86CSvgIhAKnZjhe6lExS\nRLIqEQ8fEvxore/cOfWyxbgI2CQ/t2RX\n-----END CERTIFICATE-----\n"
 }
 
 openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/clientcerts/client.centminmod.com.pem
@@ -1214,7 +1411,7 @@ openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/client
 ---------------------------------------------------------------------------
 For Cloudflare Enterprise custom Authenticated Origin Pull Client Certificate API Upload
 ---------------------------------------------------------------------------
-- https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull#per-hostname-authenticated-origin-pull-using-customer-certificates-per-hostname
+- https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates
 - https://api.cloudflare.com/#per-hostname-authenticated-origin-pull-upload-a-hostname-client-certificate
 
 populate variables
@@ -1583,7 +1780,7 @@ Time Stamp signing CA : No
   "sigalg": "ECDSAWithSHA256",
   "authority_key_id": "81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8",
   "subject_key_id": "30:91:E8:CF:20:01:A5:F9:B8:84:CD:A4:D3:51:45:F1:F8:BA:61:C1",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICWTCCAf+gAwIBAgIUf04tovLbzWPUQTBw0ouyllAMAUkwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTUwNDM5MDBaFw0zMDA5MTMwNDM5MDBaMFAxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEcMBoG\nA1UEAxMTcGVlci5jZW50bWlubW9kLmNvbTBZMBMGByqGSM49AgEGCCqGSM49AwEH\nA0IABMOP/Qh+mHQVGuv2ILL5EQFxIXszDTPNxDD4MsmWNkYLVmtoRo30IGcuH/Kc\nsmsc+NknYRKPfXbn2iF5Z0eq6Y6jgaAwgZ0wDgYDVR0PAQH/BAQDAgWgMB0GA1Ud\nJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQW\nBBQwkejPIAGl+biEzaTTUUXx+LphwTAfBgNVHSMEGDAWgBSBaRVXvWz+5Ig9qon7\nMIoCUrYw6DAeBgNVHREEFzAVghNwZWVyLmNlbnRtaW5tb2QuY29tMAoGCCqGSM49\nBAMCA0gAMEUCIQC5prKpd/Fsf8Ls8NRjpKDbFe+ezp2qwUbVUgOZErjj1QIgZQhX\nCRQoZQOTp908Nf0zjHfXCLhwHKsXDhiIUBXyHjE=\n-----END CERTIFICATE-----\n"
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICWTxxxxxx+gAwIBAgIUf04tovLbzWPUQTBw0ouyllAMAUkwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTUwNDM5MDBaFw0zMDA5MTMwNDM5MDBaMFAxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEcMBoG\nA1UEAxMTcGVlci5jZW50bWlubW9kLmNvbTBZMBMGByqGSM49AgEGCCqGSM49AwEH\nA0IABMOP/Qh+mHQVGuv2ILL5EQFxIXszDTPNxDD4MsmWNkYLVmtoRo30IGcuH/Kc\nsmsc+NknYRKPfXbn2iF5Z0eq6Y6jgaAwgZ0wDgYDVR0PAQH/BAQDAgWgMB0GA1Ud\nJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQW\nBBQwkejPIAGl+biEzaTTUUXx+LphwTAfBgNVHSMEGDAWgBSBaRVXvWz+5Ig9qon7\nMIoCUrYw6DAeBgNVHREEFzAVghNwZWVyLmNlbnRtaW5tb2QuY29tMAoGCCqGSM49\nBAMCA0gAMEUCIQC5prKpd/Fsf8Ls8NRjpKDbFe+ezp2qwUbVUgOZErjj1QIgZQhX\nCRQoZQOTp908Nf0zjHfXCLhwHKsXDhiIUBXyHjE=\n-----END CERTIFICATE-----\n"
 }
 
 openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/peercerts/peer.centminmod.com.pem
