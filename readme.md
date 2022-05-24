@@ -30,7 +30,7 @@ There are 7 options
   * The third argument defines a subdomain name or special `wildcard` option - which when specified adds `*.domain.com` to the certificate SANs (Subject Alternative Name) entries. Example at [Server Wildcard SSL Certificate](#server-wildcard-ssl-certificate).
   * The forth argument is the intended domain name for self-signed SSL certificate.
   * You need to have prior ran the `gen-ca` option for this option to work as it needs the CA Intermediate certificate to sign the server self-signed SSL certificate.
-* `gen-client` - used to generate client self-signed SSL certificates with x509v3 Extended Key Usage = `TLS Web Client Authentication`. [[jump to section](#client-ssl-certificate)].  Full example shown below in [Browser Client TLS Authentication](#browser-client-tls-authentication) and [Curl Client TLS Authentication](#curl-client-tls-authentication) sections.
+* `gen-client` - used to generate client self-signed SSL certificates with x509v3 Extended Key Usage = `TLS Web Client Authentication`. [[jump to section](#client-ssl-certificate)].  Full example shown below in [Browser Client TLS Authentication](#browser-client-tls-authentication) and [Curl Client TLS Authentication](#curl-client-tls-authentication) sections. Also included in output are examples of using generated custom client TLS certificates for [Cloudflare Authenticated Origin Pull custom apex domain client TLS certificates](#cloudflare-authenticated-origin-pull-custom-apex-domain-client-tls-certificate-upload) and [Cloudflare Authenticated Origin pull custom per hostname client TLS certificates](#cloudflare-authenticated-origin-pull-custom-hostname-domain-client-tls-certificate-upload).
   * First argument defines the CA Intermediate prefix labeled domain defined which is used to sign the server self-signed SSL certificate.
   * The second argument is how long the certificate expiry is in hours i.e. 87600 hrs = 10 yrs, 43800 hrs = 5 yrs. 
   * The third argument defines a subdomain name.
@@ -861,7 +861,7 @@ Generate self-signed client SSL certificate with CA signing for centminmod.com w
 * client csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
 * cleanup certs script: /etc/cfssl/cleanup/remove-clientcert-centminmod.com.sh
 
-Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates). Example [here](#cloudflare-authenticated-origin-pull-custom-apex-domain-client-tls-certificate-upload).
+Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates). Example for [Cloudflare Authenticated Origin Pull custom apex domain client TLS certificates](#cloudflare-authenticated-origin-pull-custom-apex-domain-client-tls-certificate-upload) and [Cloudflare Authenticated Origin pull custom per hostname client TLS certificates](#cloudflare-authenticated-origin-pull-custom-hostname-domain-client-tls-certificate-upload).
 
 > ​Per-Hostname Authenticated Origin Pull using customer certificates {#per-hostname}
 > When enabling Authenticated Origin Pull per hostname, all proxied traffic to the specified hostname is authenticated at the origin web server. Customers can use client certificates from their Private PKI to authenticate connections from Cloudflare.
@@ -1265,7 +1265,7 @@ Generate self-signed client SSL certificate with CA signing for client.centminmo
 * client csr: /etc/cfssl/clientcerts/client.centminmod.com.csr
 * client csr profile: /etc/cfssl/clientcerts/client.centminmod.com.csr.json
 
-Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates).
+Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates). An example for [Cloudflare Authenticated Origin pull custom per hostname client TLS certificates](#cloudflare-authenticated-origin-pull-custom-hostname-domain-client-tls-certificate-upload).
 
 ```
 /root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-client centminmod.com 87600 client centminmod.com
@@ -1510,164 +1510,6 @@ Cleanup script created: /etc/cfssl/cleanup/remove-clientcert-client.centminmod.c
 To clean up run: bash /etc/cfssl/cleanup/remove-clientcert-client.centminmod.com.sh
 ```
 
-# Peer Wildcard SSL Certificate
-
-Generate self-signed peer wildcard SSL certificate with CA signing for centminmod.com subdomain with `TLS Web Client Authentication` and `TLS Web Server Authentication` 
-
-* peer pkcs12: /etc/cfssl/peercerts/centminmod.com.p12
-* peer cert: /etc/cfssl/peercerts/centminmod.com.pem
-* peer private key: /etc/cfssl/peercerts/centminmod.com-key.pem
-* peer public key: /etc/cfssl/peercerts/centminmod.com-publickey.pem
-* peer csr: /etc/cfssl/peercerts/centminmod.com.csr
-* peer csr profile: /etc/cfssl/peercerts/centminmod.com.csr.json
-
-```
-/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer centminmod.com 87600 wildcard centminmod.com
-
-cfssl gencert -config /etc/cfssl/profile.json -profile peer -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.com-ca-intermediate-key.pem centminmod.com.csr.json > centminmod.com.json
-2020/09/15 04:45:23 [INFO] generate received request
-2020/09/15 04:45:23 [INFO] received CSR
-2020/09/15 04:45:23 [INFO] generating key: ecdsa-256
-2020/09/15 04:45:23 [INFO] encoded CSR
-2020/09/15 04:45:23 [INFO] signed certificate with serial number 364491867088419011259470270742378449429086468712
-
-cfssljson -f centminmod.com.json -bare centminmod.com
-
-Extract peer certificate public key: /etc/cfssl/peercerts/centminmod.com-publickey.pem
-openssl x509 -pubkey -noout -in /etc/cfssl/peercerts/centminmod.com.pem > /etc/cfssl/peercerts/centminmod.com-publickey.pem
-cat /etc/cfssl/peercerts/centminmod.com-publickey.pem
-
------BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEn2QjEndBmki89RnI6pqPG1OR7iPr
-3TB4Td/5J8vwuFD1jxjG2yN8S1KGpMRXdvM0O8P25RuHqOCHErbsSEOorA==
------END PUBLIC KEY-----
-
-
-openssl x509 -in /etc/cfssl/peercerts/centminmod.com.pem -text -noout
-
-Certificate:
-    Data:
-        Version: 3 (0x2)
-        Serial Number:
-            3f:d8:61:6e:b5:2f:db:dd:82:e2:68:9d:70:b9:fa:7b:30:bd:fa:68
-    Signature Algorithm: ecdsa-with-SHA256
-        Issuer: C=US, ST=CA, L=San Francisco, OU=Intermediate CA, CN=Intermediate CA
-        Validity
-            Not Before: Sep 15 04:40:00 2020 GMT
-            Not After : Sep 13 04:40:00 2030 GMT
-        Subject: C=US, ST=CA, L=San Francisco, CN=centminmod.com
-        Subject Public Key Info:
-            Public Key Algorithm: id-ecPublicKey
-                Public-Key: (256 bit)
-                pub: 
-                    04:9f:64:23:12:77:41:9a:48:bc:f5:19:c8:ea:9a:
-                    8f:1b:53:91:ee:23:eb:dd:30:78:4d:df:f9:27:cb:
-                    f0:b8:50:f5:8f:18:c6:db:23:7c:4b:52:86:a4:c4:
-                    57:76:f3:34:3b:c3:f6:e5:1b:87:a8:e0:87:12:b6:
-                    ec:48:43:a8:ac
-                ASN1 OID: prime256v1
-                NIST CURVE: P-256
-        X509v3 extensions:
-            X509v3 Key Usage: critical
-                Digital Signature, Key Encipherment
-            X509v3 Extended Key Usage: 
-                TLS Web Client Authentication, TLS Web Server Authentication
-            X509v3 Basic Constraints: critical
-                CA:FALSE
-            X509v3 Subject Key Identifier: 
-                58:41:18:19:32:49:F2:16:CB:43:B2:77:2D:39:9B:35:FD:CD:BB:9D
-            X509v3 Authority Key Identifier: 
-                keyid:81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8
-
-            X509v3 Subject Alternative Name: 
-                DNS:centminmod.com, DNS:*.centminmod.com
-    Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:21:00:b3:ce:32:fa:99:30:09:4c:ce:b1:0e:ad:4c:
-         37:a7:40:7d:88:06:0c:9e:9d:8e:5b:b5:e5:69:1c:21:82:cb:
-         12:02:20:4f:69:a8:2a:1c:43:4b:22:92:58:03:62:ca:23:75:
-         43:0f:de:3e:59:72:8d:a4:55:aa:e4:df:ac:50:16:73:41
-
-Generate pkcs12 format
-openssl pkcs12 -export -out /etc/cfssl/peercerts/centminmod.com.p12 -inkey /etc/cfssl/peercerts/centminmod.com-key.pem -in /etc/cfssl/peercerts/centminmod.com.pem -certfile /etc/cfssl/centminmod.com-ca-bundle.pem -passin pass: -passout pass:
-
-peer pkcs12: /etc/cfssl/peercerts/centminmod.com.p12
-peer cert: /etc/cfssl/peercerts/centminmod.com.pem
-peer private key: /etc/cfssl/peercerts/centminmod.com-key.pem
-peer public key: /etc/cfssl/peercerts/centminmod.com-publickey.pem
-peer csr: /etc/cfssl/peercerts/centminmod.com.csr
-peer csr profile: /etc/cfssl/peercerts/centminmod.com.csr.json
-
-Generate /etc/cfssl/peercerts/centminmod.com-peer-bundle.pem
-cat /etc/cfssl/peercerts/centminmod.com.pem /etc/cfssl/centminmod.com-ca-bundle.pem > /etc/cfssl/peercerts/centminmod.com-peer-bundle.pem
-peer bundle chain: /etc/cfssl/clientcerts/centminmod.com-client-bundle.pem
-
-
-Check certificate purpose:
-openssl x509 -in /etc/cfssl/peercerts/centminmod.com.pem -noout -purpose
-Certificate purposes:
-SSL client : Yes
-SSL client CA : No
-SSL server : Yes
-SSL server CA : No
-Netscape SSL server : Yes
-Netscape SSL server CA : No
-S/MIME signing : No
-S/MIME signing CA : No
-S/MIME encryption : No
-S/MIME encryption CA : No
-CRL signing : No
-CRL signing CA : No
-Any Purpose : Yes
-Any Purpose CA : Yes
-OCSP helper : Yes
-OCSP helper CA : No
-Time Stamp signing : No
-Time Stamp signing CA : No
-
-{
-  "subject": {
-    "common_name": "centminmod.com",
-    "country": "US",
-    "locality": "San Francisco",
-    "province": "CA",
-    "names": [
-      "US",
-      "CA",
-      "San Francisco",
-      "centminmod.com"
-    ]
-  },
-  "issuer": {
-    "common_name": "Intermediate CA",
-    "country": "US",
-    "organizational_unit": "Intermediate CA",
-    "locality": "San Francisco",
-    "province": "CA",
-    "names": [
-      "US",
-      "CA",
-      "San Francisco",
-      "Intermediate CA",
-      "Intermediate CA"
-    ]
-  },
-  "serial_number": "364491867088419011259470270742378449429086468712",
-  "sans": [
-    "centminmod.com",
-    "*.centminmod.com"
-  ],
-  "not_before": "2020-09-15T04:40:00Z",
-  "not_after": "2030-09-13T04:40:00Z",
-  "sigalg": "ECDSAWithSHA256",
-  "authority_key_id": "81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8",
-  "subject_key_id": "58:41:18:19:32:49:F2:16:CB:43:B2:77:2D:39:9B:35:FD:CD:BB:9D",
-  "pem": "-----BEGIN CERTIFICATE-----\nMIICYTCCAgegAwIBAgIUP9hhbrUv292C4midcLn6ezC9+mgwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTUwNDQwMDBaFw0zMDA5MTMwNDQwMDBaMEsxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEXMBUG\nA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASf\nZCMSd0GaSLz1Gcjqmo8bU5HuI+vdMHhN3/kny/C4UPWPGMbbI3xLUoakxFd28zQ7\nw/blG4eo4IcStuxIQ6iso4GtMIGqMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAU\nBggrBgEFBQcDAgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQUWEEY\nGTJJ8hbLQ7J3LTmbNf3Nu50wHwYDVR0jBBgwFoAUgWkVV71s/uSIPaqJ+zCKAlK2\nMOgwKwYDVR0RBCQwIoIOY2VudG1pbm1vZC5jb22CECouY2VudG1pbm1vZC5jb20w\nCgYIKoZIzj0EAwIDSAAwRQIhALPOMvqZMAlMzrEOrUw3p0B9iAYMnp2OW7XlaRwh\ngssSAiBPaagqHENLIpJYA2LKI3VDD94+WXKNpFWq5N+sUBZzQQ==\n-----END CERTIFICATE-----\n"
-}
-
-openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/peercerts/centminmod.com.pem
-/etc/cfssl/peercerts/centminmod.com.pem: OK
-```
-
 # Cloudflare Authenticated Origin Pull Custom Hostname Domain Client TLS Certificate Upload
 
 An example of Cloudflare Authenticated Origin Pull certificate using custom hostname domain.
@@ -1855,6 +1697,164 @@ curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_cl
     "expires_on": "2032-05-21T17:51:00Z"
   }
 }
+```
+
+# Peer Wildcard SSL Certificate
+
+Generate self-signed peer wildcard SSL certificate with CA signing for centminmod.com subdomain with `TLS Web Client Authentication` and `TLS Web Server Authentication` 
+
+* peer pkcs12: /etc/cfssl/peercerts/centminmod.com.p12
+* peer cert: /etc/cfssl/peercerts/centminmod.com.pem
+* peer private key: /etc/cfssl/peercerts/centminmod.com-key.pem
+* peer public key: /etc/cfssl/peercerts/centminmod.com-publickey.pem
+* peer csr: /etc/cfssl/peercerts/centminmod.com.csr
+* peer csr profile: /etc/cfssl/peercerts/centminmod.com.csr.json
+
+```
+/root/tools/cfssl-ca-ssl/cfssl-ca-ssl.sh gen-peer centminmod.com 87600 wildcard centminmod.com
+
+cfssl gencert -config /etc/cfssl/profile.json -profile peer -ca /etc/cfssl/centminmod.com-ca-intermediate.pem -ca-key /etc/cfssl/centminmod.com-ca-intermediate-key.pem centminmod.com.csr.json > centminmod.com.json
+2020/09/15 04:45:23 [INFO] generate received request
+2020/09/15 04:45:23 [INFO] received CSR
+2020/09/15 04:45:23 [INFO] generating key: ecdsa-256
+2020/09/15 04:45:23 [INFO] encoded CSR
+2020/09/15 04:45:23 [INFO] signed certificate with serial number 364491867088419011259470270742378449429086468712
+
+cfssljson -f centminmod.com.json -bare centminmod.com
+
+Extract peer certificate public key: /etc/cfssl/peercerts/centminmod.com-publickey.pem
+openssl x509 -pubkey -noout -in /etc/cfssl/peercerts/centminmod.com.pem > /etc/cfssl/peercerts/centminmod.com-publickey.pem
+cat /etc/cfssl/peercerts/centminmod.com-publickey.pem
+
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEn2QjEndBmki89RnI6pqPG1OR7iPr
+3TB4Td/5J8vwuFD1jxjG2yN8S1KGpMRXdvM0O8P25RuHqOCHErbsSEOorA==
+-----END PUBLIC KEY-----
+
+
+openssl x509 -in /etc/cfssl/peercerts/centminmod.com.pem -text -noout
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            3f:d8:61:6e:b5:2f:db:dd:82:e2:68:9d:70:b9:fa:7b:30:bd:fa:68
+    Signature Algorithm: ecdsa-with-SHA256
+        Issuer: C=US, ST=CA, L=San Francisco, OU=Intermediate CA, CN=Intermediate CA
+        Validity
+            Not Before: Sep 15 04:40:00 2020 GMT
+            Not After : Sep 13 04:40:00 2030 GMT
+        Subject: C=US, ST=CA, L=San Francisco, CN=centminmod.com
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub: 
+                    04:9f:64:23:12:77:41:9a:48:bc:f5:19:c8:ea:9a:
+                    8f:1b:53:91:ee:23:eb:dd:30:78:4d:df:f9:27:cb:
+                    f0:b8:50:f5:8f:18:c6:db:23:7c:4b:52:86:a4:c4:
+                    57:76:f3:34:3b:c3:f6:e5:1b:87:a8:e0:87:12:b6:
+                    ec:48:43:a8:ac
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Client Authentication, TLS Web Server Authentication
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                58:41:18:19:32:49:F2:16:CB:43:B2:77:2D:39:9B:35:FD:CD:BB:9D
+            X509v3 Authority Key Identifier: 
+                keyid:81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8
+
+            X509v3 Subject Alternative Name: 
+                DNS:centminmod.com, DNS:*.centminmod.com
+    Signature Algorithm: ecdsa-with-SHA256
+         30:45:02:21:00:b3:ce:32:fa:99:30:09:4c:ce:b1:0e:ad:4c:
+         37:a7:40:7d:88:06:0c:9e:9d:8e:5b:b5:e5:69:1c:21:82:cb:
+         12:02:20:4f:69:a8:2a:1c:43:4b:22:92:58:03:62:ca:23:75:
+         43:0f:de:3e:59:72:8d:a4:55:aa:e4:df:ac:50:16:73:41
+
+Generate pkcs12 format
+openssl pkcs12 -export -out /etc/cfssl/peercerts/centminmod.com.p12 -inkey /etc/cfssl/peercerts/centminmod.com-key.pem -in /etc/cfssl/peercerts/centminmod.com.pem -certfile /etc/cfssl/centminmod.com-ca-bundle.pem -passin pass: -passout pass:
+
+peer pkcs12: /etc/cfssl/peercerts/centminmod.com.p12
+peer cert: /etc/cfssl/peercerts/centminmod.com.pem
+peer private key: /etc/cfssl/peercerts/centminmod.com-key.pem
+peer public key: /etc/cfssl/peercerts/centminmod.com-publickey.pem
+peer csr: /etc/cfssl/peercerts/centminmod.com.csr
+peer csr profile: /etc/cfssl/peercerts/centminmod.com.csr.json
+
+Generate /etc/cfssl/peercerts/centminmod.com-peer-bundle.pem
+cat /etc/cfssl/peercerts/centminmod.com.pem /etc/cfssl/centminmod.com-ca-bundle.pem > /etc/cfssl/peercerts/centminmod.com-peer-bundle.pem
+peer bundle chain: /etc/cfssl/clientcerts/centminmod.com-client-bundle.pem
+
+
+Check certificate purpose:
+openssl x509 -in /etc/cfssl/peercerts/centminmod.com.pem -noout -purpose
+Certificate purposes:
+SSL client : Yes
+SSL client CA : No
+SSL server : Yes
+SSL server CA : No
+Netscape SSL server : Yes
+Netscape SSL server CA : No
+S/MIME signing : No
+S/MIME signing CA : No
+S/MIME encryption : No
+S/MIME encryption CA : No
+CRL signing : No
+CRL signing CA : No
+Any Purpose : Yes
+Any Purpose CA : Yes
+OCSP helper : Yes
+OCSP helper CA : No
+Time Stamp signing : No
+Time Stamp signing CA : No
+
+{
+  "subject": {
+    "common_name": "centminmod.com",
+    "country": "US",
+    "locality": "San Francisco",
+    "province": "CA",
+    "names": [
+      "US",
+      "CA",
+      "San Francisco",
+      "centminmod.com"
+    ]
+  },
+  "issuer": {
+    "common_name": "Intermediate CA",
+    "country": "US",
+    "organizational_unit": "Intermediate CA",
+    "locality": "San Francisco",
+    "province": "CA",
+    "names": [
+      "US",
+      "CA",
+      "San Francisco",
+      "Intermediate CA",
+      "Intermediate CA"
+    ]
+  },
+  "serial_number": "364491867088419011259470270742378449429086468712",
+  "sans": [
+    "centminmod.com",
+    "*.centminmod.com"
+  ],
+  "not_before": "2020-09-15T04:40:00Z",
+  "not_after": "2030-09-13T04:40:00Z",
+  "sigalg": "ECDSAWithSHA256",
+  "authority_key_id": "81:69:15:57:BD:6C:FE:E4:88:3D:AA:89:FB:30:8A:02:52:B6:30:E8",
+  "subject_key_id": "58:41:18:19:32:49:F2:16:CB:43:B2:77:2D:39:9B:35:FD:CD:BB:9D",
+  "pem": "-----BEGIN CERTIFICATE-----\nMIICYTCCAgegAwIBAgIUP9hhbrUv292C4midcLn6ezC9+mgwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMDA5MTUwNDQwMDBaFw0zMDA5MTMwNDQwMDBaMEsxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEXMBUG\nA1UEAxMOY2VudG1pbm1vZC5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASf\nZCMSd0GaSLz1Gcjqmo8bU5HuI+vdMHhN3/kny/C4UPWPGMbbI3xLUoakxFd28zQ7\nw/blG4eo4IcStuxIQ6iso4GtMIGqMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAU\nBggrBgEFBQcDAgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQUWEEY\nGTJJ8hbLQ7J3LTmbNf3Nu50wHwYDVR0jBBgwFoAUgWkVV71s/uSIPaqJ+zCKAlK2\nMOgwKwYDVR0RBCQwIoIOY2VudG1pbm1vZC5jb22CECouY2VudG1pbm1vZC5jb20w\nCgYIKoZIzj0EAwIDSAAwRQIhALPOMvqZMAlMzrEOrUw3p0B9iAYMnp2OW7XlaRwh\ngssSAiBPaagqHENLIpJYA2LKI3VDD94+WXKNpFWq5N+sUBZzQQ==\n-----END CERTIFICATE-----\n"
+}
+
+openssl verify -CAfile /etc/cfssl/centminmod.com-ca-bundle.pem /etc/cfssl/peercerts/centminmod.com.pem
+/etc/cfssl/peercerts/centminmod.com.pem: OK
 ```
 
 # Peer SSL Certificate
