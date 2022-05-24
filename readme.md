@@ -1211,27 +1211,6 @@ curl -sX PUT https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_cli
   }
 }
 ```
-And verify deletion:
-
-```
-curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq
-{
-  "success": true,
-  "errors": [],
-  "messages": [],
-  "result": {
-    "id": "d5035326-5385-4ec3-b77d-d1a122cf3283",
-    "status": "deleted",
-    "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
-    "signature": "ECDSA-SHA256",
-    "serial_number": "364027147676626726289571183730041490650282141970",
-    "certificate": "-----BEGIN CERTIFICATE-----\nMIICUDxxxxxxagAwIBAgIUP8OKtxl8+vxl38jCZ64JkcoZKRIwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNjUxMDBaFw0zMjA1MjExNjUxMDBaMEgxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEUMBIG\nA1UEAxMLY2VudG1pbi5kZXYwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASXHo+L\nWdZLL0E1D7F8LUc24SdO8duZfd4qhabKy/mEcxmUYAiOawcY0poQ+I1x1pCm+Wqz\noa9CWKC2C50i9Zdvo4GfMIGcMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAKBggr\nBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQHGhsS/h56zI8U6bf7dvAc\nrb2dTjAfBgNVHSMEGDAWgBQGaefF8v06LjDXH31/ud6bUrnUdzAnBgNVHREEIDAe\nggtjZW50bWluLmRldoIPd3d3LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUC\nIQD+CnZSL4S7jdq4Zipde3pxAIk2ofdUvh2YuoaT5BkHlgIgI0vKUWQofPoW6vB+\nVMLu0MAcXDgmkz6iX9wTHNVk7UM=\n-----END CERTIFICATE-----\n",
-    "uploaded_on": "2022-05-24T16:57:16.801883Z",
-    "expires_on": "2032-05-21T16:51:00Z"
-  }
-}
-```
-
 Delete Cloudflare Authenticated Origin Pull with custom apex domain client TLS certificate at the zone level:
 
 ```
@@ -1243,6 +1222,27 @@ curl -sX DELETE "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls
   "result": {
     "id": "d5035326-5385-4ec3-b77d-d1a122cf3283",
     "status": "pending_deletion",
+    "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
+    "signature": "ECDSA-SHA256",
+    "serial_number": "364027147676626726289571183730041490650282141970",
+    "certificate": "-----BEGIN CERTIFICATE-----\nMIICUDxxxxxxagAwIBAgIUP8OKtxl8+vxl38jCZ64JkcoZKRIwCgYIKoZIzj0EAwIw\nZjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1TYW4gRnJhbmNp\nc2NvMRgwFgYDVQQLEw9JbnRlcm1lZGlhdGUgQ0ExGDAWBgNVBAMTD0ludGVybWVk\naWF0ZSBDQTAeFw0yMjA1MjQxNjUxMDBaFw0zMjA1MjExNjUxMDBaMEgxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEUMBIG\nA1UEAxMLY2VudG1pbi5kZXYwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASXHo+L\nWdZLL0E1D7F8LUc24SdO8duZfd4qhabKy/mEcxmUYAiOawcY0poQ+I1x1pCm+Wqz\noa9CWKC2C50i9Zdvo4GfMIGcMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAKBggr\nBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQHGhsS/h56zI8U6bf7dvAc\nrb2dTjAfBgNVHSMEGDAWgBQGaefF8v06LjDXH31/ud6bUrnUdzAnBgNVHREEIDAe\nggtjZW50bWluLmRldoIPd3d3LmNlbnRtaW4uZGV2MAoGCCqGSM49BAMCA0gAMEUC\nIQD+CnZSL4S7jdq4Zipde3pxAIk2ofdUvh2YuoaT5BkHlgIgI0vKUWQofPoW6vB+\nVMLu0MAcXDgmkz6iX9wTHNVk7UM=\n-----END CERTIFICATE-----\n",
+    "uploaded_on": "2022-05-24T16:57:16.801883Z",
+    "expires_on": "2032-05-21T16:51:00Z"
+  }
+}
+```
+
+Verify deletion:
+
+```
+curl -sX GET "https://api.cloudflare.com/client/v4/zones/$cfzoneid/origin_tls_client_auth/$clientcert_id" -H "X-Auth-Email: $cfemail" -H "X-Auth-Key: $cftoken" -H "Content-Type: application/json" -d "$request_body" | jq
+{
+  "success": true,
+  "errors": [],
+  "messages": [],
+  "result": {
+    "id": "d5035326-5385-4ec3-b77d-d1a122cf3283",
+    "status": "deleted",
     "issuer": "CN=Intermediate CA,OU=Intermediate CA,L=San Francisco,ST=CA,C=US",
     "signature": "ECDSA-SHA256",
     "serial_number": "364027147676626726289571183730041490650282141970",
