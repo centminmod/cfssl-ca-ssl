@@ -859,8 +859,9 @@ Generate self-signed client SSL certificate with CA signing for centminmod.com w
 * client public key: /etc/cfssl/clientcerts/centminmod.com-publickey.pem
 * client csr: /etc/cfssl/clientcerts/centminmod.com.csr
 * client csr profile: /etc/cfssl/clientcerts/centminmod.com.csr.json
+* cleanup certs script: /etc/cfssl/cleanup/remove-clientcert-centminmod.com.sh
 
-Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates).
+Included in output are Cloudflare API instructions for uploading the generated client SSL certificate to Cloudflare for use on a custom hostname configured Cloudflare Authenticated Origin Pull certificate as outlined at [https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/set-up/#per-hostname--customer-certificates). Example [here](#cloudflare-authenticated-origin-pull-custom-apex-domain-client-tls-certificate-upload).
 
 > ​Per-Hostname Authenticated Origin Pull using customer certificates {#per-hostname}
 > When enabling Authenticated Origin Pull per hostname, all proxied traffic to the specified hostname is authenticated at the origin web server. Customers can use client certificates from their Private PKI to authenticate connections from Cloudflare.
